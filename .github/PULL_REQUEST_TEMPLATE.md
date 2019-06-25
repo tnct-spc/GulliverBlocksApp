@@ -1,4 +1,4 @@
-タスク[ISSUE番号](https://github.com/tnct-spc/GulliverBlocksApp/issues/ISSUE番号)に対するPRです。
+タスク[タスク番号](TrelloのタスクURL)に対するPRです。
 
 
 # 主な変更、追加箇所  

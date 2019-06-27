@@ -184,7 +184,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &699114731
 GameObject:
@@ -405,7 +405,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1309685b345aed1488820d5b623307a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cube: {fileID: 188317383394879714, guid: 5342cc583676bad418318de629e9768d, type: 3}
 --- !u!4 &784364639
 Transform:
   m_ObjectHideFlags: 0
@@ -418,7 +417,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:
@@ -431,8 +430,9 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
-  - component: {fileID: 963194230}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
+  - component: {fileID: 963194231}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -514,11 +514,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a68d4463849fac149b7c14e53885d31b, type: 3}
+  m_Script: {fileID: 11500000, guid: 12c6c21f44777ce4584bd4e6d6378f09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moving_speed: 1
-  rigitbody: {fileID: 0}
 --- !u!54 &963194230
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -535,6 +533,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &963194231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a68d4463849fac149b7c14e53885d31b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moving_speed: 1
+  rigitbody: {fileID: 0}
 --- !u!1 &1074639347
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,7 +857,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 963194229}
+        - m_Target: {fileID: 963194231}
           m_MethodName: MoveCameraForward
           m_Mode: 1
           m_Arguments:
@@ -862,7 +874,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 963194229}
+        - m_Target: {fileID: 963194231}
           m_MethodName: StopCameraMove
           m_Mode: 1
           m_Arguments:

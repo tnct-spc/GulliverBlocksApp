@@ -8,6 +8,6 @@ public class GameSystem : MonoBehaviour
     //　スタートボタンを押したら実行する
     public void StartGame()
     {
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("Vr");
     }
 }

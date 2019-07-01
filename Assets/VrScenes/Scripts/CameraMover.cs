@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraMover : MonoBehaviour
 {
-
+    public bool Go_or_Stop = false;
     public float moving_speed = 1;  // カメラの移動速度
     public Rigidbody rigitbody;
 
@@ -13,16 +13,24 @@ public class CameraMover : MonoBehaviour
         rigitbody = GetComponent<Rigidbody>();
     }
 
-    // 前移動のボタンを押している間実行する
-    public void MoveCameraForward()
+
+    void Update()
     {
+        /* カメラの移動 */
         Vector3 direction = Vector3.Scale(transform.forward, new Vector3(1, 0, 1));  // 縦方向を0としたカメラの向きを取得する
-        rigitbody.velocity = moving_speed * direction;  // カメラの速度ベクトルを変更して移動させる
+        if (Go_or_Stop) rigitbody.velocity = moving_speed * direction;  // カメラの速度ベクトルを変更して移動させる
+        else rigitbody.velocity = new Vector3(0, 0, 0);  // カメラの速度ベクトルを0にして移動を止める
+    }
+
+    // 前移動のボタンを押している間実行する
+    public void AllowMoveCamera()
+    {
+        Go_or_Stop = true;
     }
 
     // 移動のボタンを離したら実行する
-    public void StopCameraMove()
+    public void StopCamera()
     {
-        rigitbody.velocity = new Vector3(0, 0, 0);  // カメラの速度ベクトルを0にして移動を止める
+        Go_or_Stop = false;
     }
 }

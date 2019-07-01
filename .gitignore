@@ -46,6 +46,7 @@ Thumbs.db
 
 #log files, for some plugins
 *.log
+UpgradeLog*.htm
 
 #python bytecode cache, for some plugins.
 *.pyc

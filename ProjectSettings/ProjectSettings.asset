@@ -112,7 +112,7 @@ PlayerSettings:
   switchNVNShaderPoolsGranularity: 33554432
   switchNVNDefaultPoolsGranularity: 16777216
   switchNVNOtherPoolsGranularity: 16777216
-  vulkanEnableSetSRGBWrite: 0
+  vulkanEnableSetSRGBWrite: 1
   m_SupportedAspectRatios:
     4:3: 1
     5:4: 1
@@ -161,7 +161,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: org.tokyo-ct.gulliverblocks
-    Standalone: org.tokyo-ct.ProductName
+    Standalone: org.tokyo-ct.gulliverblocks
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 16

@@ -160,7 +160,8 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.spc.gulliverblocks
+    Android: org.tokyo_ct.gulliverblocks
+    Standalone: org.tokyo_ct.gulliverblocks
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 16

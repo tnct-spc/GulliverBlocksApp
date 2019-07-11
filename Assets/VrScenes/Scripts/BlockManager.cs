@@ -22,6 +22,11 @@ public class BlockManager : MonoBehaviour
         new Block(5.0f, 0.0f, 5.0f, 3),
     };
 
+    private void Start()
+    {
+        placeBlock(block_list);
+    }
+
     void placeBlock(Block[] block_list)
     {
         Object cube = (GameObject)Resources.Load("Cube");
@@ -29,10 +34,5 @@ public class BlockManager : MonoBehaviour
         {
             Instantiate(cube, block_list[i].position, Quaternion.identity);
         }
-    }
-
-    private void Start()
-    {
-        placeBlock(block_list);
     }
 }

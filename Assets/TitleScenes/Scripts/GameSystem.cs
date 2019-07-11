@@ -9,5 +9,8 @@ public class GameSystem : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadScene("Vr");
+
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+
     }
 }

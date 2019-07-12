@@ -13,7 +13,22 @@ public class InputManager : MonoBehaviour
         playermanager = player.GetComponent<PlayerManager>();
     }
 
-    public void Player_Move()
+    public void Player_Forward()
+    {
+        playermanager.Move_Forward();
+    }
+
+    public void Player_Right()
+    {
+        playermanager.Move_Forward();
+    }
+
+    public void Player_Left()
+    {
+        playermanager.Move_Forward();
+    }
+
+    public void Player_Back()
     {
         playermanager.Move_Forward();
     }

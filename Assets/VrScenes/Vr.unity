@@ -1031,7 +1031,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Move
+          m_MethodName: Player_Right
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1200,7 +1200,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Move
+          m_MethodName: Player_Back
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1369,7 +1369,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Move
+          m_MethodName: Player_Left
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1620,7 +1620,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Move
+          m_MethodName: Player_Forward
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

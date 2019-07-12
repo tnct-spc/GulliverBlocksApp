@@ -43,6 +43,21 @@ public class PlayerManager : MonoBehaviour
         Move_State = Forward;
     }
 
+    public void Move_Right()
+    {
+        Move_State = Right;
+    }
+
+    public void Move_Left()
+    {
+        Move_State = Left;
+    }
+
+    public void Move_Back()
+    {
+        Move_State = Forward;
+    }
+
     public void StopMove()
     {
         Move_State = Stop;

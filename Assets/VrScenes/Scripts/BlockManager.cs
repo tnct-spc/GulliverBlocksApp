@@ -36,7 +36,7 @@ public class BlockManager : MonoBehaviour
 
     private void Start()
     {
-        getDataFromServerAndCreateBlock();
+        var _ =  getDataFromServerAndCreateBlock();  // 警告メッセージ回避のために変数に代入する
     }
 
     void placeBlock(Block[] block_list)
@@ -50,19 +50,17 @@ public class BlockManager : MonoBehaviour
 
     private Block[] jsonToBlock(string json)
     {
-        // jsonの不要な文字列を削除
-        json.Trim('{', '}');
-        json = json.Replace("[", "");
-        json = json.Replace("]", "");
-        json = json.Replace("blocks:", "");
 
-        string[] json_array = Regex.Split(json, @"},");  // 要素に分ける
+        // jsonの不要な文字列を削除
+        json = json.Replace("{\"blocks\":[", "");
+        json = json.Replace("]}", "");
+
+        string[] json_array = Regex.Split(json, @"(?<=}),");  // 要素に分ける
 
         // jsonからBlockを生成
         List<Block> block_list = new List<Block>();
         for (int i = 0; i < json_array.Length; i++)
         {
-            json_array[i] = json_array[i].Insert(json_array[i].Length, "}");
             Block block = JsonUtility.FromJson<Block>(json_array[i]);
             block_list.Add(block);
         }
@@ -73,20 +71,14 @@ public class BlockManager : MonoBehaviour
 
     async System.Threading.Tasks.Task getDataFromServerAndCreateBlock()
     {
-        string server_url = "https://gulliverblocksserver.herokuapp.com";
+        string server_url = "https://gulliverblocksserver.herokuapp.com/return_test_data/";
 
         string response_json;
 
         using (var http_client = new HttpClient())
         {
-            // getリクエストを投げる
-            HttpResponseMessage response = await http_client.GetAsync(server_url);
-
-            // 通信に失敗したら例外を投げる
-            response.EnsureSuccessStatusCode();
-
-            // レスポンスのbodyを読み込む
-            response_json = await response.Content.ReadAsStringAsync();
+            // getリクエストを投げてレスポンスのbodyを読み込む
+            response_json = await http_client.GetStringAsync(server_url);
         }
 
         Block[] block_list = jsonToBlock(response_json);

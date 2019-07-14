@@ -39,12 +39,12 @@ public class BlockManager : MonoBehaviour
         var _ =  getDataFromServerAndCreateBlock();  // 警告メッセージ回避のために変数に代入する
     }
 
-    void placeBlock(Block[] block_list)
+    void placeBlock(Block[] block_array)
     {
         Object cube = (GameObject)Resources.Load("Cube");
-        for (int i = 0; i < block_list.Length; i++)
+        for (int i = 0; i < block_array.Length; i++)
         {
-            Instantiate(cube, block_list[i].getPosition(), Quaternion.identity);
+            Instantiate(cube, block_array[i].getPosition(), Quaternion.identity);
         }
     }
 
@@ -64,9 +64,9 @@ public class BlockManager : MonoBehaviour
             Block block = JsonUtility.FromJson<Block>(json_array[i]);
             block_list.Add(block);
         }
-        Block[] blocks = block_list.ToArray();
+        Block[] block_array = block_list.ToArray();
 
-        return blocks;
+        return block_array;
     }
 
     async System.Threading.Tasks.Task getDataFromServerAndCreateBlock()
@@ -81,8 +81,8 @@ public class BlockManager : MonoBehaviour
             response_json = await http_client.GetStringAsync(server_url);
         }
 
-        Block[] block_list = jsonToBlock(response_json);
+        Block[] block_array = jsonToBlock(response_json);
 
-        placeBlock(block_list);
+        placeBlock(block_array);
     }
 }

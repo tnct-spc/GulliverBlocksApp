@@ -34,18 +34,28 @@ public class BlockManager : MonoBehaviour
         }
     }
 
+    private List<(Block block_struct, Object block_instance)> block_data_list = new List<(Block block_struct, Object block_instance)>();
+
     private void Start()
     {
         var _ =  getDataFromServerAndCreateBlock();  // 警告メッセージ回避のために変数に代入する
     }
 
-    void placeBlock(Block[] block_array)
+    async System.Threading.Tasks.Task getDataFromServerAndCreateBlock()
     {
-        Object cube = (GameObject)Resources.Load("Cube");
-        for (int i = 0; i < block_array.Length; i++)
+        string server_url = "https://gulliverblocks.herokuapp.com/return_test_data/";
+
+        string response_json;
+
+        using (var http_client = new HttpClient())
         {
-            Instantiate(cube, block_array[i].getPosition(), Quaternion.identity);
+            // getリクエストを投げてレスポンスのbodyを読み込む
+            response_json = await http_client.GetStringAsync(server_url);
         }
+
+        Block[] block_array = jsonToBlock(response_json);
+
+        placeBlock(block_array);
     }
 
     private Block[] jsonToBlock(string json)
@@ -69,20 +79,14 @@ public class BlockManager : MonoBehaviour
         return block_array;
     }
 
-    async System.Threading.Tasks.Task getDataFromServerAndCreateBlock()
+    void placeBlock(Block[] block_array)
     {
-        string server_url = "https://gulliverblocksserver.herokuapp.com/return_test_data/";
-
-        string response_json;
-
-        using (var http_client = new HttpClient())
+        Object cube = (GameObject)Resources.Load("Cube");
+        for (int i = 0; i < block_array.Length; i++)
         {
-            // getリクエストを投げてレスポンスのbodyを読み込む
-            response_json = await http_client.GetStringAsync(server_url);
+            Object instance = Instantiate(cube, block_array[i].getPosition(), Quaternion.identity);
+            block_data_list.Add((block_array[i], instance));
+            Debug.Log(instance);
         }
-
-        Block[] block_array = jsonToBlock(response_json);
-
-        placeBlock(block_array);
     }
 }

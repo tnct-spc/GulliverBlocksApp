@@ -86,7 +86,6 @@ public class BlockManager : MonoBehaviour
         {
             Object instance = Instantiate(cube, block_array[i].getPosition(), Quaternion.identity);
             block_data_list.Add((block_array[i], instance));
-            Debug.Log(instance);
         }
     }
 }

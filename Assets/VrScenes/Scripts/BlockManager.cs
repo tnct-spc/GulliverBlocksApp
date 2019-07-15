@@ -34,14 +34,14 @@ public class BlockManager : MonoBehaviour
         }
     }
 
-    private List<(Block block_struct, Object block_instance)> block_data_list = new List<(Block block_struct, Object block_instance)>();
+    private List<(Block block_struct, Object block_instance)> blocks_data = new List<(Block block_struct, Object block_instance)>();
 
     private void Start()
     {
-        var _ =  getDataFromServerAndCreateBlock();  // 警告メッセージ回避のために変数に代入する
+        var _ =  fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
     }
 
-    async System.Threading.Tasks.Task getDataFromServerAndCreateBlock()
+    async System.Threading.Tasks.Task fetchAndPlaceBlocks()
     {
         string server_url = "https://gulliverblocks.herokuapp.com/return_test_data/";
 
@@ -53,12 +53,10 @@ public class BlockManager : MonoBehaviour
             response_json = await http_client.GetStringAsync(server_url);
         }
 
-        Block[] block_array = jsonToBlock(response_json);
-
-        placeBlock(block_array);
+        placeBlock(jsonToBlock(response_json));
     }
 
-    private Block[] jsonToBlock(string json)
+    private List<Block> jsonToBlock(string json)
     {
 
         // jsonの不要な文字列を削除
@@ -68,24 +66,23 @@ public class BlockManager : MonoBehaviour
         string[] json_array = Regex.Split(json, @"(?<=}),");  // 要素に分ける
 
         // jsonからBlockを生成
-        List<Block> block_list = new List<Block>();
+        List<Block> blocks = new List<Block>();
         for (int i = 0; i < json_array.Length; i++)
         {
             Block block = JsonUtility.FromJson<Block>(json_array[i]);
-            block_list.Add(block);
+            blocks.Add(block);
         }
-        Block[] block_array = block_list.ToArray();
 
-        return block_array;
+        return blocks;
     }
 
-    void placeBlock(Block[] block_array)
+    void placeBlock(List<Block> blocks)
     {
         Object cube = (GameObject)Resources.Load("Cube");
-        for (int i = 0; i < block_array.Length; i++)
+        for (int i = 0; i < blocks.Count; i++)
         {
-            Object instance = Instantiate(cube, block_array[i].getPosition(), Quaternion.identity);
-            block_data_list.Add((block_array[i], instance));
+            Object instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity);
+            blocks_data.Add((blocks[i], instance));
         }
     }
 }

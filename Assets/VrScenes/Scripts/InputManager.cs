@@ -20,17 +20,17 @@ public class InputManager : MonoBehaviour
 
     public void Player_Right()
     {
-        playermanager.Move_Forward();
+        playermanager.Move_Right();
     }
 
     public void Player_Left()
     {
-        playermanager.Move_Forward();
+        playermanager.Move_Left();
     }
 
     public void Player_Back()
     {
-        playermanager.Move_Forward();
+        playermanager.Move_Back();
     }
 
     public void Player_Stop()

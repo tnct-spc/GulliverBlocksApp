@@ -44,11 +44,11 @@ public class PlayerManager : MonoBehaviour
                 break;
             //Left
             case Left:
-                Add_Velocity(gameObject.transform.right);
+                Add_Velocity(gameObject.transform.right * -1);
                 break;
             //Back
             case Back:
-                Add_Velocity(gameObject.transform.forward);
+                Add_Velocity(gameObject.transform.forward * -1);
                 break;
 
         }

@@ -34,7 +34,7 @@ public class PlayerManager : MonoBehaviour
                 break;
             case Forward:
                 Vector3 forward = gameObject.transform.forward;
-                Add_Velocity(new Vector3(forward.x, 0, forward.z));
+                Add_Velocity(new Vector3(forward.x, 0, forward.z).normalized);
                 break;
         }
     }

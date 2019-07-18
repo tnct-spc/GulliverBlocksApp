@@ -1,6 +1,17 @@
-﻿{
+{
     "name": "PlayMode",
+    "references": [
+        "GUID:0ae97ed97baea7d448caf35009d0e918"
+    ],
     "optionalUnityReferences": [
         "TestAssemblies"
-    ]
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
 }

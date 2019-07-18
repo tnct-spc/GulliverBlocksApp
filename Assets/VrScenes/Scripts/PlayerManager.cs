@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    [SerializeField] int default_move_speed = 1;
-    [SerializeField] int run_move_speed = 2;
-    Rigidbody player_rigidbody;
-    private bool isDefault_speed = true;
+    public int default_move_speed = 1;
+    public int run_move_speed = 2;
+    public Rigidbody player_rigidbody;
+    public bool isDefault_speed = true;
     public readonly static string Stop = "Stop";
     public readonly static string Forward = "Forward";
     public readonly static string Right = "Right";
@@ -16,13 +16,13 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        player_rigidbody = GetComponent<Rigidbody>();
+        player_rigidbody = gameObject.AddComponent<Rigidbody>();
         Input.gyro.enabled = true;
     }
 
     void Update ()
     {
-        Rotate();
+        //Rotate();
         Move();
     }
 

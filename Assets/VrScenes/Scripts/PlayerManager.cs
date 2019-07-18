@@ -30,23 +30,22 @@ public class PlayerManager : MonoBehaviour
     public void Move()
     {
         switch (Move_State) {
-            //Stop
             case Stop:
                 Add_Velocity(Vector3.zero);
                 break;
-            //Forward
+
             case Forward:
                 Add_Velocity(gameObject.transform.forward);
                 break;
-            //Right
+            
             case Right:
                 Add_Velocity(gameObject.transform.right);
                 break;
-            //Left
+            
             case Left:
                 Add_Velocity(gameObject.transform.right * -1);
                 break;
-            //Back
+
             case Back:
                 Add_Velocity(gameObject.transform.forward * -1);
                 break;

@@ -8,11 +8,11 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] int run_move_speed = 2;
     Rigidbody player_rigidbody;
     private bool isDefault_speed = true;
-    const string Stop = "Stop";
-    const string Forward = "Forward";
-    const string Right = "Right";
-    const string Left = "Left";
-    private string Move_State = Stop;
+    public readonly static string Stop = "Stop";
+    public readonly static string Forward = "Forward";
+    public readonly static string Right = "Right";
+    public readonly static string Left = "Left";
+    public string Move_State = Stop;
 
     void Start()
     {
@@ -29,10 +29,10 @@ public class PlayerManager : MonoBehaviour
     public void Move()
     {
         switch (Move_State) {
-            case Stop:
+            case "Stop":
                 Add_Velocity(Vector3.zero);
                 break;
-            case Forward:
+            case "Forward":
                 Add_Velocity(gameObject.transform.forward);
                 break;
         }

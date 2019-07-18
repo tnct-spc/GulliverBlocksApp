@@ -33,8 +33,7 @@ public class PlayerManager : MonoBehaviour
                 Add_Velocity(Vector3.zero);
                 break;
             case Forward:
-                Vector3 forward = gameObject.transform.forward;
-                Add_Velocity(new Vector3(forward.x, 0, forward.z).normalized);
+                Add_Velocity(gameObject.transform.forward);
                 break;
         }
     }
@@ -51,6 +50,8 @@ public class PlayerManager : MonoBehaviour
 
     public void Add_Velocity(Vector3 move_direction)
     {
+        move_direction.y = 0;
+        move_direction = move_direction.normalized;
         if(isDefault_speed) player_rigidbody.velocity = default_move_speed * move_direction;
         else player_rigidbody.velocity = run_move_speed * move_direction;
     }

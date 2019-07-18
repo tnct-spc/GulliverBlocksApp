@@ -51,3 +51,6 @@ UpgradeLog*.htm
 #python bytecode cache, for some plugins.
 *.pyc
 
+# bugsnag api key
+Assets/TitleScenes/Scripts/BugsnagInit.cs
+

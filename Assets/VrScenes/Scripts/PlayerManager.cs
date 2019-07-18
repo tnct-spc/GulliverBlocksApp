@@ -33,7 +33,8 @@ public class PlayerManager : MonoBehaviour
                 Add_Velocity(Vector3.zero);
                 break;
             case Forward:
-                Add_Velocity(gameObject.transform.forward);
+                Vector3 forward = gameObject.transform.forward;
+                Add_Velocity(new Vector3(forward.x, 0, forward.z));
                 break;
         }
     }

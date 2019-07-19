@@ -13,9 +13,24 @@ public class InputManager : MonoBehaviour
         playermanager = player.GetComponent<PlayerManager>();
     }
 
+    private void Update()
+    {
+        if (Input.GetKey("w"))          playermanager.Move_Forward();
+        else if (Input.GetKeyUp("w"))   playermanager.StopMove();
+        
+        else if (Input.GetKey("d"))     playermanager.Move_Right();
+        else if (Input.GetKeyUp("d"))   playermanager.StopMove();
+        
+        else if (Input.GetKey("a"))     playermanager.Move_Left();
+        else if (Input.GetKeyUp("a"))   playermanager.StopMove();
+        
+        else if (Input.GetKey("s"))     playermanager.Move_Back();
+        else if (Input.GetKeyUp("s"))   playermanager.StopMove();
+    }
+
     public void Player_Forward()
     {
-        playermanager.Move_Forward();
+        playermanager.Move_Forward();     
     }
 
     public void Player_Right()

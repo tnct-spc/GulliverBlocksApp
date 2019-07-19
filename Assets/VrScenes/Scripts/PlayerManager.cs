@@ -13,6 +13,8 @@ public class PlayerManager : MonoBehaviour
     const string Right = "Right";
     const string Left = "Left";
     const string Back = "Back";
+    const string Up = "Up";
+    const string Down = "Down";
     private string Move_State = Stop;
 
     void Start()
@@ -50,6 +52,14 @@ public class PlayerManager : MonoBehaviour
                 Add_Velocity(gameObject.transform.forward * -1);
                 break;
 
+            case Up:
+                Add_Velocity(gameObject.transform.up);
+                break;
+
+            case Down:
+                Add_Velocity(gameObject.transform.up * -1);
+                break;
+
         }
     }
 
@@ -76,6 +86,16 @@ public class PlayerManager : MonoBehaviour
     public void StopMove()
     {
         Move_State = Stop;
+    }
+
+    public void Move_Up()
+    {
+        Move_State = Up;
+    }
+
+    public void Move_Down()
+    {
+        Move_State = Down;
     }
 
     public void Add_Velocity(Vector3 move_direction)

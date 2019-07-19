@@ -37,4 +37,14 @@ public class InputManager : MonoBehaviour
     {
         playermanager.StopMove();
     }
+    public void Player_Up()
+    {
+        playermanager.Move_Up();
+    }
+
+    public void Player_Down()
+    {
+        playermanager.Move_Down();
+    }
+
 }

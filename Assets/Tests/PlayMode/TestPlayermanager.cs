@@ -9,18 +9,24 @@ namespace Tests
 {
     public class TestPlayermanager : MonoBehaviour
     {
+        [UnityTest]
+        public IEnumerator Start_Test_Playermanager()
+        {
+            yield return new MonoBehaviourTest<TestPlayerMove>();
+        }
+
         private class TestPlayerMove : PlayerManager, IMonoBehaviourTest
         {
             public bool IsTestFinished { get; private set; }
 
             void Start()
             {
-                StartCoroutine(TestAdd_Velocity());
+                isEditer_Test = true;
+                StartCoroutine(TestMove());
             }
 
-            IEnumerator TestAdd_Velocity()
+            IEnumerator TestMove()
             {
-                Input.gyro.enabled = false;
                 player_rigidbody = gameObject.AddComponent<Rigidbody>();
                 player_rigidbody.useGravity = false;
                 transform.position = Vector3.zero;
@@ -37,12 +43,6 @@ namespace Tests
                 gameObject.SetActive(false);
                 IsTestFinished = true;
             }
-        }
-
-        [UnityTest]
-        public IEnumerator TestMovePlayer()
-        {
-            yield return new MonoBehaviourTest<TestPlayerMove>();
         }
     }
 }

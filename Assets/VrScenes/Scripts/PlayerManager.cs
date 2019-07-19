@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public int default_move_speed = 1;
-    public int run_move_speed = 2;
-    public Rigidbody player_rigidbody;
-    public bool isDefault_speed = true;
+    [SerializeField] int default_move_speed = 1;
+    [SerializeField] int run_move_speed = 2;
+    protected Rigidbody player_rigidbody;
+    protected bool isDefault_speed = true;
     public readonly static string Stop = "Stop";
     public readonly static string Forward = "Forward";
     public readonly static string Right = "Right";
     public readonly static string Left = "Left";
     public string Move_State = Stop;
+    public bool isEditer_Test = false;
 
     void Start()
     {
@@ -22,7 +23,7 @@ public class PlayerManager : MonoBehaviour
 
     void Update ()
     {
-        //Rotate();
+        Rotate();
         Move();
     }
 
@@ -56,6 +57,6 @@ public class PlayerManager : MonoBehaviour
 
     public void Rotate()
     {
-        transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        if(!isEditer_Test) transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
     }
 }

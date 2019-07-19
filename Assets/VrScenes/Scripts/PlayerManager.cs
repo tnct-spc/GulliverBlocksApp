@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -16,17 +17,31 @@ public class PlayerManager : MonoBehaviour
     const string Up = "Up";
     const string Down = "Down";
     private string Move_State = Stop;
+    public Toggle toggle;
+    public GameObject FlyingButtons;
 
     void Start()
     {
         player_rigidbody = GetComponent<Rigidbody>();
         Input.gyro.enabled = true;
+        toggle.GetComponent<Toggle>().isOn = false;
     }
 
     void Update ()
     {
         Rotate();
         Move();
+
+        if (toggle.GetComponent<Toggle>().isOn)
+        {
+            FlyingButtons.SetActive(true);
+            player_rigidbody.useGravity = false;
+        }
+        else
+        {
+            FlyingButtons.SetActive(false);
+            player_rigidbody.useGravity = true;
+        }
     }
 
     public void Move()

@@ -115,8 +115,16 @@ public class PlayerManager : MonoBehaviour
 
     public void Add_Velocity(Vector3 move_direction)
     {
+        switch (Move_State) {
+            case Up:
+            case Down:
+                break;
+
+            default:
         move_direction.y = 0;
         move_direction = move_direction.normalized;
+                break;
+    }
         if(isDefault_speed) player_rigidbody.velocity = default_move_speed * move_direction;
         else player_rigidbody.velocity = run_move_speed * move_direction;
     }

@@ -35,7 +35,7 @@ public class InputManager : MonoBehaviour
         else if (Input.GetKey("s")) playermanager.Move_Back();
         else if (Input.GetKeyUp("s")) playermanager.StopMove();
 
-        gamemanager.Back_To_Title_If_Needed();
+        if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
     }
 
     public void Player_Forward()

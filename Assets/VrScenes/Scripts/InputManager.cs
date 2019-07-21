@@ -7,10 +7,18 @@ public class InputManager : MonoBehaviour
     PlayerManager playermanager;
     GameObject player;
 
+
+    GameManager gamemanager;
+    GameObject gamesystem;
+
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         playermanager = player.GetComponent<PlayerManager>();
+
+        gamesystem = GameObject.Find("GameSystem");
+        gamemanager = gamesystem.GetComponent<GameManager>();
     }
 
     private void Update()
@@ -26,6 +34,8 @@ public class InputManager : MonoBehaviour
 
         else if (Input.GetKey("s")) playermanager.Move_Back();
         else if (Input.GetKeyUp("s")) playermanager.StopMove();
+
+        if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
     }
 
     public void Player_Forward()

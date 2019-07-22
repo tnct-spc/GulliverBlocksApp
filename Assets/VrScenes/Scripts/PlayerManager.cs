@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+
     [SerializeField] int default_move_speed = 1;
     [SerializeField] int run_move_speed = 2;
-    protected Rigidbody player_rigidbody;
-    protected bool isDefault_speed = true;
+    public Rigidbody player_rigidbody;
+    public bool isDefault_speed = true;
     public readonly static string Stop = "Stop";
     public readonly static string Forward = "Forward";
     public readonly static string Right = "Right";
@@ -15,7 +16,7 @@ public class PlayerManager : MonoBehaviour
     public string Move_State = Stop;
     public bool isEditer_Test = false;
 
-    void Start()
+    void Awake()
     {
         player_rigidbody = gameObject.AddComponent<Rigidbody>();
         Input.gyro.enabled = true;

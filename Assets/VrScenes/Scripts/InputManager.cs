@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    PlayerManager playermanager;
-    GameObject player;
+    public PlayerManager playermanager;
+    public GameObject player;
 
     void Start()
     {
@@ -21,5 +21,20 @@ public class InputManager : MonoBehaviour
     public void Player_Stop()
     {
         playermanager.StopMove();
+    }
+
+    public void Player_Change_speed()
+    {
+        playermanager.isDefault_speed = !playermanager.isDefault_speed;
+    }
+
+    public void Player_Change_Rigidbody_useGravity()
+    {
+        playermanager.player_rigidbody.useGravity = !playermanager.player_rigidbody.useGravity;
+    }
+
+    public void Player_Change_isEditer_Test()
+    {
+        playermanager.isEditer_Test = !playermanager.isEditer_Test;
     }
 }

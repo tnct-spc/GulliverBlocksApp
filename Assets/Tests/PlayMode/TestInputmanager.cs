@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace Tests
 {
-    public class TestPlayermanager : MonoBehaviour
+    public class TestInputmanager : MonoBehaviour
     {
         [SetUp]
         public void Init()
@@ -16,30 +16,31 @@ namespace Tests
         }
 
         [UnityTest]
-        public IEnumerator Start_Test_Playermanager()
+        public IEnumerator Start_Test_Inputmanager()
         {
-            yield return new MonoBehaviourTest<TestPlayerMove>();
+            yield return new MonoBehaviourTest<TestPlayerMove_On_Inputmanager>();
         }
 
-        private class TestPlayerMove : PlayerManager, IMonoBehaviourTest
+        private class TestPlayerMove_On_Inputmanager : InputManager, IMonoBehaviourTest
         {
             public bool IsTestFinished { get; private set; }
 
             void Start()
             {
-                isEditer_Test = true;
+                player = gameObject;
                 StartCoroutine(TestMove());
             }
 
             IEnumerator TestMove()
             {
-                player_rigidbody = gameObject.AddComponent<Rigidbody>();
-                player_rigidbody.useGravity = false;
+                playermanager = player.AddComponent<PlayerManager>();
+                Player_Change_isEditer_Test();
+                Player_Change_Rigidbody_useGravity();
                 transform.position = Vector3.zero;
                 transform.Rotate(0.0f, 0.0f, 0.0f);
                 yield return null;
 
-                Move_Forward();
+                Player_Move();
                 yield return new WaitForSeconds(1);
 
                 Assert.AreEqual(transform.position.x, 0);

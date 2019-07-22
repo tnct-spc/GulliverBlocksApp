@@ -117,7 +117,14 @@ public class PlayerManager : MonoBehaviour
     {
         switch (Move_State) {
             case Up:
+                move_direction.x = 0;
+                move_direction.y = 1;
+                move_direction.z = 0;
+                break;
             case Down:
+                move_direction.x = 0;
+                move_direction.y = -1;
+                move_direction.z = 0;
                 break;
 
             default:

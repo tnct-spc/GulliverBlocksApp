@@ -24,8 +24,10 @@ public class InputManager : MonoBehaviour
         gamesystem = GameObject.Find("GameSystem");
         gamemanager = gamesystem.GetComponent<GameManager>();
 
-        toggle.GetComponent<Toggle>().isOn = false;
+        toggle.onValueChanged.AddListener(FlyingModeCheck);
+
         FlyingButtons.SetActive(false);
+        toggle.GetComponent<Toggle>().isOn = false;
         
     }
 
@@ -45,19 +47,13 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
 
-        if (toggle.GetComponent<Toggle>().isOn)
-        {
-            playermanager.Flying("on");
-            FlyingButtons.SetActive(true);
-            
-        }else if (toggle.GetComponent<Toggle>().isOn == false)
-        {
-            playermanager.Flying("off");
-            FlyingButtons.SetActive(false);
-        }
-
     }
 
+   public void FlyingModeCheck(bool isActive)
+    {
+        playermanager.Flying(isActive);
+        FlyingButtons.SetActive(isActive);
+    }
     public void Player_Forward()
     {
         playermanager.Move_Forward();

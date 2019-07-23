@@ -18,9 +18,12 @@ public class PlayerManager : MonoBehaviour
     const string Down = "Down";
     private string Move_State = Stop;
 
-    void Start()
+    private void Awake()
     {
         player_rigidbody = GetComponent<Rigidbody>();
+    }
+    void Start()
+    {
         Input.gyro.enabled = true;
     }
 
@@ -127,13 +130,12 @@ public class PlayerManager : MonoBehaviour
         transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
     }
 
-    public void Flying(string a)
+    public void Flying(bool value)
     {
-        if(a == "on")
+        if(value == true)
         {
             player_rigidbody.useGravity = false;
-        }else if(a == "off")
-        {
+        }else{
             player_rigidbody.useGravity = true;
         }
     }

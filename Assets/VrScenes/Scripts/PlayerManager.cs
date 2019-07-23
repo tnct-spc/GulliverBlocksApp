@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -13,11 +14,16 @@ public class PlayerManager : MonoBehaviour
     const string Right = "Right";
     const string Left = "Left";
     const string Back = "Back";
+    const string Up = "Up";
+    const string Down = "Down";
     private string Move_State = Stop;
 
-    void Start()
+    private void Awake()
     {
         player_rigidbody = GetComponent<Rigidbody>();
+    }
+    void Start()
+    {
         Input.gyro.enabled = true;
     }
 
@@ -50,6 +56,14 @@ public class PlayerManager : MonoBehaviour
                 Add_Velocity(gameObject.transform.forward * -1);
                 break;
 
+            case Up:
+                Add_Velocity(gameObject.transform.up);
+                break;
+
+            case Down:
+                Add_Velocity(gameObject.transform.up * -1);
+                break;
+
         }
     }
 
@@ -78,10 +92,35 @@ public class PlayerManager : MonoBehaviour
         Move_State = Stop;
     }
 
+    public void Move_Up()
+    {
+        Move_State = Up;
+    }
+
+    public void Move_Down()
+    {
+        Move_State = Down;
+    }
+
     public void Add_Velocity(Vector3 move_direction)
     {
+        switch (Move_State) {
+            case Up:
+                move_direction.x = 0;
+                move_direction.y = 1;
+                move_direction.z = 0;
+                break;
+            case Down:
+                move_direction.x = 0;
+                move_direction.y = -1;
+                move_direction.z = 0;
+                break;
+
+            default:
         move_direction.y = 0;
         move_direction = move_direction.normalized;
+                break;
+    }
         if(isDefault_speed) player_rigidbody.velocity = default_move_speed * move_direction;
         else player_rigidbody.velocity = run_move_speed * move_direction;
     }
@@ -89,5 +128,15 @@ public class PlayerManager : MonoBehaviour
     public void Rotate()
     {
         transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+    }
+
+    public void Flying(bool value)
+    {
+        if(value == true)
+        {
+            player_rigidbody.useGravity = false;
+        }else{
+            player_rigidbody.useGravity = true;
+        }
     }
 }

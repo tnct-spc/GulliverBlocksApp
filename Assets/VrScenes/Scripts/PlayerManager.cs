@@ -16,9 +16,8 @@ public class PlayerManager : MonoBehaviour
     public string Move_State = Stop;
     public bool isEditer_Test = false;
 
-    void Awake()
+    void Start()
     {
-        player_rigidbody = gameObject.AddComponent<Rigidbody>();
         Input.gyro.enabled = true;
     }
 

@@ -548,7 +548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   default_move_speed: 1
   run_move_speed: 2
-  player_rigidbody: {fileID: 0}
+  player_rigidbody: {fileID: 963194230}
   isDefault_speed: 1
   Move_State: Stop
   isEditer_Test: 0

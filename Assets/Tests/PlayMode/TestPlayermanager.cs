@@ -9,12 +9,6 @@ namespace Tests
 {
     public class TestPlayermanager : MonoBehaviour
     {
-        [SetUp]
-        public void Init()
-        {
-            SceneManager.LoadScene("TestScene");
-        }
-
         [UnityTest]
         public IEnumerator Start_Test_Playermanager()
         {
@@ -24,23 +18,25 @@ namespace Tests
         private class TestPlayerMove : PlayerManager, IMonoBehaviourTest
         {
             public bool IsTestFinished { get; private set; }
+            private float waitTime = 1.0f;
 
             void Start()
             {
                 isEditer_Test = true;
+                gameObject.AddComponent<Rigidbody>();
                 StartCoroutine(TestMove());
             }
 
             IEnumerator TestMove()
             {
-                player_rigidbody = gameObject.AddComponent<Rigidbody>();
+                player_rigidbody = gameObject.GetComponent<Rigidbody>();
                 player_rigidbody.useGravity = false;
                 transform.position = Vector3.zero;
                 transform.Rotate(0.0f, 0.0f, 0.0f);
                 yield return null;
 
                 Move_Forward();
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(waitTime);
 
                 Assert.AreEqual(transform.position.x, 0);
                 Assert.AreEqual(transform.position.y, 0);

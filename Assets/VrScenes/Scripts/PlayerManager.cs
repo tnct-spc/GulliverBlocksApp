@@ -17,31 +17,17 @@ public class PlayerManager : MonoBehaviour
     const string Up = "Up";
     const string Down = "Down";
     private string Move_State = Stop;
-    public Toggle toggle;
-    public GameObject FlyingButtons;
 
     void Start()
     {
         player_rigidbody = GetComponent<Rigidbody>();
         Input.gyro.enabled = true;
-        toggle.GetComponent<Toggle>().isOn = false;
     }
 
     void Update ()
     {
         Rotate();
         Move();
-
-        if (toggle.GetComponent<Toggle>().isOn)
-        {
-            FlyingButtons.SetActive(true);
-            player_rigidbody.useGravity = false;
-        }
-        else
-        {
-            FlyingButtons.SetActive(false);
-            player_rigidbody.useGravity = true;
-        }
     }
 
     public void Move()
@@ -139,5 +125,16 @@ public class PlayerManager : MonoBehaviour
     public void Rotate()
     {
         transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+    }
+
+    public void Flying(string a)
+    {
+        if(a == "on")
+        {
+            player_rigidbody.useGravity = false;
+        }else if(a == "off")
+        {
+            player_rigidbody.useGravity = true;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class InputManager : MonoBehaviour
     GameManager gamemanager;
     GameObject gamesystem;
 
+    public Toggle toggle;
+    public GameObject FlyingButtons;
+
 
     void Start()
     {
@@ -19,6 +23,10 @@ public class InputManager : MonoBehaviour
 
         gamesystem = GameObject.Find("GameSystem");
         gamemanager = gamesystem.GetComponent<GameManager>();
+
+        toggle.GetComponent<Toggle>().isOn = false;
+        FlyingButtons.SetActive(false);
+        
     }
 
     private void Update()
@@ -36,6 +44,18 @@ public class InputManager : MonoBehaviour
         else if (Input.GetKeyUp("s")) playermanager.StopMove();
 
         if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
+
+        if (toggle.GetComponent<Toggle>().isOn)
+        {
+            playermanager.Flying("on");
+            FlyingButtons.SetActive(true);
+            
+        }else if (toggle.GetComponent<Toggle>().isOn == false)
+        {
+            playermanager.Flying("off");
+            FlyingButtons.SetActive(false);
+        }
+
     }
 
     public void Player_Forward()

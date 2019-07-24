@@ -82,25 +82,10 @@ public class BlockManager : MonoBehaviour
         for (int i = 0; i < blocks.Count; i++)
         {
             GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
-             switch (blocks[i].colorID) {
-                case 0:
-                    Material colorMaterial = Resources.Load("Color0") as Material;
-                    instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
-                    break;
-                case 1:
-
-                    break;
-                case 2:
-
-                    break;
-                case 3:
-
-                    break;
-                default:
-                    Material colorMaterial2 = Resources.Load("Color0") as Material;
-                    instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
-                    break;
-            }
+            string ColorName = "Color" + blocks[i].colorID.ToString();
+            print(ColorName);
+            Material colorMaterial2 = Resources.Load(ColorName) as Material;
+            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
             blocks_data.Add((blocks[i], instance));
         }
     }

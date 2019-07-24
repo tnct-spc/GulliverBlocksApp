@@ -14,6 +14,8 @@ public class PlayerManager : MonoBehaviour
     const string Up = "Up";
     const string Down = "Down";
 
+    public bool MoveX, MoveY, MoveZ;
+
     private void Awake()
     {
         player_rigidbody = GetComponent<Rigidbody>();
@@ -21,6 +23,7 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         Input.gyro.enabled = true;
+        MoveX = MoveY = MoveZ = false;
     }
 
     void Update ()
@@ -29,10 +32,26 @@ public class PlayerManager : MonoBehaviour
     }
     public void Add_Velocity(Vector3 move_direction)
     {
-        //その方向に移動するときのみ追加するように。
-        move_direction += player_rigidbody.transform.right;
-        move_direction += player_rigidbody.transform.up;
-        move_direction += player_rigidbody.transform.forward;
+        if (MoveX == true)
+        {
+            //if (MoveY == false) move_direction.y = 0;
+            //if (MoveZ == false) move_direction.z = 0;
+            move_direction.x *= player_rigidbody.transform.right.x;
+        }
+
+        if (MoveY == true)
+        {
+            //if (MoveX == false) move_direction.x = 0;
+            //if (MoveZ == false) move_direction.z = 0;
+            move_direction.y *= player_rigidbody.transform.up.y;
+        }
+
+        if (MoveZ == true)
+        {
+            //if (MoveX == false) move_direction.x = 0;
+            //if (MoveY == false) move_direction.y = 0;
+            move_direction.z *= player_rigidbody.transform.forward.z;
+        }
 
         move_direction.Normalize();
 

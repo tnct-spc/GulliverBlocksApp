@@ -75,60 +75,72 @@ public class InputManager : MonoBehaviour
     public void Player_Forward()
     {
         forward = true;
+        playermanager.MoveZ = true;
     }
 
     public void Player_Right()
     {
         right = true;
+        playermanager.MoveX = true;
     }
 
     public void Player_Left()
     {
         left = true;
+        playermanager.MoveX = true;
     }
 
     public void Player_Back()
     {
         back = true;
+        playermanager.MoveZ = true;
     }
     public void Player_Up()
     {
         up = true;
+        playermanager.MoveY = true;
     }
 
     public void Player_Down()
     {
         down = true;
+        playermanager.MoveY = true;
     }
 
     public void Player_StopForward()
     {
         forward = false;
+        playermanager.MoveZ = false;
     }
 
     public void Player_StopBack()
     {
         back = false;
+        playermanager.MoveZ = false;
     }
 
     public void Player_StopRight()
     {
         right = false;
+        playermanager.MoveX = false;
     }
 
     public void Player_StopLeft()
     {
         left = false;
+        playermanager.MoveX = false;
     }
 
     public void Player_StopUp()
     {
         up = false;
+        playermanager.MoveY = false;
     }
 
     public void Player_StopDown()
     {
         down = false;
+        playermanager.MoveY = false;
     }
 
 }

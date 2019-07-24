@@ -8,12 +8,13 @@ public class InputManager : MonoBehaviour
     PlayerManager playermanager;
     GameObject player;
 
-
     GameManager gamemanager;
     GameObject gamesystem;
 
     public Toggle toggle;
     public GameObject FlyingButtons;
+
+    bool forward, back, right, left, up, down;
 
 
     void Start()
@@ -33,59 +34,101 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey("w")) playermanager.Move_Forward();
-        else if (Input.GetKeyUp("w")) playermanager.StopMove();
+        if (Input.GetKey("w")) Player_Forward();
+        else if (Input.GetKeyUp("w")) Player_StopForward();
 
-        else if (Input.GetKey("d")) playermanager.Move_Right();
-        else if (Input.GetKeyUp("d")) playermanager.StopMove();
+        else if (Input.GetKey("d")) Player_Right();
+        else if (Input.GetKeyUp("d")) Player_StopRight();
 
-        else if (Input.GetKey("a")) playermanager.Move_Left();
-        else if (Input.GetKeyUp("a")) playermanager.StopMove();
+        else if (Input.GetKey("a")) Player_Left();
+        else if (Input.GetKeyUp("a")) Player_StopLeft();
 
-        else if (Input.GetKey("s")) playermanager.Move_Back();
-        else if (Input.GetKeyUp("s")) playermanager.StopMove();
+        else if (Input.GetKey("s")) Player_Back();
+        else if (Input.GetKeyUp("s")) Player_StopBack();
 
         if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
 
+        Player_MoveDirectionCheck();
+
     }
 
-   public void FlyingModeCheck(bool isActive)
+    public void FlyingModeCheck(bool isActive)
     {
         playermanager.Flying(isActive);
         FlyingButtons.SetActive(isActive);
     }
+
+    void Player_MoveDirectionCheck()
+    {
+        Vector3 moveDirection = Vector3.zero;
+        if (forward) moveDirection.z += 1;
+        if (back) moveDirection.z += -1;
+        if (right) moveDirection.x += 1;
+        if (left) moveDirection.x += -1;
+        if (up) moveDirection.y += 1;
+        if (down) moveDirection.y += -1;
+
+        Debug.Log(moveDirection);
+
+        playermanager.Add_Velocity(moveDirection);
+    }
     public void Player_Forward()
     {
-        playermanager.Move_Forward();
+        forward = true;
     }
 
     public void Player_Right()
     {
-        playermanager.Move_Right();
+        right = true;
     }
 
     public void Player_Left()
     {
-        playermanager.Move_Left();
+        left = true;
     }
 
     public void Player_Back()
     {
-        playermanager.Move_Back();
-    }
-
-    public void Player_Stop()
-    {
-        playermanager.StopMove();
+        back = true;
     }
     public void Player_Up()
     {
-        playermanager.Move_Up();
+        up = true;
     }
 
     public void Player_Down()
     {
-        playermanager.Move_Down();
+        down = true;
+    }
+
+    public void Player_StopForward()
+    {
+        forward = false;
+    }
+
+    public void Player_StopBack()
+    {
+        back = false;
+    }
+
+    public void Player_StopRight()
+    {
+        right = false;
+    }
+
+    public void Player_StopLeft()
+    {
+        left = false;
+    }
+
+    public void Player_StopUp()
+    {
+        up = false;
+    }
+
+    public void Player_StopDown()
+    {
+        down = false;
     }
 
 }

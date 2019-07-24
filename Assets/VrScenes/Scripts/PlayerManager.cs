@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -16,7 +13,6 @@ public class PlayerManager : MonoBehaviour
     const string Back = "Back";
     const string Up = "Up";
     const string Down = "Down";
-    private string Move_State = Stop;
 
     private void Awake()
     {
@@ -30,97 +26,18 @@ public class PlayerManager : MonoBehaviour
     void Update ()
     {
         Rotate();
-        Move();
     }
-
-    public void Move()
-    {
-        switch (Move_State) {
-            case Stop:
-                Add_Velocity(Vector3.zero);
-                break;
-
-            case Forward:
-                Add_Velocity(gameObject.transform.forward);
-                break;
-            
-            case Right:
-                Add_Velocity(gameObject.transform.right);
-                break;
-            
-            case Left:
-                Add_Velocity(gameObject.transform.right * -1);
-                break;
-
-            case Back:
-                Add_Velocity(gameObject.transform.forward * -1);
-                break;
-
-            case Up:
-                Add_Velocity(gameObject.transform.up);
-                break;
-
-            case Down:
-                Add_Velocity(gameObject.transform.up * -1);
-                break;
-
-        }
-    }
-
-    public void Move_Forward()
-    {
-        Move_State = Forward;
-    }
-
-    public void Move_Right()
-    {
-        Move_State = Right;
-    }
-
-    public void Move_Left()
-    {
-        Move_State = Left;
-    }
-
-    public void Move_Back()
-    {
-        Move_State = Back;
-    }
-
-    public void StopMove()
-    {
-        Move_State = Stop;
-    }
-
-    public void Move_Up()
-    {
-        Move_State = Up;
-    }
-
-    public void Move_Down()
-    {
-        Move_State = Down;
-    }
-
     public void Add_Velocity(Vector3 move_direction)
     {
-        switch (Move_State) {
-            case Up:
-                move_direction.x = 0;
-                move_direction.y = 1;
-                move_direction.z = 0;
-                break;
-            case Down:
-                move_direction.x = 0;
-                move_direction.y = -1;
-                move_direction.z = 0;
-                break;
+        //その方向に移動するときのみ追加するように。
+        move_direction += player_rigidbody.transform.right;
+        move_direction += player_rigidbody.transform.up;
+        move_direction += player_rigidbody.transform.forward;
 
-            default:
-        move_direction.y = 0;
-        move_direction = move_direction.normalized;
-                break;
-    }
+        move_direction.Normalize();
+
+        Debug.Log(move_direction);
+
         if(isDefault_speed) player_rigidbody.velocity = default_move_speed * move_direction;
         else player_rigidbody.velocity = run_move_speed * move_direction;
     }

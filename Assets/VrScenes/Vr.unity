@@ -2166,6 +2166,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   default_move_speed: 1
   run_move_speed: 2
+  MoveX: 0
+  MoveY: 0
+  MoveZ: 0
+  MoveLeft: 0
+  MoveBack: 0
 --- !u!54 &963194230
 Rigidbody:
   m_ObjectHideFlags: 0

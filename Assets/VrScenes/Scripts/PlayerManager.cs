@@ -14,7 +14,7 @@ public class PlayerManager : MonoBehaviour
     const string Up = "Up";
     const string Down = "Down";
 
-    public bool MoveX, MoveY, MoveZ;
+    public bool MoveX, MoveY, MoveZ, MoveLeft, MoveBack;
 
     private void Awake()
     {
@@ -30,31 +30,49 @@ public class PlayerManager : MonoBehaviour
     {
         Rotate();
     }
-    public void Add_Velocity(Vector3 move_direction)
+    public void Add_Velocity(Vector3 moveDirection)
     {
+
         if (MoveX == true)
         {
-            move_direction.x *= player_rigidbody.transform.right.x;
-            move_direction.z = player_rigidbody.transform.right.z;
+            moveDirection.x *= player_rigidbody.transform.right.x;
+
+                switch (MoveLeft)
+                {
+                    case true:
+                        moveDirection.z += player_rigidbody.transform.right.z * -1;
+                        break;
+
+                    case false:
+                        moveDirection.z += player_rigidbody.transform.right.z;
+                        break;
+                }
         }
 
         if (MoveY == true)
         {
-            move_direction.y *= player_rigidbody.transform.up.y;
+            moveDirection.y *= player_rigidbody.transform.up.y;
         }
 
         if (MoveZ == true)
         {
-            move_direction.z *= player_rigidbody.transform.forward.z;
-            move_direction.x = player_rigidbody.transform.forward.x;
+            moveDirection.z *= player_rigidbody.transform.forward.z;
+
+                switch (MoveBack)
+                {
+                    case true:
+                        moveDirection.x += player_rigidbody.transform.forward.x * -1;
+                        break;
+                    case false:
+                        moveDirection.x += player_rigidbody.transform.forward.x;
+                        break;
+                }
         }
 
-        move_direction.Normalize();
+        moveDirection.Normalize();
 
-        Debug.Log(move_direction);
-
-        if(isDefault_speed) player_rigidbody.velocity = default_move_speed * move_direction;
-        else player_rigidbody.velocity = run_move_speed * move_direction;
+        if(isDefault_speed) player_rigidbody.velocity = default_move_speed * moveDirection;
+        else player_rigidbody.velocity = run_move_speed * moveDirection;
     }
 
     public void Rotate()

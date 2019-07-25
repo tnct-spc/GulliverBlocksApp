@@ -69,80 +69,74 @@ public class InputManager : MonoBehaviour
         if (down) moveDirection.y += -1;
 
         playermanager.Add_Velocity(moveDirection);
+
+        Debug.Log("forward = " + forward + ":back = " + back + ":right = " + right + ":left = " + left + ":up = " + up + ":down = " + down);
     }
     public void Player_Forward()
     {
         forward = true;
-        playermanager.MoveZ = true;
+        playermanager.MoveForward = true;
     }
 
     public void Player_Right()
     {
         right = true;
-        playermanager.MoveX = true;
+        playermanager.MoveRight = true;
     }
 
     public void Player_Left()
     {
         left = true;
-        playermanager.MoveX = true;
         playermanager.MoveLeft = true;
     }
 
     public void Player_Back()
     {
         back = true;
-        playermanager.MoveZ = true;
         playermanager.MoveBack = true;
     }
     public void Player_Up()
     {
         up = true;
-        playermanager.MoveY = true;
     }
 
     public void Player_Down()
     {
         down = true;
-        playermanager.MoveY = true;
     }
 
     public void Player_StopForward()
     {
         forward = false;
-        playermanager.MoveZ = false;
+        playermanager.MoveForward = false;
     }
 
     public void Player_StopBack()
     {
         back = false;
-        playermanager.MoveZ = false;
         playermanager.MoveBack = false;
     }
 
     public void Player_StopRight()
     {
         right = false;
-        playermanager.MoveX = false;
+        playermanager.MoveRight = false;
     }
 
     public void Player_StopLeft()
     {
         left = false;
-        playermanager.MoveX = false;
         playermanager.MoveLeft = false;
     }
 
     public void Player_StopUp()
     {
         up = false;
-        playermanager.MoveY = false;
     }
 
     public void Player_StopDown()
     {
         down = false;
-        playermanager.MoveY = false;
     }
 
 }

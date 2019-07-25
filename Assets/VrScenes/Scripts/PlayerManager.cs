@@ -14,7 +14,7 @@ public class PlayerManager : MonoBehaviour
     const string Up = "Up";
     const string Down = "Down";
 
-    public bool MoveX, MoveY, MoveZ, MoveLeft, MoveBack;
+    public bool MoveRight, MoveLeft, MoveForward, MoveBack;
 
     private void Awake()
     {
@@ -23,7 +23,6 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         Input.gyro.enabled = true;
-        MoveX = MoveY = MoveZ = false;
     }
 
     void Update ()
@@ -32,42 +31,14 @@ public class PlayerManager : MonoBehaviour
     }
     public void Add_Velocity(Vector3 moveDirection)
     {
+        moveDirection.x *= player_rigidbody.transform.right.x;
+        moveDirection.y *= player_rigidbody.transform.up.y;
+        moveDirection.z *= player_rigidbody.transform.forward.z;
 
-        if (MoveX == true)
-        {
-            moveDirection.x *= player_rigidbody.transform.right.x;
-
-                switch (MoveLeft)
-                {
-                    case true:
-                        moveDirection.z += player_rigidbody.transform.right.z * -1;
-                        break;
-
-                    case false:
-                        moveDirection.z += player_rigidbody.transform.right.z;
-                        break;
-                }
-        }
-
-        if (MoveY == true)
-        {
-            moveDirection.y *= player_rigidbody.transform.up.y;
-        }
-
-        if (MoveZ == true)
-        {
-            moveDirection.z *= player_rigidbody.transform.forward.z;
-
-                switch (MoveBack)
-                {
-                    case true:
-                        moveDirection.x += player_rigidbody.transform.forward.x * -1;
-                        break;
-                    case false:
-                        moveDirection.x += player_rigidbody.transform.forward.x;
-                        break;
-                }
-        }
+        if (MoveRight) moveDirection.z += player_rigidbody.transform.right.z;
+        if (MoveLeft) moveDirection.z += player_rigidbody.transform.right.z * -1;
+        if (MoveForward) moveDirection.x += player_rigidbody.transform.forward.x;
+        if (MoveBack) moveDirection.x += player_rigidbody.transform.forward.x * -1;
 
         moveDirection.Normalize();
 

@@ -69,8 +69,6 @@ public class InputManager : MonoBehaviour
         if (down) moveDirection.y += -1;
 
         playermanager.Add_Velocity(moveDirection);
-
-        Debug.Log("forward = " + forward + ":back = " + back + ":right = " + right + ":left = " + left + ":up = " + up + ":down = " + down);
     }
     public void Player_Forward()
     {

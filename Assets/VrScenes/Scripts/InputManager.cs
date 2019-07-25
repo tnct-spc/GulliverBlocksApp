@@ -61,14 +61,12 @@ public class InputManager : MonoBehaviour
     void Player_MoveDirectionCheck()
     {
         Vector3 moveDirection = Vector3.zero;
-        if (forward) moveDirection.z += 1;
-        if (back) moveDirection.z += -1;
-        if (right) moveDirection.x += 1;
-        if (left) moveDirection.x += -1;
-        if (up) moveDirection.y += 1;
-        if (down) moveDirection.y += -1;
-
-        Debug.Log(moveDirection);
+        if (forward) moveDirection.z = 1;
+        if (back) moveDirection.z = -1;
+        if (right) moveDirection.x = 1;
+        if (left) moveDirection.x = -1;
+        if (up) moveDirection.y = 1;
+        if (down) moveDirection.y = -1;
 
         playermanager.Add_Velocity(moveDirection);
     }

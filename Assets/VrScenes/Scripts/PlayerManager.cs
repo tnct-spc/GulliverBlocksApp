@@ -34,23 +34,19 @@ public class PlayerManager : MonoBehaviour
     {
         if (MoveX == true)
         {
-            //if (MoveY == false) move_direction.y = 0;
-            //if (MoveZ == false) move_direction.z = 0;
             move_direction.x *= player_rigidbody.transform.right.x;
+            move_direction.z = player_rigidbody.transform.right.z;
         }
 
         if (MoveY == true)
         {
-            //if (MoveX == false) move_direction.x = 0;
-            //if (MoveZ == false) move_direction.z = 0;
             move_direction.y *= player_rigidbody.transform.up.y;
         }
 
         if (MoveZ == true)
         {
-            //if (MoveX == false) move_direction.x = 0;
-            //if (MoveY == false) move_direction.y = 0;
             move_direction.z *= player_rigidbody.transform.forward.z;
+            move_direction.x = player_rigidbody.transform.forward.x;
         }
 
         move_direction.Normalize();

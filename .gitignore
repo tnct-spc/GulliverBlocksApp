@@ -53,4 +53,5 @@ UpgradeLog*.htm
 
 # bugsnag api key
 Assets/TitleScenes/Scripts/BugsnagInit.cs
+Assets/TitleScenes/Scripts/BugsnagInit.cs.meta
 

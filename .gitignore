@@ -52,6 +52,10 @@ UpgradeLog*.htm
 #python bytecode cache, for some plugins.
 *.pyc
 
+#touchscript meta data
+Assets/TouchScript/Editor/Behaviors/Cursors/CursorsManagerEditor.cs.meta
+
 # bugsnag api key
 Assets/TitleScenes/Scripts/BugsnagInit.cs
+Assets/TitleScenes/Scripts/BugsnagInit.cs.meta
 

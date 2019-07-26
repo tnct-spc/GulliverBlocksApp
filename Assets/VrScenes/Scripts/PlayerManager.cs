@@ -14,7 +14,7 @@ public class PlayerManager : MonoBehaviour
     const string Up = "Up";
     const string Down = "Down";
 
-    public bool MoveRight, MoveLeft, MoveForward, MoveBack;
+    public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
 
     private void Awake()
     {
@@ -28,6 +28,20 @@ public class PlayerManager : MonoBehaviour
     void Update ()
     {
         Rotate();
+        Move();
+    }
+
+    void Move()
+    {
+        Vector3 Direction = Vector3.zero;
+        if (MoveForward) Direction.z += 1;
+        if (MoveBack) Direction.z += -1;
+        if (MoveRight) Direction.x += 1;
+        if (MoveLeft) Direction.x += -1;
+        if (MoveUp) Direction.y += 1;
+        if (MoveDown) Direction.y += -1;
+
+        Add_Velocity(Direction);
     }
     public void Add_Velocity(Vector3 moveDirection)
     {

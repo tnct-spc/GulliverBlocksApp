@@ -14,9 +14,6 @@ public class InputManager : MonoBehaviour
     public Toggle toggle;
     public GameObject FlyingButtons;
 
-    bool forward, back, right, left, up, down;
-
-
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -47,9 +44,6 @@ public class InputManager : MonoBehaviour
         else if (Input.GetKeyUp("s")) Player_StopBack();
 
         if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
-
-        Player_MoveDirectionCheck();
-
     }
 
     public void FlyingModeCheck(bool isActive)
@@ -58,83 +52,64 @@ public class InputManager : MonoBehaviour
         FlyingButtons.SetActive(isActive);
     }
 
-    void Player_MoveDirectionCheck()
-    {
-        Vector3 moveDirection = Vector3.zero;
-        if (forward) moveDirection.z += 1;
-        if (back) moveDirection.z += -1;
-        if (right) moveDirection.x += 1;
-        if (left) moveDirection.x += -1;
-        if (up) moveDirection.y += 1;
-        if (down) moveDirection.y += -1;
 
-        playermanager.Add_Velocity(moveDirection);
-    }
     public void Player_Forward()
     {
-        forward = true;
         playermanager.MoveForward = true;
     }
 
     public void Player_Right()
     {
-        right = true;
         playermanager.MoveRight = true;
     }
 
     public void Player_Left()
     {
-        left = true;
         playermanager.MoveLeft = true;
     }
 
     public void Player_Back()
     {
-        back = true;
         playermanager.MoveBack = true;
     }
     public void Player_Up()
     {
-        up = true;
+        playermanager.MoveUp = true;
     }
 
     public void Player_Down()
     {
-        down = true;
+        playermanager.MoveDown = true;
     }
 
     public void Player_StopForward()
     {
-        forward = false;
         playermanager.MoveForward = false;
     }
 
     public void Player_StopBack()
     {
-        back = false;
         playermanager.MoveBack = false;
     }
 
     public void Player_StopRight()
     {
-        right = false;
         playermanager.MoveRight = false;
     }
 
     public void Player_StopLeft()
     {
-        left = false;
         playermanager.MoveLeft = false;
     }
 
     public void Player_StopUp()
     {
-        up = false;
+        playermanager.MoveUp = false;
     }
 
     public void Player_StopDown()
     {
-        down = false;
+        playermanager.MoveDown = false;
     }
 
 }

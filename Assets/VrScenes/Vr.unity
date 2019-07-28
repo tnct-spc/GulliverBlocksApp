@@ -1268,7 +1268,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Stop
+          m_MethodName: Player_StopDown
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -2258,6 +2258,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   default_move_speed: 1
   run_move_speed: 2
+  MoveX: 0
+  MoveY: 0
+  MoveZ: 0
+  MoveLeft: 0
+  MoveBack: 0
 --- !u!54 &963194230
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3257,7 +3262,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Stop
+          m_MethodName: Player_StopUp
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -3443,7 +3448,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Stop
+          m_MethodName: Player_StopRight
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -4072,7 +4077,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Stop
+          m_MethodName: Player_StopBack
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -4333,7 +4338,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Stop
+          m_MethodName: Player_StopLeft
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -4601,7 +4606,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Stop
+          m_MethodName: Player_StopForward
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

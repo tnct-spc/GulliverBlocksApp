@@ -4,8 +4,17 @@ using UnityEngine.SceneManagement;
 
 public class GameSystem : MonoBehaviour
 {
+    public GameObject ModeSelectPanel;
 
-    //　スタートボタンを押したら実行する
+    private void Awake()
+    {
+        ModeSelectPanel.SetActive(false);
+    }
+    public void SelectGameMode()
+    {
+        ModeSelectPanel.SetActive(true);
+    }
+
     public void StartGame()
     {
         SceneManager.LoadScene("Vr");

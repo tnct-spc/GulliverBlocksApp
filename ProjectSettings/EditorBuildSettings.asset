@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/VrScenes/Vr.unity
     guid: fc369ce2506153e4fb441fbd0e4b77bb
+  - enabled: 1
+    path: Assets/SettingScene/SettingScene.unity
+    guid: d1a04244326c8a54cb623f87bc67e74b
   m_configObjects: {}

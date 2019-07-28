@@ -5,9 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-   public string Mode;
-
-   public void Back_To_Title_If_Android()
+    public static string Mode;
+    public void Back_To_Title_If_Android()
     {
         if (Application.platform == RuntimePlatform.Android)
         {

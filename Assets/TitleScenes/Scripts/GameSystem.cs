@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class GameSystem : MonoBehaviour
 {
     public GameObject ModeSelectPanel;
+    public GameManager GameManager;
 
     private void Awake()
     {
@@ -15,12 +16,23 @@ public class GameSystem : MonoBehaviour
         ModeSelectPanel.SetActive(true);
     }
 
-    public void StartGame()
+    public void StartViewMode()
     {
+        GameManager.Mode = "View";
+
         SceneManager.LoadScene("Vr");
 
         Screen.orientation = ScreenOrientation.LandscapeLeft;
 
+    }
+
+    public void StartPlayMode()
+    {
+        GameManager.Mode = "Play";
+
+        SceneManager.LoadScene("Vr");
+
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
     }
 
     public void MoveSetting()

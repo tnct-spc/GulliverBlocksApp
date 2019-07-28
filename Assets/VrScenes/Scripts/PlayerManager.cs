@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -16,7 +13,8 @@ public class PlayerManager : MonoBehaviour
     const string Back = "Back";
     const string Up = "Up";
     const string Down = "Down";
-    private string Move_State = Stop;
+
+    public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
 
     private void Awake()
     {
@@ -33,96 +31,33 @@ public class PlayerManager : MonoBehaviour
         Move();
     }
 
-    public void Move()
+    void Move()
     {
-        switch (Move_State) {
-            case Stop:
-                Add_Velocity(Vector3.zero);
-                break;
+        Vector3 Direction = Vector3.zero;
+        if (MoveForward) Direction.z += 1;
+        if (MoveBack) Direction.z += -1;
+        if (MoveRight) Direction.x += 1;
+        if (MoveLeft) Direction.x += -1;
+        if (MoveUp) Direction.y += 1;
+        if (MoveDown) Direction.y += -1;
 
-            case Forward:
-                Add_Velocity(gameObject.transform.forward);
-                break;
-            
-            case Right:
-                Add_Velocity(gameObject.transform.right);
-                break;
-            
-            case Left:
-                Add_Velocity(gameObject.transform.right * -1);
-                break;
-
-            case Back:
-                Add_Velocity(gameObject.transform.forward * -1);
-                break;
-
-            case Up:
-                Add_Velocity(gameObject.transform.up);
-                break;
-
-            case Down:
-                Add_Velocity(gameObject.transform.up * -1);
-                break;
-
-        }
+        Add_Velocity(Direction);
     }
-
-    public void Move_Forward()
+    public void Add_Velocity(Vector3 moveDirection)
     {
-        Move_State = Forward;
-    }
+        moveDirection.x *= player_rigidbody.transform.right.x;
+        moveDirection.y *= player_rigidbody.transform.up.y;
+        moveDirection.z *= player_rigidbody.transform.forward.z;
 
-    public void Move_Right()
-    {
-        Move_State = Right;
-    }
+        if (MoveRight) moveDirection.z += player_rigidbody.transform.right.z;
+        if (MoveLeft) moveDirection.z += player_rigidbody.transform.right.z * -1;
+        if (MoveForward) moveDirection.x += player_rigidbody.transform.forward.x;
+        if (MoveBack) moveDirection.x += player_rigidbody.transform.forward.x * -1;
 
-    public void Move_Left()
-    {
-        Move_State = Left;
-    }
+        moveDirection.Normalize();
 
-    public void Move_Back()
-    {
-        Move_State = Back;
-    }
-
-    public void StopMove()
-    {
-        Move_State = Stop;
-    }
-
-    public void Move_Up()
-    {
-        Move_State = Up;
-    }
-
-    public void Move_Down()
-    {
-        Move_State = Down;
-    }
-
-    public void Add_Velocity(Vector3 move_direction)
-    {
-        switch (Move_State) {
-            case Up:
-                move_direction.x = 0;
-                move_direction.y = 1;
-                move_direction.z = 0;
-                break;
-            case Down:
-                move_direction.x = 0;
-                move_direction.y = -1;
-                move_direction.z = 0;
-                break;
-
-            default:
-        move_direction.y = 0;
-        move_direction = move_direction.normalized;
-                break;
-    }
-        if(isDefault_speed) player_rigidbody.velocity = default_move_speed * move_direction;
-        else player_rigidbody.velocity = run_move_speed * move_direction;
+        if(isDefault_speed) player_rigidbody.velocity = default_move_speed * moveDirection;
+        else player_rigidbody.velocity = run_move_speed * moveDirection;
     }
 
     public void Rotate()

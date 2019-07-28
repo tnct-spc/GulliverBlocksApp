@@ -22,4 +22,12 @@ public class GameSystem : MonoBehaviour
         Screen.orientation = ScreenOrientation.LandscapeLeft;
 
     }
+
+    public void MoveSetting()
+    {
+        SceneManager.LoadScene("SettingScene");
+
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+
+    }
 }

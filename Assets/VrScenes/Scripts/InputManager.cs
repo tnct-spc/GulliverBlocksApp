@@ -24,8 +24,11 @@ public class InputManager : MonoBehaviour
 
         toggle.onValueChanged.AddListener(FlyingModeCheck);
 
-        FlyingButtons.SetActive(false);
-        toggle.GetComponent<Toggle>().isOn = false;
+        bool modechecker=false;
+        if (GameManager.Mode == "Play") modechecker = true;
+        FlyingButtons.SetActive(modechecker);
+        toggle.GetComponent<Toggle>().isOn = modechecker;
+        FlyingModeCheck(modechecker);
         
     }
 

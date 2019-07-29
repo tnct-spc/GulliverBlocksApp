@@ -4,11 +4,40 @@ using UnityEngine.SceneManagement;
 
 public class GameSystem : MonoBehaviour
 {
+    public GameObject ModeSelectPanel;
+    public GameManager GameManager;
 
-    //　スタートボタンを押したら実行する
-    public void StartGame()
+    private void Awake()
     {
+        ModeSelectPanel.SetActive(false);
+    }
+    public void SelectGameMode()
+    {
+        ModeSelectPanel.SetActive(true);
+    }
+
+    public void StartViewMode()
+    {
+        GameManager.Mode = "View";
+
         SceneManager.LoadScene("Vr");
+
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+
+    }
+
+    public void StartPlayMode()
+    {
+        GameManager.Mode = "Play";
+
+        SceneManager.LoadScene("Vr");
+
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+    }
+
+    public void MoveSetting()
+    {
+        SceneManager.LoadScene("SettingScene");
 
         Screen.orientation = ScreenOrientation.LandscapeLeft;
 

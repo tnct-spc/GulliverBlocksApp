@@ -43,7 +43,7 @@ public class BlockManager : MonoBehaviour
 
     async System.Threading.Tasks.Task fetchAndPlaceBlocks()
     {
-        string server_url = "https://gulliverblocks.herokuapp.com/return_test_data/";
+        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/4afdc675-465a-4874-b7cd-0c2447f7f7ba/";
 
         string response_json;
 
@@ -82,9 +82,8 @@ public class BlockManager : MonoBehaviour
         for (int i = 0; i < blocks.Count; i++)
         {
             GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
-            string ColorName = "Color" + blocks[i].colorID.ToString();
-            print(ColorName);
-            Material colorMaterial2 = Resources.Load(ColorName) as Material;
+            string colorName = "Color" + blocks[i].colorID.ToString();
+            Material colorMaterial2 = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
             blocks_data.Add((blocks[i], instance));
         }

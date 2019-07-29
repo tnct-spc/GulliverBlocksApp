@@ -22,7 +22,10 @@ public class PlayerManager : MonoBehaviour
 
     void Update ()
     {
-        Rotate();
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            Rotate();
+        }
         Move();
     }
 

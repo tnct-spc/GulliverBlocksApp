@@ -34,7 +34,7 @@ public class BlockManager : MonoBehaviour
         }
     }
 
-    private List<(Block block_struct, Object block_instance)> blocks_data = new List<(Block block_struct, Object block_instance)>();
+    private List<(Block block_struct, GameObject block_instance)> blocks_data = new List<(Block block_struct, GameObject block_instance)>();
 
     private void Start()
     {
@@ -81,7 +81,10 @@ public class BlockManager : MonoBehaviour
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Count; i++)
         {
-            Object instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity);
+            GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
+            string colorName = "Color" + blocks[i].colorID.ToString();
+            Material colorMaterial2 = Resources.Load(colorName) as Material;
+            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
             blocks_data.Add((blocks[i], instance));
         }
     }

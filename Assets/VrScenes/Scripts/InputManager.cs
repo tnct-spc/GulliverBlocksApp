@@ -11,8 +11,9 @@ public class InputManager : MonoBehaviour
     GameManager gamemanager;
     GameObject gamesystem;
 
-    public Toggle toggle;
+    public Toggle FlyingModeToggle;
     public GameObject FlyingButtons;
+    public GameObject PlayButton;
 
     void Start()
     {
@@ -22,13 +23,15 @@ public class InputManager : MonoBehaviour
         gamesystem = GameObject.Find("GameSystem");
         gamemanager = gamesystem.GetComponent<GameManager>();
 
-        toggle.onValueChanged.AddListener(FlyingModeCheck);
+        FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
 
-        bool modechecker=false;
-        if (GameManager.Mode == "Play") modechecker = true;
-        FlyingButtons.SetActive(modechecker);
-        toggle.GetComponent<Toggle>().isOn = modechecker;
-        FlyingModeCheck(modechecker);
+        bool isPlayMode = false;
+        if (GameManager.Mode == "Play") isPlayMode = true;
+        FlyingButtons.SetActive(isPlayMode);
+        FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayMode;
+        FlyingModeCheck(isPlayMode);
+        PlayButton.GetComponent<Toggle>().isOn = false;
+        PlayButton.SetActive(isPlayMode);
         
     }
 

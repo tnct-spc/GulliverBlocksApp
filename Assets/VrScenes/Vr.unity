@@ -2102,8 +2102,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c7e61c5c3fd85a47b6c17d436fb558a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 979611540}
+  FlyingModeToggle: {fileID: 979611540}
   FlyingButtons: {fileID: 577250793}
+  PlayButton: {fileID: 1940012608}
 --- !u!4 &784364639
 Transform:
   m_ObjectHideFlags: 0

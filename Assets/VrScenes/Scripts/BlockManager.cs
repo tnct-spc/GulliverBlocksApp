@@ -44,7 +44,7 @@ public class BlockManager : MonoBehaviour
 
     async System.Threading.Tasks.Task fetchAndPlaceBlocks()
     {
-        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/" + WorldID;
+        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
 
         string response_json;
 

@@ -86,8 +86,10 @@ public class PlayerManager : MonoBehaviour
         }
 
         #else
+        if(Input.touchCount > 0){
+            touch = Input.GetTouch(0);
+        }
 
-        touch = Input.GetTouch(0);
         if(touch.phase == TouchPhase.Began){
             lastMousePosition = Input.mousePosition;
             newAngle = transform.eulerAngles;
@@ -99,7 +101,8 @@ public class PlayerManager : MonoBehaviour
             transform.rotation = Quaternion.Euler(newAngle);
             lastMousePosition = Input.mousePosition;
         }
-        //transform.rotation = Quaternion.Euler(newAngle)  * Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        Quaternion gyro = Quaternion.Euler(newAngle)  * Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        transform.rotation = Quaternion.Euler(gyro.eulerAngles + newAngle);
 
         #endif
 

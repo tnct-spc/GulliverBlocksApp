@@ -16,6 +16,10 @@ public class PlayerManager : MonoBehaviour
 
     public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
 
+    private Vector3 lastMousePosition;
+    private Vector3 newAngle = new Vector3(0, 0, 0);
+    public Vector3 rotationSpeed;
+
     #if UNITY_EDITOR
         private Vector3 rot;
     #endif
@@ -70,8 +74,9 @@ public class PlayerManager : MonoBehaviour
 
     public void Rotate()
     {
-        #if UNITY_EDITOR //unityEditorでのデバッグ時に矢印ボタンで視点移動できるようにする
+        //#if UNITY_EDITOR //unityEditorでのデバッグ時に矢印ボタンで視点移動できるようにする
 
+/* 
             float spd = Time.deltaTime*100.0f;
             if(Input.GetKey(KeyCode.LeftArrow)){
                 rot.y -= spd;
@@ -87,11 +92,24 @@ public class PlayerManager : MonoBehaviour
             }
             transform.rotation = Quaternion.Euler(rot);
 
-        #else
+*/
+            if(Input.GetMouseButtonDown(0)){
+            lastMousePosition = Input.mousePosition;
+            newAngle = transform.eulerAngles;
 
-            transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        }
+        else if(Input.GetMouseButton(0)){
+            newAngle.x -= (lastMousePosition.y - Input.mousePosition.y) * rotationSpeed.x;
+            newAngle.y -= (Input.mousePosition.x - lastMousePosition.x) * rotationSpeed.y;
+            print(newAngle);
+            //transform.eulerAngles += newAngle;
+            transform.rotation = Quaternion.Euler(newAngle);
+            lastMousePosition = Input.mousePosition;
+        }
+        //#else
+            //transform.rotation *= Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        //#endif
 
-        #endif
     }
 
     public void Flying(bool value)
@@ -103,6 +121,4 @@ public class PlayerManager : MonoBehaviour
             player_rigidbody.useGravity = true;
         }
     }
-    
-    
 }

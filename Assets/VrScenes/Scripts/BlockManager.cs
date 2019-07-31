@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 public class BlockManager : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class BlockManager : MonoBehaviour
         var _ =  fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
     }
 
-    async System.Threading.Tasks.Task fetchAndPlaceBlocks()
+    async Task fetchAndPlaceBlocks()
     {
         string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/4afdc675-465a-4874-b7cd-0c2447f7f7ba/";
 
@@ -76,11 +77,12 @@ public class BlockManager : MonoBehaviour
         return blocks;
     }
 
-    void placeBlock(List<Block> blocks)
+    async void placeBlock(List<Block> blocks)
     {
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Count; i++)
         {
+            if (GameManager.Mode == "Play")await Task.Delay(1000);
             GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blocks[i].colorID.ToString();
             Material colorMaterial2 = Resources.Load(colorName) as Material;

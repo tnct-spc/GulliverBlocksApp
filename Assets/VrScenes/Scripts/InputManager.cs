@@ -5,15 +5,17 @@ using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
+    BlockManager BlockManager;
     PlayerManager playermanager;
     GameObject player;
 
     GameManager gamemanager;
     GameObject gamesystem;
+    BlockManager blockManager;
 
     public Toggle FlyingModeToggle;
     public GameObject FlyingButtons;
-    public GameObject PlayButton;
+    public Toggle PlayButton;
     public GameObject PlayModeUI;
 
     void Start()
@@ -23,8 +25,10 @@ public class InputManager : MonoBehaviour
 
         gamesystem = GameObject.Find("GameSystem");
         gamemanager = gamesystem.GetComponent<GameManager>();
+        blockManager = gamesystem.GetComponent<BlockManager>();
 
         FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
+        PlayButton.onValueChanged.AddListener(Play);
 
         bool isPlayMode = false;
         if (GameManager.Mode == "Play") isPlayMode = true;
@@ -119,4 +123,8 @@ public class InputManager : MonoBehaviour
         playermanager.MoveDown = false;
     }
 
+    public void Play(bool isActive)
+    {
+        if (isActive) blockManager.PlaceBlock();
+    }
 }

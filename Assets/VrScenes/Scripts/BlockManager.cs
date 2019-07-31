@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 public class BlockManager : MonoBehaviour
 {
+    static string response_json;
     private struct Block
     {
         public float x;
@@ -46,15 +47,12 @@ public class BlockManager : MonoBehaviour
     {
         string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/4afdc675-465a-4874-b7cd-0c2447f7f7ba/";
 
-        string response_json;
-
         using (var http_client = new HttpClient())
         {
             // getリクエストを投げてレスポンスのbodyを読み込む
             response_json = await http_client.GetStringAsync(server_url);
         }
 
-        placeBlock(jsonToBlock(response_json));
     }
 
     private List<Block> jsonToBlock(string json)
@@ -77,8 +75,9 @@ public class BlockManager : MonoBehaviour
         return blocks;
     }
 
-    async void placeBlock(List<Block> blocks)
+    public async void PlaceBlock()
     {
+        List<Block> blocks = jsonToBlock(response_json);
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Count; i++)
         {

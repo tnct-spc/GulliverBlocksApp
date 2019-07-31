@@ -3,28 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using System.Text;
 
 [System.Serializable]
 public class World
 {
-    public string worldID;
-    public string worldName;
-}
-
-public static class JsonHelperWorldSelect
-{
-    public static T[] FromJson<T>(string json)
-    {
-        Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
-        Debug.Log(wrapper.maps);
-        return wrapper.maps;
-    }
-
-    [System.Serializable]
-    private class Wrapper<T>
-    {
-        public T[] maps;
-    }
+    public string ID;
+    public string name;
 }
 
 public class WorldSelect : MonoBehaviour
@@ -59,10 +44,13 @@ public class WorldSelect : MonoBehaviour
         {
             //通信成功
             Debug.Log(webRequest.downloadHandler.text);
-            WorldsData = JsonHelperWorldSelect.FromJson<World>(webRequest.downloadHandler.text);
+            WorldsData = JsonHelper.FromJson<World>(webRequest.downloadHandler.text);
 
-            Debug.Log(WorldsData[0].worldID);
-            Debug.Log(WorldsData[0].worldName);
+            for(int i = 0; i < WorldsData.Length; i++)
+            {
+                Debug.Log(WorldsData[i].ID);
+                Debug.Log(WorldsData[i].name);
+            }
         }
     }
 

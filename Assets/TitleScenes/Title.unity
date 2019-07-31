@@ -192,6 +192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   btnPref: {fileID: 4424595871841789736, guid: ce877090381bbfa44866327e2a0f65d8, type: 3}
+  WorldsData: []
 --- !u!1 &64957043
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,7 +28,7 @@ public class GameSystem : MonoBehaviour
 
     public void StartPlayMode()
     {
-        GameManager.Mode = "Play";
+        GameManager.Mode = "Vr";
 
         SceneManager.LoadScene("Vr");
 

@@ -31,7 +31,6 @@ public class GameSystem : MonoBehaviour
             .First(t => t.name == "Label").text;
 
         GameManager.Mode = selectedLabel.Replace("Mode", "");
-        Debug.Log(GameManager.Mode);
 
         // VrSceneを読み込む
         SceneManager.LoadScene("Vr");

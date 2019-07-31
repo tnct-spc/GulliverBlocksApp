@@ -19,9 +19,9 @@ public class PlayerManager : MonoBehaviour
     private Vector3 lastMousePosition;
     private Vector3 newAngle = new Vector3(0, 0, 0);
     public Vector3 rotationSpeed;
-
     #if UNITY_EDITOR
-        private Vector3 rot;
+    #else
+    public Touch touch = Input.GetTouch(0);
     #endif
 
     private void Awake()
@@ -30,11 +30,7 @@ public class PlayerManager : MonoBehaviour
     }
     void Start()
     {
-        #if UNITY_EDITOR
-            rot = transform.rotation.eulerAngles;
-        #else
             Input.gyro.enabled = true;
-        #endif
     }
 
     void Update ()
@@ -74,26 +70,9 @@ public class PlayerManager : MonoBehaviour
 
     public void Rotate()
     {
-        //#if UNITY_EDITOR //unityEditorでのデバッグ時に矢印ボタンで視点移動できるようにする
+        #if UNITY_EDITOR //unityEditorでのデバッグ時
 
-/* 
-            float spd = Time.deltaTime*100.0f;
-            if(Input.GetKey(KeyCode.LeftArrow)){
-                rot.y -= spd;
-            }
-            if(Input.GetKey(KeyCode.RightArrow)){
-                rot.y += spd;
-            }
-            if(Input.GetKey(KeyCode.UpArrow)){
-                rot.x -= spd;
-            }
-            if(Input.GetKey(KeyCode.DownArrow)){
-                rot.x += spd;
-            }
-            transform.rotation = Quaternion.Euler(rot);
-
-*/
-            if(Input.GetMouseButtonDown(0)){
+        if(Input.GetMouseButtonDown(0)){
             lastMousePosition = Input.mousePosition;
             newAngle = transform.eulerAngles;
 
@@ -101,14 +80,28 @@ public class PlayerManager : MonoBehaviour
         else if(Input.GetMouseButton(0)){
             newAngle.x -= (lastMousePosition.y - Input.mousePosition.y) * rotationSpeed.x;
             newAngle.y -= (Input.mousePosition.x - lastMousePosition.x) * rotationSpeed.y;
-            print(newAngle);
             //transform.eulerAngles += newAngle;
             transform.rotation = Quaternion.Euler(newAngle);
             lastMousePosition = Input.mousePosition;
         }
-        //#else
-            //transform.rotation *= Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
-        //#endif
+
+        #else
+
+        touch = Input.GetTouch(0);
+        if(touch.phase == TouchPhase.Began){
+            lastMousePosition = Input.mousePosition;
+            newAngle = transform.eulerAngles;
+
+        }
+        else if(touch.phase == TouchPhase.Moved){
+            newAngle.x -= (lastMousePosition.y - Input.mousePosition.y) * rotationSpeed.x;
+            newAngle.y -= (Input.mousePosition.x - lastMousePosition.x) * rotationSpeed.y;
+            transform.rotation = Quaternion.Euler(newAngle);
+            lastMousePosition = Input.mousePosition;
+        }
+        //transform.rotation = Quaternion.Euler(newAngle)  * Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+
+        #endif
 
     }
 

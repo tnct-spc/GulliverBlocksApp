@@ -16,13 +16,21 @@ public class PlayerManager : MonoBehaviour
 
     public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
 
+    #if UNITY_EDITOR
+        private Vector3 rot;
+    #endif
+
     private void Awake()
     {
         player_rigidbody = GetComponent<Rigidbody>();
     }
     void Start()
     {
-        Input.gyro.enabled = true;
+        #if UNITY_EDITOR
+            rot = transform.rotation.eulerAngles;
+        #else
+            Input.gyro.enabled = true;
+        #endif
     }
 
     void Update ()
@@ -62,7 +70,28 @@ public class PlayerManager : MonoBehaviour
 
     public void Rotate()
     {
-        transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        #if UNITY_EDITOR //unityEditorでのデバッグ時に矢印ボタンで視点移動できるようにする
+
+            float spd = Time.deltaTime*100.0f;
+            if(Input.GetKey(KeyCode.LeftArrow)){
+                rot.y -= spd;
+            }
+            if(Input.GetKey(KeyCode.RightArrow)){
+                rot.y += spd;
+            }
+            if(Input.GetKey(KeyCode.UpArrow)){
+                rot.x -= spd;
+            }
+            if(Input.GetKey(KeyCode.DownArrow)){
+                rot.x += spd;
+            }
+            transform.rotation = Quaternion.Euler(rot);
+
+        #else
+
+            transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+
+        #endif
     }
 
     public void Flying(bool value)
@@ -74,4 +103,6 @@ public class PlayerManager : MonoBehaviour
             player_rigidbody.useGravity = true;
         }
     }
+    
+    
 }

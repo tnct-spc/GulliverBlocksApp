@@ -1,4 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using System;
+using System.Linq;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
@@ -6,6 +9,7 @@ public class GameSystem : MonoBehaviour
 {
     public GameObject ModeSelectPanel;
     public GameManager GameManager;
+    public ToggleGroup toggleGroup;
 
     private void Awake()
     {
@@ -16,23 +20,22 @@ public class GameSystem : MonoBehaviour
         ModeSelectPanel.SetActive(true);
     }
 
-    public void StartViewMode()
+    public void OnClickWorldSelectButton(string ID)
     {
-        GameManager.Mode = "View";
+        // BlockManagerにIDを渡す
+        BlockManager.WorldID = ID;
 
+        // GameManagerにModeを渡す
+        string selectedLabel = toggleGroup.ActiveToggles()
+            .First().GetComponentsInChildren<Text>()
+            .First(t => t.name == "Label").text;
+
+        GameManager.Mode = selectedLabel.Replace("Mode", "");
+
+        // VrSceneを読み込む
         SceneManager.LoadScene("Vr");
-
         Screen.orientation = ScreenOrientation.LandscapeLeft;
 
-    }
-
-    public void StartPlayMode()
-    {
-        GameManager.Mode = "Play";
-
-        SceneManager.LoadScene("Vr");
-
-        Screen.orientation = ScreenOrientation.LandscapeLeft;
     }
 
     public void MoveSetting()

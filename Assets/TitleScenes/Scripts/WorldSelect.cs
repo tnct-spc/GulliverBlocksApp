@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-using System.Text;
 
 [System.Serializable]
 public class World
@@ -14,20 +13,18 @@ public class World
 
 public class WorldSelect : MonoBehaviour
 {
-
+    GameSystem gameSystem;
     [SerializeField] private GameObject btnPref;  //ボタンプレハブ
-    const int BUTTON_COUNT = 10;
     const string SERVER_URL = "http://gulliverblocks.herokuapp.com/get_maps";
     public World[] WorldsData;
 
 
     private void Start()
     {
-        setWorldSelectButton();
         StartCoroutine("GetWorlds", SERVER_URL);
     }
 
-    IEnumerator GetWorlds(string url)
+    public IEnumerator GetWorlds(string url)
     {
         //URLをGETで用意
         UnityWebRequest webRequest = UnityWebRequest.Get(url);
@@ -43,19 +40,35 @@ public class WorldSelect : MonoBehaviour
         else
         {
             //通信成功
-            Debug.Log(webRequest.downloadHandler.text);
             WorldsData = JsonHelper.FromJson<World>(webRequest.downloadHandler.text);
 
-            for(int i = 0; i < WorldsData.Length; i++)
-            {
-                Debug.Log(WorldsData[i].ID);
-                Debug.Log(WorldsData[i].name);
-            }
+            yield return null;
+
+            setWorldSelectButton();
         }
     }
 
-    private void setWorldSelectButton()
+    public static class JsonHelper
     {
+        public static T[] FromJson<T>(string json)
+        {
+            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+            return wrapper.maps;
+        }
+
+        [System.Serializable]
+        private class Wrapper<T>
+        {
+            public T[] maps;
+        }
+    }
+
+
+    // ButtonをScrollViewに追加する関数
+    public void setWorldSelectButton()
+    {
+        int btnCount = WorldsData.Length;
+
         //Content取得(ボタンを並べる場所)
         GameObject canvas = GameObject.Find("Canvas");
         RectTransform content = canvas.transform.Find("SelectPanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
@@ -63,10 +76,11 @@ public class WorldSelect : MonoBehaviour
         //Contentの高さ決定
         float btnSpace = content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得
         float btnHeight = btnPref.GetComponent<LayoutElement>().preferredHeight;   // WorldSelectButton自体の高さを取得
-        content.sizeDelta = new Vector2(0, (btnHeight + btnSpace) * BUTTON_COUNT); // 上２つの要素からcontentの高さを作成
+        content.sizeDelta = new Vector2(0, (btnHeight + btnSpace) * btnCount); // 上２つの要素からcontentの高さを作成
 
+        gameSystem = gameObject.GetComponent<GameSystem>();
 
-        for (int i = 0; i < BUTTON_COUNT; i++)
+        for (int i = 0; i < btnCount; i++)
         {
             int btnNum = i;
 
@@ -77,16 +91,11 @@ public class WorldSelect : MonoBehaviour
             btn.transform.SetParent(content, false);
 
             //ボタンのテキスト変更
-            btn.transform.GetComponentInChildren<Text>().text = "World_" + btnNum.ToString();
+            btn.transform.GetComponentInChildren<Text>().text = WorldsData[btnNum].name;
 
             //ボタンのクリックイベント登録
-            btn.transform.GetComponent<Button>().onClick.AddListener(() => OnClickWorldSelectButton(btnNum));
+            btn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].ID));
 
         }
-    }
- 
-    public void OnClickWorldSelectButton(int btnNum)
-    {
-        Debug.Log(btnNum);
     }
 }

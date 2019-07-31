@@ -153,6 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ModeSelectPanel: {fileID: 846081297}
   GameManager: {fileID: 21720919}
+  toggleGroup: {fileID: 1573903317}
 --- !u!4 &21720918
 Transform:
   m_ObjectHideFlags: 0
@@ -2462,7 +2463,7 @@ GameObject:
   - component: {fileID: 1093484812}
   - component: {fileID: 1093484811}
   m_Layer: 5
-  m_Name: 'WorldSelectPanelText '
+  m_Name: 'Text(SelectPanel) '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3322,7 +3323,7 @@ GameObject:
   - component: {fileID: 1671829104}
   - component: {fileID: 1671829103}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Text(ModeSelectPanel)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

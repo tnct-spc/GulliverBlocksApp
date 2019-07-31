@@ -14,6 +14,7 @@ public class InputManager : MonoBehaviour
     public Toggle FlyingModeToggle;
     public GameObject FlyingButtons;
     public GameObject PlayButton;
+    public GameObject PlayModeUI;
 
     void Start()
     {
@@ -31,7 +32,7 @@ public class InputManager : MonoBehaviour
         FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayMode;
         FlyingModeCheck(isPlayMode);
         PlayButton.GetComponent<Toggle>().isOn = false;
-        PlayButton.SetActive(isPlayMode);
+        PlayModeUI.SetActive(isPlayMode);
         
     }
 

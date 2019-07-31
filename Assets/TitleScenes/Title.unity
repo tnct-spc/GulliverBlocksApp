@@ -130,8 +130,8 @@ GameObject:
   m_Component:
   - component: {fileID: 21720918}
   - component: {fileID: 21720917}
-  - component: {fileID: 21720919}
   - component: {fileID: 21720920}
+  - component: {fileID: 21720919}
   m_Layer: 0
   m_Name: GameSystem
   m_TagString: Untagged

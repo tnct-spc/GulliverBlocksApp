@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 
 [System.Serializable]
-public class World
+public struct World
 {
     public string ID;
     public string name;

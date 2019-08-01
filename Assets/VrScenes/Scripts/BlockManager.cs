@@ -11,12 +11,12 @@ public class BlockManager : MonoBehaviour
         public float x;
         public float y;
         public float z;
-        public int ID;
+        public string ID;
         public float time;
         public bool put;
         public int colorID;
 
-        public Block(float x, float y, float z, int ID, float time, bool put, int colorID)
+        public Block(float x, float y, float z, string ID, float time, bool put, int colorID)
         {
             this.x = x;
             this.y = y;
@@ -55,6 +55,10 @@ public class BlockManager : MonoBehaviour
         }
 
         placeBlock(jsonToBlock(response_json));
+
+        Debug.Log(blocks_data[0].block_instance.name);
+        Debug.Log(blocks_data[0].block_struct.colorID);
+        Debug.Log(blocks_data[0].block_struct.ID);
     }
 
     private List<Block> jsonToBlock(string json)
@@ -84,8 +88,8 @@ public class BlockManager : MonoBehaviour
         {
             GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blocks[i].colorID.ToString();
-            Material colorMaterial2 = Resources.Load(colorName) as Material;
-            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
+            Material colorMaterial = Resources.Load(colorName) as Material;
+            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
             blocks_data.Add((blocks[i], instance));
         }
     }

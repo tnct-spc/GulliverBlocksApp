@@ -102,8 +102,8 @@ public class BlockManager : MonoBehaviour
 
     public void DestroyBlocks()
     {
+        isPlacingBlock = true;
         if (blocks == null) return;
-        isPlacingBlock = false;
         for (int i = 0; i < blocks.Count; i++)
         {
             GameObject cube = GameObject.Find("Cube" + i);

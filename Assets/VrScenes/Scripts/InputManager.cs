@@ -136,7 +136,7 @@ public class InputManager : MonoBehaviour
 
     public void DestroyBlocks()
     {
-        blockManager.DestroyBlocks();
         PlayButton.GetComponent<Toggle>().isOn = false;
+        blockManager.DestroyBlocks();
     }
 }

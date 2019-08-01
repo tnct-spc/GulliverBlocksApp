@@ -55,10 +55,6 @@ public class BlockManager : MonoBehaviour
         }
 
         placeBlock(jsonToBlock(response_json));
-
-        Debug.Log(blocks_data[0].block_instance.name);
-        Debug.Log(blocks_data[0].block_struct.colorID);
-        Debug.Log(blocks_data[0].block_struct.ID);
     }
 
     private List<Block> jsonToBlock(string json)

@@ -127,10 +127,16 @@ public class InputManager : MonoBehaviour
     {
         if (isActive)
         {
-            blockManager.PlaceBlock();
+            if(blockManager.hasEndedPlacingBlock) blockManager.PlaceBlock();
             blockManager.isPlacingBlock = true;
         }
 
         if (isActive == false) blockManager.isPlacingBlock = false;
+    }
+
+    public void DestroyBlocks()
+    {
+        blockManager.DestroyBlocks();
+        PlayButton.GetComponent<Toggle>().isOn = false;
     }
 }

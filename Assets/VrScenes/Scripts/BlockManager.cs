@@ -9,6 +9,9 @@ public class BlockManager : MonoBehaviour
 {
     static string response_json;
     public bool isPlacingBlock = true;
+    public bool hasEndedPlacingBlock = true;
+    private int blockNumber = 0;
+    List<Block> blocks;
     private struct Block
     {
         public float x;
@@ -78,17 +81,35 @@ public class BlockManager : MonoBehaviour
 
     public async void PlaceBlock()
     {
-        List<Block> blocks = jsonToBlock(response_json);
+        hasEndedPlacingBlock = false;
+
+        blocks = jsonToBlock(response_json);
         Object cube = (GameObject)Resources.Load("Cube");
-        for (int i = 0; i < blocks.Count; i++)
+        for (int i = blockNumber; blockNumber < blocks.Count; blockNumber++)
         {
             while (isPlacingBlock == false) await Task.Delay(1);
-            GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
-            string colorName = "Color" + blocks[i].colorID.ToString();
+            if (hasEndedPlacingBlock) break;
+            GameObject instance = Instantiate(cube, blocks[blockNumber].getPosition(), Quaternion.identity) as GameObject;
+            string colorName = "Color" + blocks[blockNumber].colorID.ToString();
             Material colorMaterial2 = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
-            blocks_data.Add((blocks[i], instance));
+            instance.name = "Cube" + blockNumber;
+            blocks_data.Add((blocks[blockNumber], instance));
             if (GameManager.Mode == "Play") await Task.Delay(1000);
         }
+        hasEndedPlacingBlock = true;
+    }
+
+    public void DestroyBlocks()
+    {
+        if (blocks == null) return;
+        isPlacingBlock = false;
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            GameObject cube = GameObject.Find("Cube" + i);
+            Destroy(cube);
+        }
+        blockNumber = 0;
+        hasEndedPlacingBlock = true;
     }
 }

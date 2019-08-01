@@ -23,6 +23,8 @@ public class GameSystem : MonoBehaviour
 
         SceneManager.LoadScene("Vr");
 
+        blockManager.isPlacingBlock = true;
+
         Screen.orientation = ScreenOrientation.LandscapeLeft;
 
     }

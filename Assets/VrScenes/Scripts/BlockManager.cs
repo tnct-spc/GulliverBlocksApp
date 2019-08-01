@@ -39,7 +39,7 @@ public class BlockManager : MonoBehaviour
 
     private void Start()
     {
-        var _ =  fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
+        var _ = fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
     }
 
     async System.Threading.Tasks.Task fetchAndPlaceBlocks()

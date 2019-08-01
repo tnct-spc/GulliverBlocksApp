@@ -125,6 +125,12 @@ public class InputManager : MonoBehaviour
 
     public void Play(bool isActive)
     {
-        if (isActive) blockManager.PlaceBlock();
+        if (isActive)
+        {
+            blockManager.PlaceBlock();
+            blockManager.isPlacingBlock = true;
+        }
+
+        if (isActive == false) blockManager.isPlacingBlock = false;
     }
 }

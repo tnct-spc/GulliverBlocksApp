@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 public class BlockManager : MonoBehaviour
 {
     static string response_json;
+    public bool isPlacingBlock = true;
     private struct Block
     {
         public float x;
@@ -52,7 +53,7 @@ public class BlockManager : MonoBehaviour
             // getリクエストを投げてレスポンスのbodyを読み込む
             response_json = await http_client.GetStringAsync(server_url);
         }
-
+        if (GameManager.Mode != "Play") PlaceBlock();
     }
 
     private List<Block> jsonToBlock(string json)
@@ -81,12 +82,13 @@ public class BlockManager : MonoBehaviour
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Count; i++)
         {
-            if (GameManager.Mode == "Play")await Task.Delay(1000);
+            while (isPlacingBlock == false) await Task.Delay(1);
             GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blocks[i].colorID.ToString();
             Material colorMaterial2 = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
             blocks_data.Add((blocks[i], instance));
+            if (GameManager.Mode == "Play") await Task.Delay(1000);
         }
     }
 }

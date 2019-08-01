@@ -6,6 +6,7 @@ public class GameSystem : MonoBehaviour
 {
     public GameObject ModeSelectPanel;
     public GameManager GameManager;
+    BlockManager blockManager;
 
     private void Awake()
     {

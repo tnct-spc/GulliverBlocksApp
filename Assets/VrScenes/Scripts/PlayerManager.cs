@@ -62,7 +62,14 @@ public class PlayerManager : MonoBehaviour
 
     public void Rotate()
     {
-        transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        if (Application.platform == RuntimePlatform.WindowsEditor)
+        {
+            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+        }
+        else
+        {
+            transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        }
     }
 
     public void Flying(bool value)

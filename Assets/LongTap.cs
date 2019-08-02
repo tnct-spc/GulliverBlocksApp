@@ -14,7 +14,7 @@ public class LongTap : MonoBehaviour
     //StopCoroutineのためにCoroutineで宣言しておく
     Coroutine PressCorutine;
     bool isPressDown = false;
-    float PressTime = 2f;
+    float PressTime = 5f;
 
     void Awake()
     {

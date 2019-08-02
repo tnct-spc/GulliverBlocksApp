@@ -55,6 +55,7 @@ public class BlockManager : MonoBehaviour
         }
 
         placeBlock(jsonToBlock(response_json));
+        Debug.Log(blocks_data[1].block_struct.ID);
 
         applyColorRules();
     }
@@ -94,7 +95,7 @@ public class BlockManager : MonoBehaviour
 
     public void applyColorRules()
     {
-        string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"699bd863-6fe6-4016-8612-b31bf60b6442\", \"to\": 3 }] }";
+        string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"17411e0b-f945-47b0-9a87-974434eb5993\", \"to\": 1 }] }";
         Debug.Log(rulesJson);
         Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson);
         for (int i = 0; i < ruleData.Length; i++)

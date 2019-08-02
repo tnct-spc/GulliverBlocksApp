@@ -11,12 +11,12 @@ public class BlockManager : MonoBehaviour
         public float x;
         public float y;
         public float z;
-        public int ID;
+        public string ID;
         public float time;
         public bool put;
         public int colorID;
 
-        public Block(float x, float y, float z, int ID, float time, bool put, int colorID)
+        public Block(float x, float y, float z, string ID, float time, bool put, int colorID)
         {
             this.x = x;
             this.y = y;
@@ -35,6 +35,7 @@ public class BlockManager : MonoBehaviour
     }
 
     private List<(Block block_struct, GameObject block_instance)> blocks_data = new List<(Block block_struct, GameObject block_instance)>();
+    public static string WorldID;
 
     private void Start()
     {
@@ -43,7 +44,7 @@ public class BlockManager : MonoBehaviour
 
     async System.Threading.Tasks.Task fetchAndPlaceBlocks()
     {
-        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/4afdc675-465a-4874-b7cd-0c2447f7f7ba/";
+        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
 
         string response_json;
 
@@ -83,8 +84,8 @@ public class BlockManager : MonoBehaviour
         {
             GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blocks[i].colorID.ToString();
-            Material colorMaterial2 = Resources.Load(colorName) as Material;
-            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
+            Material colorMaterial = Resources.Load(colorName) as Material;
+            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
             blocks_data.Add((blocks[i], instance));
         }
     }

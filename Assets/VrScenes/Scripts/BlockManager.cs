@@ -120,4 +120,20 @@ public class BlockManager : MonoBehaviour
         blockNumber = 0;
         hasEndedPlacingBlock = true;
     }
+
+    public void PlaceBlockBySeekBar(float value)
+    {
+        DestroyBlocks();
+        blocks = jsonToBlock(response_json);
+        Object cube = (GameObject)Resources.Load("Cube");
+        for (int i = blockNumber; blockNumber < value; blockNumber++)
+        {
+            GameObject instance = Instantiate(cube, blocks[blockNumber].getPosition(), Quaternion.identity) as GameObject;
+            string colorName = "Color" + blocks[blockNumber].colorID.ToString();
+            Material colorMaterial = Resources.Load(colorName) as Material;
+            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
+            instance.name = "Cube" + blockNumber;
+            blocks_data.Add((blocks[blockNumber], instance));
+        }
+    }
 }

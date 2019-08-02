@@ -19,7 +19,7 @@ public class SeekBarMover : MonoBehaviour
     {
         SeekBar = GetComponent<Slider>();
         SeekBar.maxValue = 100;
-        SeekBar.value = 50;
+        SeekBar.value = 0;
     }
 
     

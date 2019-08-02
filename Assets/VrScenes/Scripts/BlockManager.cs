@@ -97,9 +97,57 @@ public class BlockManager : MonoBehaviour
         string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"699bd863-6fe6-4016-8612-b31bf60b6442\", \"to\": 3 }] }";
         Debug.Log(rulesJson);
         Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson);
-        Debug.Log(ruleData[0].target);
-        Debug.Log(ruleData[0].target.GetType());
-        Debug.Log(ruleData[0].type);
+        for (int i = 0; i < ruleData.Length; i++)
+        {
+            string type = ruleData[i].type;
+            string target = ruleData[i].target;
+            string toColorName =  "Color" + ruleData[i].to;
+            if (type == "color")
+            {
+                string targetColorName = "Color" + target;
+                Material targetColorMaterial = Resources.Load(targetColorName) as Material;
+                Material toColorMaterial = Resources.Load(toColorName) as Material;
+                if (targetColorMaterial != null && toColorMaterial != null)
+                { 
+                    for (int j = 0; j < blocks_data.Count; j++)
+                    {
+                        string currentColorName = "Color" + blocks_data[j].block_struct.colorID;
+                        if (targetColorName == currentColorName)
+                        {
+                            blocks_data[j].block_instance.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.Log("Material(rules) is null.");
+                }
+            }
+            else if (type == "ID")
+            {
+                string targetID = target;
+                Material toColorMaterial = Resources.Load(toColorName) as Material;
+                if(toColorMaterial != null)
+                {
+                    for(int j = 0; j < blocks_data.Count; j++)
+                    {
+                        string currentID = blocks_data[j].block_struct.ID;
+                        if (targetID  == currentID)
+                        {
+                            blocks_data[j].block_instance.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.Log("Material(rules) is null.");
+                }
+            }
+            else
+            {
+                Debug.Log("Type(rules) is Invalid.");
+            }
+        }
     }
 
     public static class JsonHelper

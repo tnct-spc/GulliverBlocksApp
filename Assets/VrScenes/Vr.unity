@@ -1184,6 +1184,7 @@ MonoBehaviour:
   PlayButton: {fileID: 785627975}
   PlayModeUI: {fileID: 276605839}
   ResetButton: {fileID: 497752574}
+  SeekBar: {fileID: 805845243}
 --- !u!4 &784364639
 Transform:
   m_ObjectHideFlags: 0
@@ -1212,7 +1213,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlacingBlock: 1
   hasEndedPlacingBlock: 1
-  SeekBar: {fileID: 0}
 --- !u!114 &784364641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1405,12 +1405,23 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1124464451}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
+  m_MaxValue: 4
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 784364638}
+        m_MethodName: PlaceBlockBySeekBar
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &813201307

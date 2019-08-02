@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
-    BlockManager BlockManager;
     PlayerManager playermanager;
     GameObject player;
 
@@ -18,6 +17,7 @@ public class InputManager : MonoBehaviour
     public Toggle PlayButton;
     public GameObject PlayModeUI;
     public GameObject ResetButton;
+    public Slider SeekBar;
 
     void Start()
     {
@@ -29,6 +29,7 @@ public class InputManager : MonoBehaviour
         blockManager = gamesystem.GetComponent<BlockManager>();
 
         FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
+        SeekBar.onValueChanged.AddListener(PlaceBlockBySeekBar);
         PlayButton.onValueChanged.AddListener(Play);
 
         bool isPlayMode = false;
@@ -147,5 +148,10 @@ public class InputManager : MonoBehaviour
     {
         PlayButton.GetComponent<Toggle>().isOn = false;
         blockManager.DestroyBlocks();
+    }
+
+    public void PlaceBlockBySeekBar(float value)
+    {
+        blockManager.PlaceBlockBySeekBar(value);
     }
 }

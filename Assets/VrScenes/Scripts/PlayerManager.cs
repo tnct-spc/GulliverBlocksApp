@@ -102,7 +102,8 @@ public class PlayerManager : MonoBehaviour
             lastMousePosition = Input.mousePosition;
         }
         Quaternion gyro = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
-        transform.rotation = gyro * Quaternion.Euler(newAngle);
+        transform.rotation = gyro ;//* Quaternion.Euler(newAngle);
+        transform.Rotate(newAngle);
 
         #endif
 

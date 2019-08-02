@@ -31,7 +31,7 @@ public class InputManager : MonoBehaviour
         PlayButton.onValueChanged.AddListener(Play);
 
         bool isPlayMode = false;
-        if (GameManager.Mode == "Play") isPlayMode = true;
+        if (GameManager.Mode == "Vr") isPlayMode = true;
         FlyingButtons.SetActive(isPlayMode);
         FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayMode;
         FlyingModeCheck(isPlayMode);

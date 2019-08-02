@@ -17,12 +17,12 @@ public class BlockManager : MonoBehaviour
         public float x;
         public float y;
         public float z;
-        public int ID;
+        public string ID;
         public float time;
         public bool put;
         public int colorID;
 
-        public Block(float x, float y, float z, int ID, float time, bool put, int colorID)
+        public Block(float x, float y, float z, string ID, float time, bool put, int colorID)
         {
             this.x = x;
             this.y = y;
@@ -41,6 +41,7 @@ public class BlockManager : MonoBehaviour
     }
 
     private List<(Block block_struct, GameObject block_instance)> blocks_data = new List<(Block block_struct, GameObject block_instance)>();
+    public static string WorldID;
 
     private void Start()
     {
@@ -49,14 +50,14 @@ public class BlockManager : MonoBehaviour
 
     async Task fetchAndPlaceBlocks()
     {
-        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/4afdc675-465a-4874-b7cd-0c2447f7f7ba/";
+        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
 
         using (var http_client = new HttpClient())
         {
             // getリクエストを投げてレスポンスのbodyを読み込む
             response_json = await http_client.GetStringAsync(server_url);
         }
-        if (GameManager.Mode != "Play") PlaceBlock();
+        if (GameManager.Mode != "Vr") PlaceBlock();
     }
 
     private List<Block> jsonToBlock(string json)
@@ -91,11 +92,11 @@ public class BlockManager : MonoBehaviour
             if (hasEndedPlacingBlock) break;
             GameObject instance = Instantiate(cube, blocks[blockNumber].getPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blocks[blockNumber].colorID.ToString();
-            Material colorMaterial2 = Resources.Load(colorName) as Material;
-            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
+            Material colorMaterial = Resources.Load(colorName) as Material;
+            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
             instance.name = "Cube" + blockNumber;
             blocks_data.Add((blocks[blockNumber], instance));
-            if (GameManager.Mode == "Play") await Task.Delay(1000);
+            if (GameManager.Mode == "Vr") await Task.Delay(1000);
         }
         hasEndedPlacingBlock = true;
     }

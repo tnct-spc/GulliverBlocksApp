@@ -1183,6 +1183,7 @@ MonoBehaviour:
   FlyingButtons: {fileID: 577250793}
   PlayButton: {fileID: 785627975}
   PlayModeUI: {fileID: 276605839}
+  ResetButton: {fileID: 497752574}
 --- !u!4 &784364639
 Transform:
   m_ObjectHideFlags: 0

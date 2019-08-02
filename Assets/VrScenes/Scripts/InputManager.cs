@@ -17,6 +17,7 @@ public class InputManager : MonoBehaviour
     public GameObject FlyingButtons;
     public Toggle PlayButton;
     public GameObject PlayModeUI;
+    public GameObject ResetButton;
 
     void Start()
     {
@@ -127,8 +128,16 @@ public class InputManager : MonoBehaviour
     {
         if (isActive)
         {
-            if(blockManager.hasEndedPlacingBlock) blockManager.PlaceBlock();
-            blockManager.isPlacingBlock = true;
+            if (blockManager.hasEndedPlacingBlock) blockManager.PlaceBlock();
+            {
+                blockManager.isPlacingBlock = true;
+
+                ResetButton.SetActive(false);
+            }
+        }
+        else
+        {
+            ResetButton.SetActive(true);
         }
 
         if (isActive == false) blockManager.isPlacingBlock = false;

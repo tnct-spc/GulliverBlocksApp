@@ -9,11 +9,12 @@ using System.Linq;
 
 public class SeekBarMover : MonoBehaviour
 {
-    public Slider SeekBar;
+    Slider SeekBar;
 
     InputManager InputManager;
     BlockManager BlockManager;
-    
+    int i = 1;
+
     void Start()
     {
         SeekBar = GetComponent<Slider>();
@@ -24,6 +25,7 @@ public class SeekBarMover : MonoBehaviour
     
     void Update()
     {
-        
+        if (SeekBar.value == 100 || SeekBar.value == 0) i *= -1;
+        SeekBar.value += i;
     }
 }

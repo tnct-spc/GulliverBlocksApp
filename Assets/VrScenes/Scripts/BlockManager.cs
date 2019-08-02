@@ -12,6 +12,9 @@ public class BlockManager : MonoBehaviour
     public bool hasEndedPlacingBlock = true;
     private int blockNumber = 0;
     List<Block> blocks;
+    InputManager InputManager;
+    SeekBarMover SeekBarMover;
+
     private struct Block
     {
         public float x;
@@ -81,7 +84,6 @@ public class BlockManager : MonoBehaviour
             Block block = JsonUtility.FromJson<Block>(json_array[i]);
             blocks.Add(block);
         }
-
         return blocks;
     }
 

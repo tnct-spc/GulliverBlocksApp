@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class InputManager : MonoBehaviour
 {
@@ -38,7 +39,6 @@ public class InputManager : MonoBehaviour
         FlyingModeCheck(isPlayMode);
         PlayButton.GetComponent<Toggle>().isOn = false;
         PlayModeUI.SetActive(isPlayMode);
-        
     }
 
     private void Update()

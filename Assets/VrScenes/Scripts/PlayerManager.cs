@@ -70,7 +70,6 @@ public class PlayerManager : MonoBehaviour
 
     public void Rotate()
     {
-<<<<<<< HEAD
         #if UNITY_EDITOR //unityEditorでのデバッグ時
 
         if(Input.GetMouseButtonDown(0)){
@@ -108,16 +107,6 @@ public class PlayerManager : MonoBehaviour
 
         #endif
 
-=======
-        if (Application.platform == RuntimePlatform.WindowsEditor)
-        {
-            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
-        }
-        else
-        {
-            transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
-        }
->>>>>>> develop
     }
 
     public void Flying(bool value)

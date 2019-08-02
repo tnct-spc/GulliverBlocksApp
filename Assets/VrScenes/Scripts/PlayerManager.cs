@@ -98,11 +98,11 @@ public class PlayerManager : MonoBehaviour
         else if(touch.phase == TouchPhase.Moved){
             newAngle.x -= (lastMousePosition.y - Input.mousePosition.y) * rotationSpeed.x;
             newAngle.y -= (Input.mousePosition.x - lastMousePosition.x) * rotationSpeed.y;
-            transform.rotation = Quaternion.Euler(newAngle);
+            //transform.rotation = Quaternion.Euler(newAngle);
             lastMousePosition = Input.mousePosition;
         }
-        Quaternion gyro = Quaternion.Euler(newAngle)  * Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
-        transform.rotation = Quaternion.Euler(gyro.eulerAngles + newAngle);
+        Quaternion gyro = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        transform.rotation = gyro * Quaternion.Euler(newAngle);
 
         #endif
 

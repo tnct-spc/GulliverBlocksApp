@@ -14,9 +14,9 @@ public class BlockManager : MonoBehaviour
         public string ID;
         public float time;
         public bool put;
-        public int colorID;
+        public string colorID;
 
-        public Block(float x, float y, float z, string ID, float time, bool put, int colorID)
+        public Block(float x, float y, float z, string ID, float time, bool put, string colorID)
         {
             this.x = x;
             this.y = y;
@@ -39,7 +39,7 @@ public class BlockManager : MonoBehaviour
 
     private void Start()
     {
-        var _ =  fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
+        var _ = fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
     }
 
     async System.Threading.Tasks.Task fetchAndPlaceBlocks()
@@ -55,6 +55,8 @@ public class BlockManager : MonoBehaviour
         }
 
         placeBlock(jsonToBlock(response_json));
+
+        applyColorRules();
     }
 
     private List<Block> jsonToBlock(string json)
@@ -88,5 +90,38 @@ public class BlockManager : MonoBehaviour
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
             blocks_data.Add((blocks[i], instance));
         }
+    }
+
+    public void applyColorRules()
+    {
+        string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"699bd863-6fe6-4016-8612-b31bf60b6442\", \"to\": 3 }] }";
+        Debug.Log(rulesJson);
+        Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson);
+        Debug.Log(ruleData[0].target);
+        Debug.Log(ruleData[0].target.GetType());
+        Debug.Log(ruleData[0].type);
+    }
+
+    public static class JsonHelper
+    {
+        public static T[] FromJson<T>(string json)
+        {
+            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+            return wrapper.rules;
+        }
+
+        [System.Serializable]
+        private class Wrapper<T>
+        {
+            public T[] rules;
+        }
+    }
+
+    [System.Serializable]
+    public class Rule
+    {
+        public string type;
+        public string target;
+        public string to;
     }
 }

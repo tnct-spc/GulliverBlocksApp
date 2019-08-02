@@ -59,7 +59,7 @@ public class WorldSelect : MonoBehaviour
         [System.Serializable]
         private class Wrapper<T>
         {
-            public T[] maps;
+            public T[] maps; 
         }
     }
 

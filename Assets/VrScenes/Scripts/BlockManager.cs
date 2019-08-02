@@ -57,7 +57,12 @@ public class BlockManager : MonoBehaviour
             // getリクエストを投げてレスポンスのbodyを読み込む
             response_json = await http_client.GetStringAsync(server_url);
         }
-        if (GameManager.Mode != "Vr") PlaceBlock();
+        if (GameManager.Mode != "Vr")
+        {
+            isPlacingBlock = true;
+            hasEndedPlacingBlock = false;
+            PlaceBlock();
+        }
     }
 
     private List<Block> jsonToBlock(string json)

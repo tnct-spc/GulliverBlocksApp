@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 public class BlockManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class BlockManager : MonoBehaviour
     public bool hasEndedPlacingBlock = true;
     private int blockNumber = 0;
     List<Block> blocks;
+    public Slider SeekBar;
     private struct Block
     {
         public float x;
@@ -46,6 +48,7 @@ public class BlockManager : MonoBehaviour
     private void Start()
     {
         var _ =  fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
+        SeekBar.onValueChanged.AddListener(PlaceBlockBySeekBar);
     }
 
     async Task fetchAndPlaceBlocks()
@@ -119,7 +122,7 @@ public class BlockManager : MonoBehaviour
         hasEndedPlacingBlock = true;
     }
 
-    public void PlaceBlockBySeekBar(int value)
+    public void PlaceBlockBySeekBar(float value)
     {
         DestroyBlocks();
         blocks = jsonToBlock(response_json);

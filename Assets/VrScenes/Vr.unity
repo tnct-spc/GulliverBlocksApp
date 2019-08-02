@@ -1212,6 +1212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlacingBlock: 1
   hasEndedPlacingBlock: 1
+  SeekBar: {fileID: 0}
 --- !u!114 &784364641
 MonoBehaviour:
   m_ObjectHideFlags: 0

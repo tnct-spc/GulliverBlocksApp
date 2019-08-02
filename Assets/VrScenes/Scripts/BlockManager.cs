@@ -55,8 +55,6 @@ public class BlockManager : MonoBehaviour
         }
 
         placeBlock(jsonToBlock(response_json));
-        Debug.Log(blocks_data[1].block_struct.ID);
-
         applyColorRules();
     }
 
@@ -96,59 +94,78 @@ public class BlockManager : MonoBehaviour
     public void applyColorRules()
     {
         string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"17411e0b-f945-47b0-9a87-974434eb5993\", \"to\": 1 }] }";
-        Debug.Log(rulesJson);
         Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson);
         for (int i = 0; i < ruleData.Length; i++)
         {
             string type = ruleData[i].type;
             string target = ruleData[i].target;
-            string toColorName =  "Color" + ruleData[i].to;
-            if (type == "color")
+            Material toColorMaterial = Resources.Load("Color" + ruleData[i].to) as Material;
+            if (toColorMaterial != null)
             {
-                string targetColorName = "Color" + target;
-                Material targetColorMaterial = Resources.Load(targetColorName) as Material;
-                Material toColorMaterial = Resources.Load(toColorName) as Material;
-                if (targetColorMaterial != null && toColorMaterial != null)
-                { 
-                    for (int j = 0; j < blocks_data.Count; j++)
+                if (type == "color")
+                {
+                    string targetColorName = "Color" + target;
+                    List<GameObject> targetObjectList = searchBlockByColor(targetColorName);
+                    for (int j = 0; j < targetObjectList.Count; j++)
                     {
-                        string currentColorName = "Color" + blocks_data[j].block_struct.colorID;
-                        if (targetColorName == currentColorName)
-                        {
-                            blocks_data[j].block_instance.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
-                        }
+                        targetObjectList[j].GetComponent<Renderer>().sharedMaterial = toColorMaterial;
                     }
+
+                }
+                else if (type == "ID")
+                {
+                    string targetID = target;
+                    GameObject targetObject = searchBlockByID(targetID);
+                    targetObject.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
                 }
                 else
                 {
-                    Debug.Log("Material(rules) is null.");
-                }
-            }
-            else if (type == "ID")
-            {
-                string targetID = target;
-                Material toColorMaterial = Resources.Load(toColorName) as Material;
-                if(toColorMaterial != null)
-                {
-                    for(int j = 0; j < blocks_data.Count; j++)
-                    {
-                        string currentID = blocks_data[j].block_struct.ID;
-                        if (targetID  == currentID)
-                        {
-                            blocks_data[j].block_instance.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.Log("Material(rules) is null.");
+                    Debug.Log("Type is Invalid.");
                 }
             }
             else
             {
-                Debug.Log("Type(rules) is Invalid.");
+                Debug.Log("To is Invalid.");
             }
         }
+    }
+
+    public List<GameObject> searchBlockByColor(string targetColorName)
+    {
+        List<GameObject> blockObjectList = new List<GameObject>();
+        Material targetColorMaterial = Resources.Load(targetColorName) as Material;
+        if(targetColorMaterial != null)
+        {
+            for (int i = 0; i < blocks_data.Count; i++)
+            {
+                if("Color" + blocks_data[i].block_struct.colorID == targetColorName)
+                {
+                    blockObjectList.Add(blocks_data[i].block_instance);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Target(Color) is Invalid.");
+        }
+
+        return blockObjectList;
+    }
+
+    public GameObject searchBlockByID(string targetID)
+    {
+        GameObject blockObject = null;
+        for(int i = 0; i < blocks_data.Count; i++)
+        {
+            if (blocks_data[i].block_struct.ID == targetID)
+            {
+                blockObject = blocks_data[i].block_instance;
+                break;
+            }
+        }
+        if (blockObject == null) Debug.Log("Target(ID) is Invalid.");
+
+        return blockObject;
     }
 
     public static class JsonHelper

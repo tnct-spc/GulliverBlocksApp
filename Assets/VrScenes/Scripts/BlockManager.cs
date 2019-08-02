@@ -39,10 +39,10 @@ public class BlockManager : MonoBehaviour
 
     private void Start()
     {
-        var _ = fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
+        var _ = FetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
     }
 
-    async System.Threading.Tasks.Task fetchAndPlaceBlocks()
+    async System.Threading.Tasks.Task FetchAndPlaceBlocks()
     {
         string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
 
@@ -54,8 +54,8 @@ public class BlockManager : MonoBehaviour
             response_json = await http_client.GetStringAsync(server_url);
         }
 
-        placeBlock(jsonToBlock(response_json));
-        applyColorRules();
+        PlaceBlock(jsonToBlock(response_json));
+        ApplyColorRules();
     }
 
     private List<Block> jsonToBlock(string json)
@@ -78,7 +78,7 @@ public class BlockManager : MonoBehaviour
         return blocks;
     }
 
-    void placeBlock(List<Block> blocks)
+    void PlaceBlock(List<Block> blocks)
     {
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Count; i++)
@@ -91,7 +91,7 @@ public class BlockManager : MonoBehaviour
         }
     }
 
-    public void applyColorRules()
+    private void ApplyColorRules()
     {
         string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"17411e0b-f945-47b0-9a87-974434eb5993\", \"to\": 1 }] }";
         Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson);
@@ -105,7 +105,7 @@ public class BlockManager : MonoBehaviour
                 if (type == "color")
                 {
                     string targetColorName = "Color" + target;
-                    List<GameObject> targetObjectList = searchBlockByColor(targetColorName);
+                    List<GameObject> targetObjectList = SearchBlockByColor(targetColorName);
                     for (int j = 0; j < targetObjectList.Count; j++)
                     {
                         targetObjectList[j].GetComponent<Renderer>().sharedMaterial = toColorMaterial;
@@ -115,7 +115,7 @@ public class BlockManager : MonoBehaviour
                 else if (type == "ID")
                 {
                     string targetID = target;
-                    GameObject targetObject = searchBlockByID(targetID);
+                    GameObject targetObject = SearchBlockByID(targetID);
                     targetObject.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
                 }
                 else
@@ -130,7 +130,7 @@ public class BlockManager : MonoBehaviour
         }
     }
 
-    public List<GameObject> searchBlockByColor(string targetColorName)
+    private List<GameObject> SearchBlockByColor(string targetColorName)
     {
         List<GameObject> blockObjectList = new List<GameObject>();
         Material targetColorMaterial = Resources.Load(targetColorName) as Material;
@@ -152,7 +152,7 @@ public class BlockManager : MonoBehaviour
         return blockObjectList;
     }
 
-    public GameObject searchBlockByID(string targetID)
+    private GameObject SearchBlockByID(string targetID)
     {
         GameObject blockObject = null;
         for(int i = 0; i < blocks_data.Count; i++)
@@ -168,7 +168,7 @@ public class BlockManager : MonoBehaviour
         return blockObject;
     }
 
-    public static class JsonHelper
+    private static class JsonHelper
     {
         public static T[] FromJson<T>(string json)
         {

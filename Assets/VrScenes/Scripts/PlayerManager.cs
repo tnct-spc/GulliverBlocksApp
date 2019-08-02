@@ -29,6 +29,7 @@ public class PlayerManager : MonoBehaviour
     {
         Rotate();
         Move();
+        CheckPlayerisFall();
     }
 
     void Move()
@@ -79,6 +80,18 @@ public class PlayerManager : MonoBehaviour
             player_rigidbody.useGravity = false;
         }else{
             player_rigidbody.useGravity = true;
+        }
+    }
+
+    private void RespornPlayer()
+    {
+        transform.position = new Vector3(0,0,0);
+    }
+
+    private void CheckPlayerisFall()
+    {
+        if(transform.position.y < -1){
+            RespornPlayer();
         }
     }
 }

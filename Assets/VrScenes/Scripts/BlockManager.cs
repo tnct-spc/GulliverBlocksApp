@@ -16,17 +16,6 @@ public class BlockManager : MonoBehaviour
         public bool put;
         public string colorID;
 
-        public Block(float x, float y, float z, string ID, float time, bool put, string colorID)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.ID = ID;
-            this.time = time;
-            this.put = put;
-            this.colorID = colorID;
-        }
-
         public Vector3 GetPosition()
         {
             Vector3 position = new Vector3(x, y, z);
@@ -34,7 +23,7 @@ public class BlockManager : MonoBehaviour
         }
     }
 
-    private List<(Block block_struct, GameObject block_instance)> blocks_data = new List<(Block block_struct, GameObject block_instance)>();
+    private List<(Block block_class, GameObject block_instance)> blocks_data = new List<(Block block_class, GameObject block_instance)>();
     public static string WorldID;
 
     private void Start()
@@ -55,17 +44,20 @@ public class BlockManager : MonoBehaviour
         }
 
         PlaceBlock(JsonToBlock(response_json));
+        Debug.Log("a");
         ApplyColorRules();
+        Debug.Log("b");
     }
 
     private List<Block> JsonToBlock(string json)
     {
-
+        Debug.Log("1");
         // jsonの不要な文字列を削除
         json = json.Replace("{\"blocks\":[", "");
         json = json.Replace("]}", "");
 
         string[] json_array = Regex.Split(json, @"(?<=}),");  // 要素に分ける
+        Debug.Log(json_array);
 
         // jsonからBlockを生成
         List<Block> blocks = new List<Block>();
@@ -74,12 +66,13 @@ public class BlockManager : MonoBehaviour
             Block block = JsonUtility.FromJson<Block>(json_array[i]);
             blocks.Add(block);
         }
-
+        Debug.Log("2");
         return blocks;
     }
 
     void PlaceBlock(List<Block> blocks)
     {
+        Debug.Log("3");
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Count; i++)
         {
@@ -87,8 +80,11 @@ public class BlockManager : MonoBehaviour
             string colorName = "Color" + blocks[i].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
+            Debug.Log("3.5");
+            instance.GetComponent<IncludingBlockInfo>().SetBlockData(blocks[i].x, blocks[i].y, blocks[i].z, blocks[i].ID, blocks[i].time, blocks[i].put, blocks[i].colorID);
             blocks_data.Add((blocks[i], instance));
         }
+        Debug.Log("4");
     }
 
     private void ApplyColorRules()
@@ -134,11 +130,11 @@ public class BlockManager : MonoBehaviour
     {
         List<GameObject> blockObjectList = new List<GameObject>();
         Material targetColorMaterial = Resources.Load(targetColorName) as Material;
-        if(targetColorMaterial != null)
+        if (targetColorMaterial != null)
         {
             for (int i = 0; i < blocks_data.Count; i++)
             {
-                if("Color" + blocks_data[i].block_struct.colorID == targetColorName)
+                if ("Color" + blocks_data[i].block_class.colorID == targetColorName)
                 {
                     blockObjectList.Add(blocks_data[i].block_instance);
                 }
@@ -155,9 +151,9 @@ public class BlockManager : MonoBehaviour
     private GameObject SearchBlockByID(string targetID)
     {
         GameObject blockObject = null;
-        for(int i = 0; i < blocks_data.Count; i++)
+        for (int i = 0; i < blocks_data.Count; i++)
         {
-            if (blocks_data[i].block_struct.ID == targetID)
+            if (blocks_data[i].block_class.ID == targetID)
             {
                 blockObject = blocks_data[i].block_instance;
                 break;

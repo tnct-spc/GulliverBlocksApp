@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 public class BlockManager : MonoBehaviour
 {
-    private struct Block
+    private class Block
     {
         public float x;
         public float y;
@@ -27,7 +27,7 @@ public class BlockManager : MonoBehaviour
             this.colorID = colorID;
         }
 
-        public Vector3 getPosition()
+        public Vector3 GetPosition()
         {
             Vector3 position = new Vector3(x, y, z);
             return position;
@@ -54,11 +54,11 @@ public class BlockManager : MonoBehaviour
             response_json = await http_client.GetStringAsync(server_url);
         }
 
-        PlaceBlock(jsonToBlock(response_json));
+        PlaceBlock(JsonToBlock(response_json));
         ApplyColorRules();
     }
 
-    private List<Block> jsonToBlock(string json)
+    private List<Block> JsonToBlock(string json)
     {
 
         // jsonの不要な文字列を削除
@@ -83,7 +83,7 @@ public class BlockManager : MonoBehaviour
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Count; i++)
         {
-            GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
+            GameObject instance = Instantiate(cube, blocks[i].GetPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blocks[i].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;

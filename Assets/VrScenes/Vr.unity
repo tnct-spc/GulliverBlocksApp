@@ -1389,6 +1389,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toggle: {fileID: 979611540}
   FlyingButtons: {fileID: 577250793}
+  BackToTheGame: {fileID: 0}
+  RuntimeHierarchy: {fileID: 0}
+  RuntimeInspector: {fileID: 0}
 --- !u!4 &784364639
 Transform:
   m_ObjectHideFlags: 0
@@ -1515,8 +1518,9 @@ GameObject:
   - component: {fileID: 853448507}
   - component: {fileID: 853448511}
   - component: {fileID: 853448512}
+  - component: {fileID: 853448513}
   m_Layer: 5
-  m_Name: Button1
+  m_Name: BackToTheGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1565,8 +1569,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 853448512}
-        m_MethodName: OnClick
+      - m_Target: {fileID: 853448513}
+        m_MethodName: OnClickBackToTheGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1642,14 +1646,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 853448506}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e367d50636bd2ee40a9d3bff6494a0f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Button1: {fileID: 853448506}
+  BackToTheGame: {fileID: 853448506}
   RuntimeHierarchy: {fileID: 1637628486}
   RuntimeInspector: {fileID: 1932141157}
+  push: 1
 --- !u!114 &853448512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1662,7 +1667,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed75378c07117a74381ce0e416e3d51f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Button1: {fileID: 853448506}
+  BackToTheGame: {fileID: 853448506}
+  RuntimeHierarchy: {fileID: 1637628486}
+  RuntimeInspector: {fileID: 1932141157}
+  push: 1
+--- !u!114 &853448513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853448506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c7e61c5c3fd85a47b6c17d436fb558a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toggle: {fileID: 979611540}
+  FlyingButtons: {fileID: 577250793}
+  BackToTheGame: {fileID: 853448506}
   RuntimeHierarchy: {fileID: 1637628486}
   RuntimeInspector: {fileID: 1932141157}
 --- !u!1 &867682193
@@ -2200,7 +2223,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Button1: {fileID: 853448506}
-  Button2: {fileID: 0}
+  RuntimeHierarchy: {fileID: 1637628486}
+  RuntimeInspector: {fileID: 1932141157}
   _EventTrigger: {fileID: 1345083674}
 --- !u!114 &1345083674
 MonoBehaviour:

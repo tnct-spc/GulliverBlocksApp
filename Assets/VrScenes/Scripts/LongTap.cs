@@ -7,7 +7,8 @@ using UnityEngine.EventSystems; //追加を忘れないように！
 public class LongTap : MonoBehaviour
 {
     public GameObject Button1;
-    public GameObject Button2;
+    public GameObject RuntimeHierarchy;
+    public GameObject RuntimeInspector;
     //EventTriggerをアタッチしておく
     public EventTrigger _EventTrigger;
 
@@ -27,7 +28,7 @@ public class LongTap : MonoBehaviour
         //PointerUpイベントの登録
         EventTrigger.Entry pressup = new EventTrigger.Entry();
         pressup.eventID = EventTriggerType.PointerUp;
-        pressup.callback.AddListener((data) => PointerUp());
+        
         _EventTrigger.triggers.Add(pressup);
     }
 
@@ -60,23 +61,14 @@ public class LongTap : MonoBehaviour
 
             //お好みの長押し時の挙動をここに書く
             this.Button1.SetActive(true);
-           
+            this.RuntimeInspector.SetActive(true);
+            this.RuntimeHierarchy.SetActive(true);
+
+
         }
         //プレス処理終了
         isPressDown = false;
     }
 
-    //EventTriggerのPointerUpイベントに登録する処理
-    void PointerUp()
-    {
-        if (isPressDown)
-        {
-            Debug.Log("Short Press Done");
-            isPressDown = false;
-
-            //お好みの短押し時の挙動をここに書く(無い場合は書かなくても良い)
-
-        }
-        Debug.Log("Press End");
-    }
+   
 }

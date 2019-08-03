@@ -44,20 +44,16 @@ public class BlockManager : MonoBehaviour
         }
 
         PlaceBlock(JsonToBlock(response_json));
-        Debug.Log("a");
         ApplyColorRules();
-        Debug.Log("b");
     }
 
     private List<Block> JsonToBlock(string json)
     {
-        Debug.Log("1");
         // jsonの不要な文字列を削除
         json = json.Replace("{\"blocks\":[", "");
         json = json.Replace("]}", "");
 
         string[] json_array = Regex.Split(json, @"(?<=}),");  // 要素に分ける
-        Debug.Log(json_array);
 
         // jsonからBlockを生成
         List<Block> blocks = new List<Block>();
@@ -66,13 +62,11 @@ public class BlockManager : MonoBehaviour
             Block block = JsonUtility.FromJson<Block>(json_array[i]);
             blocks.Add(block);
         }
-        Debug.Log("2");
         return blocks;
     }
 
     void PlaceBlock(List<Block> blocks)
     {
-        Debug.Log("3");
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Count; i++)
         {
@@ -80,11 +74,9 @@ public class BlockManager : MonoBehaviour
             string colorName = "Color" + blocks[i].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
-            Debug.Log("3.5");
             instance.GetComponent<IncludingBlockInfo>().SetBlockData(blocks[i].x, blocks[i].y, blocks[i].z, blocks[i].ID, blocks[i].time, blocks[i].put, blocks[i].colorID);
             blocks_data.Add((blocks[i], instance));
         }
-        Debug.Log("4");
     }
 
     private void ApplyColorRules()

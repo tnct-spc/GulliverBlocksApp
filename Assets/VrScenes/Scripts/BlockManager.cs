@@ -23,9 +23,9 @@ public class BlockManager : MonoBehaviour
         public string ID;
         public float time;
         public bool put;
-        public int colorID;
+        public string colorID;
 
-        public Block(float x, float y, float z, string ID, float time, bool put, int colorID)
+        public Block(float x, float y, float z, string ID, float time, bool put, string colorID)
         {
             this.x = x;
             this.y = y;
@@ -48,10 +48,10 @@ public class BlockManager : MonoBehaviour
 
     private void Start()
     {
-        var _ =  fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
-    }
+        var _ = FetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
+    ]
 
-    async Task fetchAndPlaceBlocks()
+    async System.Threading.Tasks.Task FetchAndPlaceBlocks()
     {
         string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
 
@@ -60,12 +60,16 @@ public class BlockManager : MonoBehaviour
             // getリクエストを投げてレスポンスのbodyを読み込む
             response_json = await http_client.GetStringAsync(server_url);
         }
+
         if (GameManager.Mode != "Vr")
         {
             isPlacingBlock = true;
             hasEndedPlacingBlock = false;
-            PlaceBlock();
-        }
+            
+
+        PlaceBlock(jsonToBlock(response_json));
+        ApplyColorRules();
+	]
     }
 
     private List<Block> jsonToBlock(string json)
@@ -87,7 +91,7 @@ public class BlockManager : MonoBehaviour
         return blocks;
     }
 
-    public async void PlaceBlock()
+    void PlaceBlock(List<Block> blocks)
     {
         hasEndedPlacingBlock = false;
 
@@ -135,5 +139,105 @@ public class BlockManager : MonoBehaviour
             instance.name = "Cube" + blockNumber;
             blocks_data.Add((blocks[blockNumber], instance));
         }
+    }
+
+    private void ApplyColorRules()
+    {
+        string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"17411e0b-f945-47b0-9a87-974434eb5993\", \"to\": 1 }] }";
+        Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson);
+        for (int i = 0; i < ruleData.Length; i++)
+        {
+            string type = ruleData[i].type;
+            string target = ruleData[i].target;
+            Material toColorMaterial = Resources.Load("Color" + ruleData[i].to) as Material;
+            if (toColorMaterial != null)
+            {
+                if (type == "color")
+                {
+                    string targetColorName = "Color" + target;
+                    List<GameObject> targetObjectList = SearchBlockByColor(targetColorName);
+                    for (int j = 0; j < targetObjectList.Count; j++)
+                    {
+                        targetObjectList[j].GetComponent<Renderer>().sharedMaterial = toColorMaterial;
+                    }
+
+                }
+                else if (type == "ID")
+                {
+                    string targetID = target;
+                    GameObject targetObject = SearchBlockByID(targetID);
+                    targetObject.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
+                }
+                else
+                {
+                    Debug.Log("Type is Invalid.");
+                }
+            }
+            else
+            {
+                Debug.Log("To is Invalid.");
+            }
+        }
+    }
+
+    private List<GameObject> SearchBlockByColor(string targetColorName)
+    {
+        List<GameObject> blockObjectList = new List<GameObject>();
+        Material targetColorMaterial = Resources.Load(targetColorName) as Material;
+        if(targetColorMaterial != null)
+        {
+            for (int i = 0; i < blocks_data.Count; i++)
+            {
+                if("Color" + blocks_data[i].block_struct.colorID == targetColorName)
+                {
+                    blockObjectList.Add(blocks_data[i].block_instance);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Target(Color) is Invalid.");
+        }
+
+        return blockObjectList;
+    }
+
+    private GameObject SearchBlockByID(string targetID)
+    {
+        GameObject blockObject = null;
+        for(int i = 0; i < blocks_data.Count; i++)
+        {
+            if (blocks_data[i].block_struct.ID == targetID)
+            {
+                blockObject = blocks_data[i].block_instance;
+                break;
+            }
+        }
+        if (blockObject == null) Debug.Log("Target(ID) is Invalid.");
+
+        return blockObject;
+    }
+
+    private static class JsonHelper
+    {
+        public static T[] FromJson<T>(string json)
+        {
+            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+            return wrapper.rules;
+        }
+
+        [System.Serializable]
+        private class Wrapper<T>
+        {
+            public T[] rules;
+        }
+    }
+
+    [System.Serializable]
+    public class Rule
+    {
+        public string type;
+        public string target;
+        public string to;
     }
 }

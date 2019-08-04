@@ -1516,8 +1516,6 @@ GameObject:
   - component: {fileID: 853448509}
   - component: {fileID: 853448508}
   - component: {fileID: 853448507}
-  - component: {fileID: 853448511}
-  - component: {fileID: 853448512}
   - component: {fileID: 853448513}
   m_Layer: 5
   m_Name: BackToTheGame
@@ -1639,38 +1637,6 @@ RectTransform:
   m_AnchoredPosition: {x: -27, y: -169}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &853448511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 853448506}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e367d50636bd2ee40a9d3bff6494a0f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BackToTheGame: {fileID: 853448506}
-  RuntimeHierarchy: {fileID: 1637628486}
-  RuntimeInspector: {fileID: 1932141157}
-  push: 1
---- !u!114 &853448512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 853448506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed75378c07117a74381ce0e416e3d51f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BackToTheGame: {fileID: 853448506}
-  RuntimeHierarchy: {fileID: 1637628486}
-  RuntimeInspector: {fileID: 1932141157}
-  push: 1
 --- !u!114 &853448513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2184,7 +2150,7 @@ GameObject:
   - component: {fileID: 1345083674}
   - component: {fileID: 1345083673}
   m_Layer: 5
-  m_Name: LongTap
+  m_Name: DebugButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2222,7 +2188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1843623e655002469c3d3ad8d8ca873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Button1: {fileID: 853448506}
+  BackToTheGame: {fileID: 853448506}
   RuntimeHierarchy: {fileID: 1637628486}
   RuntimeInspector: {fileID: 1932141157}
   _EventTrigger: {fileID: 1345083674}

@@ -6,7 +6,7 @@ using UnityEngine.EventSystems; //追加を忘れないように！
 //長押しを発生させるuGUI(ImageやText)にアタッチして使う
 public class LongTap : MonoBehaviour
 {
-    public GameObject Button1;
+    public GameObject BackToTheGame;
     public GameObject RuntimeHierarchy;
     public GameObject RuntimeInspector;
     //EventTriggerをアタッチしておく
@@ -60,7 +60,7 @@ public class LongTap : MonoBehaviour
             Debug.Log("Long Press Done");
 
             //お好みの長押し時の挙動をここに書く
-            this.Button1.SetActive(true);
+            this.BackToTheGame.SetActive(true);
             this.RuntimeInspector.SetActive(true);
             this.RuntimeHierarchy.SetActive(true);
 

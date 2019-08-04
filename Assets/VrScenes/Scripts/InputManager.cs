@@ -57,6 +57,10 @@ public class InputManager : MonoBehaviour
         else if (Input.GetKeyUp("s")) Player_StopBack();
 
         if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
+
+        SeekBar.maxValue = blockManager.BlockCount;
+        SeekBar.value = blockManager.BlockNumber;
+        if (SeekBar.value == SeekBar.maxValue) PlayButton.GetComponent<Toggle>().isOn = false;
     }
 
     public void FlyingModeCheck(bool isActive)
@@ -154,4 +158,5 @@ public class InputManager : MonoBehaviour
     {
         blockManager.PlaceBlockBySeekBar(value);
     }
+
 }

@@ -1,19 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 public class BlockManager : MonoBehaviour
 {
-    GameObject gamesystem;
+    GameObject GameSystem;
     static string response_json;
     public bool isPlacingBlock = true;
     public bool hasEndedPlacingBlock = true;
-    private int blockNumber = 0;
+    public int BlockNumber = 0;
     List<Block> blocks;
     InputManager InputManager;
+
+    public int BlockCount = 0;
 
     private struct Block
     {
@@ -61,14 +64,10 @@ public class BlockManager : MonoBehaviour
             // getリクエストを投げてレスポンスのbodyを読み込む
             response_json = await http_client.GetStringAsync(server_url);
         }
-
+        getBlockCount(jsonToBlock(response_json));
         if (GameManager.Mode != "Vr")
         {
-            isPlacingBlock = true;
-            hasEndedPlacingBlock = false;
-
-
-            PlaceBlock(jsonToBlock(response_json));
+            PlaceBlockBySeekBar(BlockCount);
             ApplyColorRules();
         }
     }
@@ -92,22 +91,26 @@ public class BlockManager : MonoBehaviour
         return blocks;
     }
 
+    void getBlockCount(List<Block> blocks) //BlockCountを取得する為の関数
+    {
+        blocks = jsonToBlock(response_json);
+        Object cube = (GameObject)Resources.Load("Cube");
+        for (int i = BlockNumber; BlockNumber < blocks.Count; BlockNumber++)
+        {
+            BlockCount++;
+        }
+        BlockNumber = 0;
+    }
+
     async void PlaceBlock(List<Block> blocks)
     {
         hasEndedPlacingBlock = false;
-
         blocks = jsonToBlock(response_json);
         Object cube = (GameObject)Resources.Load("Cube");
-        for (int i = blockNumber; blockNumber < blocks.Count; blockNumber++)
+        for (int i = BlockNumber; BlockNumber < BlockCount + 1; BlockNumber++)
         {
             while (isPlacingBlock == false) await Task.Delay(1);
-            if (hasEndedPlacingBlock) break;
-            GameObject instance = Instantiate(cube, blocks[blockNumber].getPosition(), Quaternion.identity) as GameObject;
-            string colorName = "Color" + blocks[blockNumber].colorID.ToString();
-            Material colorMaterial = Resources.Load(colorName) as Material;
-            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
-            instance.name = "Cube" + blockNumber;
-            blocks_data.Add((blocks[blockNumber], instance));
+            PlaceBlockBySeekBar(BlockNumber);
             if (GameManager.Mode == "Vr")
             {
                 await Task.Delay(1000);
@@ -120,12 +123,12 @@ public class BlockManager : MonoBehaviour
     {
         isPlacingBlock = true;
         if (blocks == null) return;
-        for (int i = 0; i < blocks.Count; i++)
+        for (int i = 0; i < BlockCount; i++)
         {
             GameObject cube = GameObject.Find("Cube" + i);
             Destroy(cube);
         }
-        blockNumber = 0;
+        BlockNumber = 0;
         hasEndedPlacingBlock = true;
     }
 
@@ -134,14 +137,14 @@ public class BlockManager : MonoBehaviour
         DestroyBlocks();
         blocks = jsonToBlock(response_json);
         Object cube = (GameObject)Resources.Load("Cube");
-        for (int i = blockNumber; blockNumber < value; blockNumber++)
+        for (int i = BlockNumber; BlockNumber < value; BlockNumber++)
         {
-            GameObject instance = Instantiate(cube, blocks[blockNumber].getPosition(), Quaternion.identity) as GameObject;
-            string colorName = "Color" + blocks[blockNumber].colorID.ToString();
+            GameObject instance = Instantiate(cube, blocks[BlockNumber].getPosition(), Quaternion.identity) as GameObject;
+            string colorName = "Color" + blocks[BlockNumber].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
-            instance.name = "Cube" + blockNumber;
-            blocks_data.Add((blocks[blockNumber], instance));
+            instance.name = "Cube" + BlockNumber;
+            blocks_data.Add((blocks[BlockNumber], instance));
         }
     }
 
@@ -249,4 +252,5 @@ public class BlockManager : MonoBehaviour
     {
         if (hasEndedPlacingBlock) PlaceBlock(jsonToBlock(response_json));
     }
+
 }

@@ -88,7 +88,14 @@ public class BlockManager : MonoBehaviour
             Block block = JsonUtility.FromJson<Block>(json_array[i]);
             blocks.Add(block);
         }
+        blocks.Sort(Compare);
+
         return blocks;
+    }
+
+    static int Compare(Block x, Block y)
+    {
+        return x.time.CompareTo(y.time);
     }
 
     void getBlockCount(List<Block> blocks) //BlockCountを取得する為の関数

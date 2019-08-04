@@ -34,7 +34,7 @@ public class BlockManager : MonoBehaviour
 
     async System.Threading.Tasks.Task FetchAndPlaceBlocks()
     {
-        string server_url = "http://" + ServerAdress + "/get_blocks/" + WorldID + "/";
+        string server_url = "http://" + ServerAddress + "/get_blocks/" + WorldID + "/";
 
         string response_json;
 

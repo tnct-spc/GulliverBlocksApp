@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 public class BlockManager : MonoBehaviour
 {
+    GameObject gamesystem;
     static string response_json;
     public bool isPlacingBlock = true;
     public bool hasEndedPlacingBlock = true;
     private int blockNumber = 0;
     List<Block> blocks;
     InputManager InputManager;
-    SeekBarMover SeekBarMover;
 
     private struct Block
     {
@@ -48,8 +48,9 @@ public class BlockManager : MonoBehaviour
 
     private void Start()
     {
-        var _ = FetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
-    ]
+        var _ = FetchAndPlaceBlocks();
+    } // 警告メッセージ回避のために変数に代入する
+    
 
     async System.Threading.Tasks.Task FetchAndPlaceBlocks()
     {
@@ -65,11 +66,11 @@ public class BlockManager : MonoBehaviour
         {
             isPlacingBlock = true;
             hasEndedPlacingBlock = false;
-            
 
-        PlaceBlock(jsonToBlock(response_json));
-        ApplyColorRules();
-	]
+
+            PlaceBlock(jsonToBlock(response_json));
+            ApplyColorRules();
+        }
     }
 
     private List<Block> jsonToBlock(string json)
@@ -91,7 +92,7 @@ public class BlockManager : MonoBehaviour
         return blocks;
     }
 
-    void PlaceBlock(List<Block> blocks)
+    async void PlaceBlock(List<Block> blocks)
     {
         hasEndedPlacingBlock = false;
 
@@ -107,7 +108,10 @@ public class BlockManager : MonoBehaviour
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
             instance.name = "Cube" + blockNumber;
             blocks_data.Add((blocks[blockNumber], instance));
-            if (GameManager.Mode == "Vr") await Task.Delay(1000);
+            if (GameManager.Mode == "Vr")
+            {
+                await Task.Delay(1000);
+            }
         }
         hasEndedPlacingBlock = true;
     }
@@ -239,5 +243,10 @@ public class BlockManager : MonoBehaviour
         public string type;
         public string target;
         public string to;
+    }
+
+    public void CheckHasEndedPlaceBlock()
+    {
+        if (hasEndedPlacingBlock) PlaceBlock(jsonToBlock(response_json));
     }
 }

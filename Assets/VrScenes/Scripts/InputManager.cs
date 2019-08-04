@@ -129,12 +129,12 @@ public class InputManager : MonoBehaviour
     {
         if (isActive)
         {
-            if (blockManager.hasEndedPlacingBlock) blockManager.PlaceBlock();
-            {
-                blockManager.isPlacingBlock = true;
+            blockManager.CheckHasEndedPlaceBlock();
 
-                ResetButton.SetActive(false);
-            }
+            blockManager.isPlacingBlock = true;
+
+            ResetButton.SetActive(false);
+            
         }
         else
         {

@@ -4,11 +4,26 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
+[System.Serializable]
+public struct World
+{
+    public string ID;
+    public string name;
+}
+
+[System.Serializable]
+public struct Rule
+{
+    public string type;
+    public string target;
+    public string to;
+}
+
 public class WorldSelect : MonoBehaviour
 {
     GameSystem gameSystem;
     [SerializeField] private GameObject btnPref;  //ボタンプレハブ
-    const string SERVER_URL = "http://gulliverblocks.herokuapp.com/get_maps";
+    const string SERVER_URL = "https://gulliverblocks.herokuapp.com/get_maps/";
     public World[] WorldsData;
 
 
@@ -33,7 +48,7 @@ public class WorldSelect : MonoBehaviour
         else
         {
             //通信成功
-            WorldsData = JsonHelper.FromJson<World>(webRequest.downloadHandler.text, "Maps");
+            WorldsData = CommunicationManager.JsonHelper.FromJson<World>(webRequest.downloadHandler.text, "Maps");
 
             yield return null;
 

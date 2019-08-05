@@ -3,6 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[System.Serializable]
+public struct Block
+{
+    public float x;
+    public float y;
+    public float z;
+    public string ID;
+    public float time;
+    public bool put;
+    public string colorID;
+
+    public Vector3 GetPosition()
+    {
+        Vector3 position = new Vector3(x, y, z);
+        return position;
+    }
+}
+
+
 public class BlockManager : MonoBehaviour
 {
     private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
@@ -15,7 +34,7 @@ public class BlockManager : MonoBehaviour
 
     IEnumerator FetchAndPlaceBlocks()
     {
-        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
+        string server_url = "https://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
 
         //URLをGETで用意
         UnityWebRequest webRequest = UnityWebRequest.Get(server_url);
@@ -30,7 +49,7 @@ public class BlockManager : MonoBehaviour
         }
         else
         {
-            Block[] blockJson = JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
+            Block[] blockJson = CommunicationManager.JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
             PlaceBlock(blockJson);
             ApplyColorRules();
         }
@@ -54,7 +73,7 @@ public class BlockManager : MonoBehaviour
     private void ApplyColorRules()
     {
         string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"17411e0b-f945-47b0-9a87-974434eb5993\", \"to\": 1 }] }";
-        Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson, "Rules");
+        Rule[] ruleData = CommunicationManager.JsonHelper.FromJson<Rule>(rulesJson, "Rules");
         for (int i = 0; i < ruleData.Length; i++)
         {
             string type = ruleData[i].type;

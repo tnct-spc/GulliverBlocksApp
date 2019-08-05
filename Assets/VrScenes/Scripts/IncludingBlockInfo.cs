@@ -12,15 +12,15 @@ public class IncludingBlockInfo : MonoBehaviour
     public bool put;
     public string colorID;
 
-    public void SetBlockData(float x, float y, float z, string ID, float time, bool put, string colorID)
+    public void SetBlockData(BlockManager.Block block)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.ID = ID;
-        this.time = time;
-        this.put = put;
-        this.colorID = colorID;
+        this.x = block.x;
+        this.y = block.y;
+        this.z = block.z;
+        this.ID = block.ID;
+        this.time = block.time;
+        this.put = block.put;
+        this.colorID = block.colorID;
     }
 
     public Vector3 GetPosition()

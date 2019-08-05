@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 public class BlockManager : MonoBehaviour
 {
-    private class Block
+    public struct Block
     {
         public float x;
         public float y;
@@ -23,7 +23,7 @@ public class BlockManager : MonoBehaviour
         }
     }
 
-    private List<(Block block_class, GameObject block_instance)> blocks_data = new List<(Block block_class, GameObject block_instance)>();
+    private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
     public static string WorldID;
 
     private void Start()
@@ -74,8 +74,9 @@ public class BlockManager : MonoBehaviour
             string colorName = "Color" + blocks[i].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
-            instance.GetComponent<IncludingBlockInfo>().SetBlockData(blocks[i].x, blocks[i].y, blocks[i].z, blocks[i].ID, blocks[i].time, blocks[i].put, blocks[i].colorID);
-            blocks_data.Add((blocks[i], instance));
+            IncludingBlockInfo blockInfo = instance.GetComponent<IncludingBlockInfo>();
+            blockInfo.SetBlockData(blocks[i]);
+            blocks_data.Add((blockInfo, instance));
         }
     }
 
@@ -126,7 +127,7 @@ public class BlockManager : MonoBehaviour
         {
             for (int i = 0; i < blocks_data.Count; i++)
             {
-                if ("Color" + blocks_data[i].block_class.colorID == targetColorName)
+                if ("Color" + blocks_data[i].block_Info.colorID == targetColorName)
                 {
                     blockObjectList.Add(blocks_data[i].block_instance);
                 }
@@ -145,7 +146,7 @@ public class BlockManager : MonoBehaviour
         GameObject blockObject = null;
         for (int i = 0; i < blocks_data.Count; i++)
         {
-            if (blocks_data[i].block_class.ID == targetID)
+            if (blocks_data[i].block_Info.ID == targetID)
             {
                 blockObject = blocks_data[i].block_instance;
                 break;

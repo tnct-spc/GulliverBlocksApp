@@ -26,6 +26,7 @@ public class BlockManager : MonoBehaviour
 {
     private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
     public static string WorldID;
+    public string ServerAddress = "gulliverblocks.herokuapp.com";
 
     private void Start()
     {
@@ -34,7 +35,7 @@ public class BlockManager : MonoBehaviour
 
     IEnumerator FetchAndPlaceBlocks()
     {
-        string server_url = "https://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
+        string server_url = "https://" + ServerAddress + "/get_blocks/" + WorldID + "/";
 
         //URLをGETで用意
         UnityWebRequest webRequest = UnityWebRequest.Get(server_url);

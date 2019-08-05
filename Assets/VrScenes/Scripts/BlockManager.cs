@@ -16,11 +16,11 @@ public class BlockManager : MonoBehaviour
         public bool put;
         public string colorID;
 
-        /*public Vector3 GetPosition()
+        public Vector3 GetPosition()
         {
             Vector3 position = new Vector3(x, y, z);
             return position;
-        }*/
+        }
     }
 
     private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
@@ -49,7 +49,6 @@ public class BlockManager : MonoBehaviour
         else
         {
             Block[] blockJson = JsonHelperBlock.FromJson<Block>(webRequest.downloadHandler.text);
-            Debug.Log(blockJson);
             PlaceBlock(blockJson);
             ApplyColorRules();
         }
@@ -72,12 +71,10 @@ public class BlockManager : MonoBehaviour
 
     void PlaceBlock(Block[] blocks)
     {
-        Debug.Log(blocks);
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Length; i++)
         {
-            Vector3 position = new Vector3(blocks[i].x, blocks[i].y, blocks[i].z);
-            GameObject instance = Instantiate(cube, position, Quaternion.identity) as GameObject;
+            GameObject instance = Instantiate(cube, blocks[i].GetPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blocks[i].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;

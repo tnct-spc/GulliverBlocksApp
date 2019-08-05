@@ -33,29 +33,13 @@ public class WorldSelect : MonoBehaviour
         else
         {
             //通信成功
-            WorldsData = JsonHelper.FromJson<World>(webRequest.downloadHandler.text);
+            WorldsData = JsonHelper.FromJson<World>(webRequest.downloadHandler.text, "Maps");
 
             yield return null;
 
             setWorldSelectButton();
         }
     }
-
-    public static class JsonHelper
-    {
-        public static T[] FromJson<T>(string json)
-        {
-            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
-            return wrapper.maps;
-        }
-
-        [System.Serializable]
-        private class Wrapper<T>
-        {
-            public T[] maps;
-        }
-    }
-
 
     // ButtonをScrollViewに追加する関数
     public void setWorldSelectButton()

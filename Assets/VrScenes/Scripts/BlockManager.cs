@@ -30,24 +30,9 @@ public class BlockManager : MonoBehaviour
         }
         else
         {
-            Block[] blockJson = JsonHelperBlock.FromJson<Block>(webRequest.downloadHandler.text);
+            Block[] blockJson = JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
             PlaceBlock(blockJson);
             ApplyColorRules();
-        }
-    }
-
-    private static class JsonHelperBlock
-    {
-        public static T[] FromJson<T>(string json)
-        {
-            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
-            return wrapper.blocks;
-        }
-
-        [System.Serializable]
-        private class Wrapper<T>
-        {
-            public T[] blocks;
         }
     }
 
@@ -69,7 +54,7 @@ public class BlockManager : MonoBehaviour
     private void ApplyColorRules()
     {
         string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"17411e0b-f945-47b0-9a87-974434eb5993\", \"to\": 1 }] }";
-        Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson);
+        Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson, "Rules");
         for (int i = 0; i < ruleData.Length; i++)
         {
             string type = ruleData[i].type;
@@ -141,20 +126,5 @@ public class BlockManager : MonoBehaviour
         if (blockObject == null) Debug.Log("Target(ID) is Invalid.");
 
         return blockObject;
-    }
-
-    private static class JsonHelper
-    {
-        public static T[] FromJson<T>(string json)
-        {
-            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
-            return wrapper.rules;
-        }
-
-        [System.Serializable]
-        private class Wrapper<T>
-        {
-            public T[] rules;
-        }
     }
 }

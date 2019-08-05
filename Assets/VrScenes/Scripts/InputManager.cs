@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR;
 
 public class InputManager : MonoBehaviour
 {
@@ -26,7 +27,6 @@ public class InputManager : MonoBehaviour
 
         FlyingButtons.SetActive(false);
         toggle.GetComponent<Toggle>().isOn = false;
-        
     }
 
     private void Update()
@@ -42,8 +42,19 @@ public class InputManager : MonoBehaviour
 
         else if (Input.GetKey("s")) Player_Back();
         else if (Input.GetKeyUp("s")) Player_StopBack();
+        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (XRSettings.enabled == true)
+            {
+                XRSettings.enabled = false;
+            }
 
-        if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
+            else
+            {
+                gamemanager.Back_To_Title_If_Android();
+            }
+        }
     }
 
     public void FlyingModeCheck(bool isActive)
@@ -112,4 +123,13 @@ public class InputManager : MonoBehaviour
         playermanager.MoveDown = false;
     }
 
+    public void VR_ModeOn()
+    {
+        XRSettings.enabled = true;
+    }
+
+    public void VR_ModeOff()
+    {
+        XRSettings.enabled = false;
+    }
 }

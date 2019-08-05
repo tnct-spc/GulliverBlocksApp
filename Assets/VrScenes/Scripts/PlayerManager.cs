@@ -32,11 +32,9 @@ public class PlayerManager : MonoBehaviour
     ZAxisMove zMove = ZAxisMove.None;
     */
 
-#if UNITY_EDITOR
+    private Quaternion lastTransformRotate;
     private Vector3 lastMousePosition;
-#else
     Quaternion lastGyro = Quaternion.identity;
-#endif
     public Vector2 rotationSpeed = Vector2.one;
     
 
@@ -44,13 +42,12 @@ public class PlayerManager : MonoBehaviour
     {
         player_rigidbody = GetComponent<Rigidbody>();
     }
-#if !UNITY_EDITOR
     void Start()
     {
+        lastTransformRotate = Quaternion.Euler(Vector3.zero);
         Input.gyro.enabled = true;
-        lastGyro = Input.gyro.attitude;
+        lastGyro = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
     }
-#endif
     void Update ()
     {
         RefleshRotation();
@@ -91,8 +88,8 @@ public class PlayerManager : MonoBehaviour
         #if UNITY_EDITOR //unityEditorでのデバッグ時
         RefleshRotationByMouseDrag();
         #else
-        RefleshRotationByGyro();
         RefleshRotationByTouch();
+        RefleshRotationByGyro();
         #endif
     }
 
@@ -107,24 +104,37 @@ public class PlayerManager : MonoBehaviour
         {
             var currentMousePos = Input.mousePosition;
             var deltaMousePos = currentMousePos - lastMousePosition;
-            transform.Rotate(-deltaMousePos.y * rotationSpeed.y,deltaMousePos.x * rotationSpeed.x,0);
+            transform.Rotate(deltaMousePos.y * rotationSpeed.y, -deltaMousePos.x * rotationSpeed.x,0);
+            transform.rotation *= Quaternion.Euler(new Vector3(deltaMousePos.y * rotationSpeed.y, -deltaMousePos.x * rotationSpeed.x, 0));
+            var transformVec3 = transform.rotation.eulerAngles;
+            transformVec3.z = 0;
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
+            print(transform.rotation.eulerAngles);
             lastMousePosition = currentMousePos;
         }
 
     }
     #else
     void RefleshRotationByGyro(){
-        var currentGyro = Input.gyro.attitude;
-        var deltaRotation = currentGyro * Quaternion.Inverse(lastGyro);
-        transform.rotation *= Quaternion.Inverse(deltaRotation);
-        lastGyro = currentGyro;
+        //var currentGyro = Input.gyro.attitude;
+        var currentGyro = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
+        //var deltaRotation = currentGyro * Quaternion.Inverse(lastGyro);
+        //transform.rotation *= Quaternion.Inverse(deltaRotation);
+        var gyroEuler = currentGyro.eulerAngles;
+        //transform.rotation = currentGyro;
+        transform.rotation = Quaternion.Euler(new Vector3(lastTransformRotate.eulerAngles.x + gyroEuler.x , lastTransformRotate.eulerAngles.y + gyroEuler.y, gyroEuler.z));
+        //lastGyro = currentGyro;
     }
 
     void RefleshRotationByTouch(){
         if (Input.touchCount > 0)
         {
+            var lastTransformEuler = transform.rotation.eulerAngles;
             var deltaTouchPos = Input.GetTouch(0).deltaPosition;
-            transform.Rotate(-deltaTouchPos.y * rotationSpeed.y, deltaTouchPos.x*rotationSpeed.x, 0);
+            lastTransformRotate *= Quaternion.Euler(new Vector3(deltaTouchPos.y * rotationSpeed.y, -deltaTouchPos.x*rotationSpeed.x, 0));
+            //transform.rotation = Quaternion.Euler(new Vector3(lastTransform.rotation.eulerAngles.x , lastTransform.rotation.eulerAngles.y , lastTransformEuler.z));
+            //lastTransform = Quaternion.Euler(deltaTouchPos.y * rotationSpeed.y, -deltaTouchPos.x*rotationSpeed.x, 0);
+            //transform.rotation *= Quaternion.Euler(lastTransform.eulerAngles.x, lastTransform.eulerAngles.y, 0);
         }
     }
     #endif

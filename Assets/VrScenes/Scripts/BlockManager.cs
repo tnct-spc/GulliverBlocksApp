@@ -5,24 +5,6 @@ using UnityEngine.Networking;
 
 public class BlockManager : MonoBehaviour
 {
-    [System.Serializable]
-    public struct Block
-    {
-        public float x;
-        public float y;
-        public float z;
-        public string ID;
-        public float time;
-        public bool put;
-        public string colorID;
-
-        public Vector3 GetPosition()
-        {
-            Vector3 position = new Vector3(x, y, z);
-            return position;
-        }
-    }
-
     private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
     public static string WorldID;
 
@@ -69,7 +51,7 @@ public class BlockManager : MonoBehaviour
         }
     }
 
-    void PlaceBlock(Block[] blocks)
+    public void PlaceBlock(Block[] blocks)
     {
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < blocks.Length; i++)
@@ -174,13 +156,5 @@ public class BlockManager : MonoBehaviour
         {
             public T[] rules;
         }
-    }
-
-    [System.Serializable]
-    public class Rule
-    {
-        public string type;
-        public string target;
-        public string to;
     }
 }

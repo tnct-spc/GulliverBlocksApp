@@ -25,7 +25,7 @@ public class BlockManager : MonoBehaviour
 
     private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
     public static string WorldID;
-    public string url = "http://gulliverblocks.herokuapp.com/get_blocks/";
+    public string ServerAddress = "gulliverblocks.herokuapp.com";
 
     private void Start()
     {
@@ -34,7 +34,7 @@ public class BlockManager : MonoBehaviour
 
     async System.Threading.Tasks.Task FetchAndPlaceBlocks()
     {
-        string server_url = url + WorldID + "/";
+        string server_url = "http://" + ServerAdress + "/get_blocks/" + WorldID + "/";
 
         string response_json;
 

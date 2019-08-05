@@ -1,75 +1,65 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Net.Http;
-using System.Text.RegularExpressions;
+using UnityEngine.Networking;
+
+[System.Serializable]
+public struct Block
+{
+    public float x;
+    public float y;
+    public float z;
+    public string ID;
+    public float time;
+    public bool put;
+    public string colorID;
+
+    public Vector3 GetPosition()
+    {
+        Vector3 position = new Vector3(x, y, z);
+        return position;
+    }
+}
+
 
 public class BlockManager : MonoBehaviour
 {
-    public struct Block
-    {
-        public float x;
-        public float y;
-        public float z;
-        public string ID;
-        public float time;
-        public bool put;
-        public string colorID;
-
-        public Vector3 GetPosition()
-        {
-            Vector3 position = new Vector3(x, y, z);
-            return position;
-        }
-    }
-
     private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
     public static string WorldID;
     public string ServerAddress = "gulliverblocks.herokuapp.com";
 
     private void Start()
     {
-        var _ = FetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
+        StartCoroutine("FetchAndPlaceBlocks");
     }
 
-    async System.Threading.Tasks.Task FetchAndPlaceBlocks()
+    IEnumerator FetchAndPlaceBlocks()
     {
-        string server_url = "http://" + ServerAddress + "/get_blocks/" + WorldID + "/";
+        string server_url = "https://" + ServerAddress + "/get_blocks/" + WorldID + "/";
 
-        string response_json;
+        //URLをGETで用意
+        UnityWebRequest webRequest = UnityWebRequest.Get(server_url);
+        //URLに接続して結果が戻ってくるまで待機
+        yield return webRequest.SendWebRequest();
 
-        using (var http_client = new HttpClient())
+        //エラーが出ていないかチェック
+        if (webRequest.isNetworkError)
         {
-            // getリクエストを投げてレスポンスのbodyを読み込む
-            response_json = await http_client.GetStringAsync(server_url);
+            //通信失敗
+            Debug.Log(webRequest.error);
         }
-
-        PlaceBlock(JsonToBlock(response_json));
-        ApplyColorRules();
+        else
+        {
+            Block[] blockJson = CommunicationManager.JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
+            PlaceBlock(blockJson);
+            ApplyColorRules();
+        }
     }
 
-    private List<Block> JsonToBlock(string json)
-    {
-        // jsonの不要な文字列を削除
-        json = json.Replace("{\"blocks\":[", "");
-        json = json.Replace("]}", "");
-
-        string[] json_array = Regex.Split(json, @"(?<=}),");  // 要素に分ける
-
-        // jsonからBlockを生成
-        List<Block> blocks = new List<Block>();
-        for (int i = 0; i < json_array.Length; i++)
-        {
-            Block block = JsonUtility.FromJson<Block>(json_array[i]);
-            blocks.Add(block);
-        }
-        return blocks;
-    }
-
-    void PlaceBlock(List<Block> blocks)
+    public void PlaceBlock(Block[] blocks)
     {
         Object cube = (GameObject)Resources.Load("Cube");
-        for (int i = 0; i < blocks.Count; i++)
+        for (int i = 0; i < blocks.Length; i++)
         {
             GameObject instance = Instantiate(cube, blocks[i].GetPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blocks[i].colorID.ToString();
@@ -84,7 +74,7 @@ public class BlockManager : MonoBehaviour
     private void ApplyColorRules()
     {
         string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"17411e0b-f945-47b0-9a87-974434eb5993\", \"to\": 1 }] }";
-        Rule[] ruleData = JsonHelper.FromJson<Rule>(rulesJson);
+        Rule[] ruleData = CommunicationManager.JsonHelper.FromJson<Rule>(rulesJson, "Rules");
         for (int i = 0; i < ruleData.Length; i++)
         {
             string type = ruleData[i].type;
@@ -156,28 +146,5 @@ public class BlockManager : MonoBehaviour
         if (blockObject == null) Debug.Log("Target(ID) is Invalid.");
 
         return blockObject;
-    }
-
-    private static class JsonHelper
-    {
-        public static T[] FromJson<T>(string json)
-        {
-            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
-            return wrapper.rules;
-        }
-
-        [System.Serializable]
-        private class Wrapper<T>
-        {
-            public T[] rules;
-        }
-    }
-
-    [System.Serializable]
-    public class Rule
-    {
-        public string type;
-        public string target;
-        public string to;
     }
 }

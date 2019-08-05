@@ -12,7 +12,7 @@ public class IncludingBlockInfo : MonoBehaviour
     public bool put;
     public string colorID;
 
-    public void SetBlockData(BlockManager.Block block)
+    public void SetBlockData(Block block)
     {
         this.x = block.x;
         this.y = block.y;

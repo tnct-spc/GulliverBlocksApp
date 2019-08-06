@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR;
 
 public class GameSystem : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class GameSystem : MonoBehaviour
 
     private void Awake()
     {
+        XRSettings.enabled = false;
         ModeSelectPanel.SetActive(false);
     }
     public void SelectGameMode()

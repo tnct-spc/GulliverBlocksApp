@@ -10,22 +10,17 @@ public class ColorChangePanel : MonoBehaviour
 
     void OnEnable()
     {
-        Debug.Log("1");
         for (int i = 0; i < 10; i++)
         {
             string materialName = "Color" + i.ToString();
             Material material = Resources.Load(materialName, typeof(Material)) as Material;
             contentMaterials.Add(material);
-            Debug.Log(contentMaterials[i].name);
         }
-        Debug.Log("2");
-        Debug.Log("count: "+ contentMaterials.Count);
         SetColorPanel();
     }
 
     public void SetColorPanel()
-    {
-        Debug.Log("3");
+    { 
         int materialCount = contentMaterials.Count;
 
         //Content取得(ボタンを並べる場所)
@@ -37,22 +32,27 @@ public class ColorChangePanel : MonoBehaviour
         float panelHeight = panelPref.GetComponent<LayoutElement>().preferredHeight;   // WorldSelectButton自体の高さを取得
         content.sizeDelta = new Vector2(0, (panelHeight + panelSpace) * materialCount); // 上２つの要素からcontentの高さを作成
 
-        Debug.Log("4");
         bool isFirst = true;
         ToggleGroup toggleGroup = null;
         for (int i = 0; i < materialCount; i++)
         {
             int panelNum = i;
-
-            //ボタン生成
+            Material material = new Material(Shader.Find("UI/Default"));
+            material.color = contentMaterials[i].color;
             GameObject panel = (GameObject)Instantiate(panelPref);
 
-            //ボタンをContentの子に設定
             panel.transform.SetParent(content, false);
 
             GameObject toggleObject = panel.transform.Find("ColorChangeToggle").gameObject;
+
             Toggle toggle =  toggleObject.GetComponent<Toggle>();
             toggle.isOn = false;
+
+            Text textNameLabel = toggleObject.transform.Find("NameLabel").gameObject.GetComponent<Text>();
+            textNameLabel.text = "Name : " + contentMaterials[i].name;
+
+            RawImage rawImage = toggleObject.transform.Find("MaterialRawImage").gameObject.GetComponent<RawImage>();
+            rawImage.material = material;
 
             if (isFirst)
             {
@@ -63,6 +63,5 @@ public class ColorChangePanel : MonoBehaviour
 
             toggle.group = toggleGroup;
         }
-        Debug.Log("5");
     }
 }

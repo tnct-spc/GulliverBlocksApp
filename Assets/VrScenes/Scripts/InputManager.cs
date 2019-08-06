@@ -45,6 +45,7 @@ public class InputManager : MonoBehaviour
         FlyingModeCheck(isPlayMode);
         PlayButton.GetComponent<Toggle>().isOn = false;
         PlayModeUI.SetActive(isPlayMode);
+        SeekBar.maxValue = 100;
     }
 
     private void Update()
@@ -62,8 +63,6 @@ public class InputManager : MonoBehaviour
         else if (Input.GetKeyUp("s")) Player_StopBack();
 
         if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
-
-        SeekBar.maxValue = BlockManager.BlockCount;
     }
 
     public void FlyingModeCheck(bool isActive)
@@ -134,18 +133,16 @@ public class InputManager : MonoBehaviour
 
     public void Play(bool isActive)
     {
+        SeekBar.maxValue = BlockManager.GetBlockJsonLength();
         if (isActive)
         {
-            if (BlockManager.BlockNumber == 0) BlockManager.StartPlaceBlocks();
-            BlockManager.isPlacingBlock = true;
+            if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
             ResetButton.SetActive(false);
         }
         else
         {
             ResetButton.SetActive(true);
         }
-
-        if (isActive == false) BlockManager.isPlacingBlock = false;
     }
 
     public void DestroyBlocks()
@@ -156,6 +153,7 @@ public class InputManager : MonoBehaviour
 
     public void PlaceBlockBySeekBar(float value)
     {
+        SeekBar.maxValue = BlockManager.GetBlockJsonLength();
         BlockManager.PlaceBlocks(value);
     }
 

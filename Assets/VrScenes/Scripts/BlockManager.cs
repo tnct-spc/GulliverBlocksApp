@@ -33,19 +33,23 @@ public class BlockManager : MonoBehaviour
     public string ServerAddress = "gulliverblocks.herokuapp.com";
     GameObject GameSystem;
     static string response_json;
-    public bool isPlacingBlock = false;
     public float BlockNumber = 0;
-    List<Block> blocks;
+    public bool isRepeating = false;
     InputManager InputManager;
     Slider SeekBar;
-    public int BlockCount = 0;
+    Toggle PlayButton;
+    GameManager GameManager;
+    Block[] blockJson;
 
     private void Start()
     {
         GameSystem = GameObject.Find("GameSystem");
         InputManager = GameSystem.GetComponent<InputManager>();
         SeekBar = InputManager.SeekBar;
+        PlayButton = InputManager.PlayButton;
+        GameManager = GameSystem.GetComponent<GameManager>();
         StartCoroutine("FetchAndPlaceBlocks");
+        if (GameManager.Mode == "View") InitialPlacementInViewMode();
     }
 
     IEnumerator FetchAndPlaceBlocks()
@@ -64,82 +68,56 @@ public class BlockManager : MonoBehaviour
         }
         else
         {
-            Block[] blockJson = CommunicationManager.JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
-            RepeatPlaceBlocks();
-            ApplyColorRules();
-        }
-        getBlockCount(jsonToBlock(response_json));
-        if (GameManager.Mode != "Vr")
-        {
-            PlaceBlocks(BlockCount);
+            blockJson = CommunicationManager.JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
             ApplyColorRules();
         }
     }
 
-    private List<Block> jsonToBlock(string json)
+    async void InitialPlacementInViewMode()
     {
-
-        // jsonの不要な文字列を削除
-        json = json.Replace("{\"blocks\":[", "");
-        json = json.Replace("]}", "");
-
-        string[] json_array = Regex.Split(json, @"(?<=}),");  // 要素に分ける
-
-        // jsonからBlockを生成
-        List<Block> blocks = new List<Block>();
-        blocks.Sort((x, y) => x.time.CompareTo(y.time));
-
-        return blocks;
-    }
-    void getBlockCount(List<Block> blocks)
-    {
-        blocks = jsonToBlock(response_json);
-        BlockCount = blocks.Count;
+        await Task.Delay(1000);
+        PlaceBlocks(GetBlockJsonLength());
     }
 
-    public void StartPlaceBlocks()
+    public float GetBlockJsonLength()
     {
-        RepeatPlaceBlocks();
+        return blockJson.Length;
     }
-    async void RepeatPlaceBlocks()
+
+    public async void RepeatPlaceBlocks()
     {
-        isPlacingBlock = true;
-        for (float i = BlockNumber; BlockNumber < BlockCount + 1; BlockNumber++)
+        isRepeating = true;
+        while(BlockNumber < blockJson.Length)
         {
-            while (isPlacingBlock == false) await Task.Delay(1);
+            while (PlayButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
             SeekBar.value++;
-            if (GameManager.Mode == "Vr")
-            {
-                await Task.Delay(1000);
-            }
+            await Task.Delay(1000);
         }
-        isPlacingBlock = false;
-        InputManager.PlayButton.GetComponent<Toggle>().isOn = false;
+        PlayButton.GetComponent<Toggle>().isOn = false;
+        isRepeating = false;
     }
 
     public void DestroyBlocks()
     {
-        for (int i = 0; i < BlockCount; i++)
+        for (int i = 0; i < blockJson.Length; i++)
         {
             GameObject cube = GameObject.Find("Cube" + i);
             Destroy(cube);
         }
-        BlockNumber = 0;
     }
 
     public void PlaceBlocks(float value)
     {
         DestroyBlocks();
-        blocks = jsonToBlock(response_json);
         Object cube = (GameObject)Resources.Load("Cube");
         for (int i = 0; i < value; i++)
         {
-            GameObject instance = Instantiate(cube, blocks[i].GetPosition(), Quaternion.identity) as GameObject;
-            string colorName = "Color" + blocks[i].colorID.ToString();
+            GameObject instance = Instantiate(cube, blockJson[i].GetPosition(), Quaternion.identity) as GameObject;
+            string colorName = "Color" + blockJson[i].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
             IncludingBlockInfo blockInfo = instance.GetComponent<IncludingBlockInfo>();
-            blockInfo.SetBlockData(blocks[i]);
+            blockInfo.SetBlockData(blockJson[i]);
             instance.name = "Cube" + i;
             blocks_data.Add((blockInfo, instance));
         }

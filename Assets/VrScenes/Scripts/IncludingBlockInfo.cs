@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class IncludingBlockInfo : MonoBehaviour
 {
@@ -14,13 +15,13 @@ public class IncludingBlockInfo : MonoBehaviour
 
     public void SetBlockData(Block block)
     {
-        this.x = block.x;
-        this.y = block.y;
-        this.z = block.z;
-        this.ID = block.ID;
-        this.time = block.time;
-        this.put = block.put;
-        this.colorID = block.colorID;
+        x = block.x;
+        y = block.y;
+        z = block.z;
+        ID = block.ID;
+        time = block.time;
+        put = block.put;
+        colorID = block.colorID;
     }
 
     public Vector3 GetPosition()
@@ -31,6 +32,8 @@ public class IncludingBlockInfo : MonoBehaviour
 
     public void OnClickBlock()
     {
-        Debug.Log("click block");
+        GameObject canvas = GameObject.Find("Canvas");
+        GameObject panel = canvas.transform.Find("ColorChangePanel").gameObject;
+        panel.SetActive(true);
     }
 }

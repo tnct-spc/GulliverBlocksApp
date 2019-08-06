@@ -28,4 +28,9 @@ public class IncludingBlockInfo : MonoBehaviour
         Vector3 position = new Vector3(x, y, z);
         return position;
     }
+
+    public void OnClickBlock()
+    {
+        Debug.Log("click block");
+    }
 }

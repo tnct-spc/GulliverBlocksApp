@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
 
     GameManager gamemanager;
     GameObject gamesystem;
-    BlockManager blockManager;
+    BlockManager BlockManager;
 
     public Toggle FlyingModeToggle;
     public GameObject FlyingButtons;
@@ -27,7 +27,7 @@ public class InputManager : MonoBehaviour
 
         gamesystem = GameObject.Find("GameSystem");
         gamemanager = gamesystem.GetComponent<GameManager>();
-        blockManager = gamesystem.GetComponent<BlockManager>();
+        BlockManager = gamesystem.GetComponent<BlockManager>();
 
         FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
         SeekBar.onValueChanged.AddListener(PlaceBlockBySeekBar);
@@ -58,9 +58,7 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape)) gamemanager.Back_To_Title_If_Android();
 
-        SeekBar.maxValue = blockManager.BlockCount;
-        SeekBar.value = blockManager.BlockNumber;
-        if (SeekBar.value == SeekBar.maxValue) PlayButton.GetComponent<Toggle>().isOn = false;
+        SeekBar.maxValue = BlockManager.BlockCount;
     }
 
     public void FlyingModeCheck(bool isActive)
@@ -133,30 +131,27 @@ public class InputManager : MonoBehaviour
     {
         if (isActive)
         {
-            blockManager.CheckHasEndedPlaceBlock();
-
-            blockManager.isPlacingBlock = true;
-
+            if (BlockManager.BlockNumber == 0) BlockManager.StartPlaceBlocks();
+            BlockManager.isPlacingBlock = true;
             ResetButton.SetActive(false);
-            
         }
         else
         {
             ResetButton.SetActive(true);
         }
 
-        if (isActive == false) blockManager.isPlacingBlock = false;
+        if (isActive == false) BlockManager.isPlacingBlock = false;
     }
 
     public void DestroyBlocks()
     {
-        PlayButton.GetComponent<Toggle>().isOn = false;
-        blockManager.DestroyBlocks();
+        BlockManager.DestroyBlocks();
+        SeekBar.value = 0;
     }
 
     public void PlaceBlockBySeekBar(float value)
     {
-        blockManager.PlaceBlockBySeekBar(value);
+        BlockManager.PlaceBlocks(value);
     }
 
 }

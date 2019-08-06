@@ -39,6 +39,7 @@ public class ColorChangePanel : MonoBehaviour
 
         Debug.Log("4");
         bool isFirst = true;
+        ToggleGroup toggleGroup = null;
         for (int i = 0; i < materialCount; i++)
         {
             int panelNum = i;
@@ -49,14 +50,18 @@ public class ColorChangePanel : MonoBehaviour
             //ボタンをContentの子に設定
             panel.transform.SetParent(content, false);
 
-            Toggle toggle = panel.transform.Find("ColorChangeToggle").GetComponent<Toggle>();
+            GameObject toggleObject = panel.transform.Find("ColorChangeToggle").gameObject;
+            Toggle toggle =  toggleObject.GetComponent<Toggle>();
             toggle.isOn = false;
 
             if (isFirst)
             {
                 toggle.isOn = true;
+                toggleGroup = toggleObject.AddComponent<ToggleGroup>();
                 isFirst = false;
             }
+
+            toggle.group = toggleGroup;
         }
         Debug.Log("5");
     }

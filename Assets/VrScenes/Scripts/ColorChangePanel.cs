@@ -48,8 +48,8 @@ public class ColorChangePanel : MonoBehaviour
             Toggle toggle =  toggleObject.GetComponent<Toggle>();
             toggle.isOn = false;
 
-            Text textNameLabel = toggleObject.transform.Find("NameLabel").gameObject.GetComponent<Text>();
-            textNameLabel.text = "Name : " + contentMaterials[i].name;
+            Text textMaterialNameLabel = toggleObject.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>();
+            textMaterialNameLabel.text = contentMaterials[i].name;
 
             RawImage rawImage = toggleObject.transform.Find("MaterialRawImage").gameObject.GetComponent<RawImage>();
             rawImage.material = material;

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +19,11 @@ public class InputManager : MonoBehaviour
     public GameObject PlayModeUI;
     public GameObject ResetButton;
     public Slider SeekBar;
+
+    public GameObject BackToTheGame;
+    public GameObject RuntimeHierarchy;
+    public GameObject RuntimeInspector;
+    bool push = true;
 
     void Start()
     {
@@ -154,4 +159,11 @@ public class InputManager : MonoBehaviour
         BlockManager.PlaceBlocks(value);
     }
 
+    public void OnClickBackToTheGame()
+    {
+        this.BackToTheGame.SetActive(false);
+        this.RuntimeHierarchy.SetActive(false);
+        this.RuntimeInspector.SetActive(false);
+        Debug.Log("Back to Game");
+    }
 }

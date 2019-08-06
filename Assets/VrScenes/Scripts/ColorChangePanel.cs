@@ -38,6 +38,7 @@ public class ColorChangePanel : MonoBehaviour
         content.sizeDelta = new Vector2(0, (panelHeight + panelSpace) * materialCount); // 上２つの要素からcontentの高さを作成
 
         Debug.Log("4");
+        bool isFirst = true;
         for (int i = 0; i < materialCount; i++)
         {
             int panelNum = i;
@@ -48,8 +49,14 @@ public class ColorChangePanel : MonoBehaviour
             //ボタンをContentの子に設定
             panel.transform.SetParent(content, false);
 
-            //ボタンのテキスト変更
-            //panel.transform.GetComponentInChildren<Text>().text = WorldsData[btnNum].name;
+            Toggle toggle = panel.transform.Find("ColorChangeToggle").GetComponent<Toggle>();
+            toggle.isOn = false;
+
+            if (isFirst)
+            {
+                toggle.isOn = true;
+                isFirst = false;
+            }
         }
         Debug.Log("5");
     }

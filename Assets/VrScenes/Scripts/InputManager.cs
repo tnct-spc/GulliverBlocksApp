@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +14,9 @@ public class InputManager : MonoBehaviour
 
     public Toggle toggle;
     public GameObject FlyingButtons;
+    public GameObject BackToTheGame;
+    public GameObject RuntimeHierarchy;
+    public GameObject RuntimeInspector;
 
     void Start()
     {
@@ -132,4 +135,14 @@ public class InputManager : MonoBehaviour
     {
         XRSettings.enabled = false;
     }
+
+    public void OnClickBackToTheGame()
+    {
+        this.BackToTheGame.SetActive(false);
+        this.RuntimeHierarchy.SetActive(false);
+        this.RuntimeInspector.SetActive(false);
+        Debug.Log("Back to Game");
+    }
+
 }
+

@@ -1,92 +1,150 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Net.Http;
-using System.Text.RegularExpressions;
+using UnityEngine.Networking;
+
+[System.Serializable]
+public struct Block
+{
+    public float x;
+    public float y;
+    public float z;
+    public string ID;
+    public float time;
+    public bool put;
+    public string colorID;
+
+    public Vector3 GetPosition()
+    {
+        Vector3 position = new Vector3(x, y, z);
+        return position;
+    }
+}
+
 
 public class BlockManager : MonoBehaviour
 {
-    private struct Block
-    {
-        public float x;
-        public float y;
-        public float z;
-        public string ID;
-        public float time;
-        public bool put;
-        public int colorID;
-
-        public Block(float x, float y, float z, string ID, float time, bool put, int colorID)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.ID = ID;
-            this.time = time;
-            this.put = put;
-            this.colorID = colorID;
-        }
-
-        public Vector3 getPosition()
-        {
-            Vector3 position = new Vector3(x, y, z);
-            return position;
-        }
-    }
-
-    private List<(Block block_struct, GameObject block_instance)> blocks_data = new List<(Block block_struct, GameObject block_instance)>();
+    private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
     public static string WorldID;
+    public string ServerAddress = "gulliverblocks.herokuapp.com";
 
     private void Start()
     {
-        var _ =  fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
+        StartCoroutine("FetchAndPlaceBlocks");
     }
 
-    async System.Threading.Tasks.Task fetchAndPlaceBlocks()
+    IEnumerator FetchAndPlaceBlocks()
     {
-        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
+        string server_url = "https://" + ServerAddress + "/get_blocks/" + WorldID + "/";
 
-        string response_json;
+        //URLをGETで用意
+        UnityWebRequest webRequest = UnityWebRequest.Get(server_url);
+        //URLに接続して結果が戻ってくるまで待機
+        yield return webRequest.SendWebRequest();
 
-        using (var http_client = new HttpClient())
+        //エラーが出ていないかチェック
+        if (webRequest.isNetworkError)
         {
-            // getリクエストを投げてレスポンスのbodyを読み込む
-            response_json = await http_client.GetStringAsync(server_url);
+            //通信失敗
+            Debug.Log(webRequest.error);
         }
-
-        placeBlock(jsonToBlock(response_json));
+        else
+        {
+            Block[] blockJson = CommunicationManager.JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
+            PlaceBlock(blockJson);
+            ApplyColorRules();
+        }
     }
 
-    private List<Block> jsonToBlock(string json)
-    {
-
-        // jsonの不要な文字列を削除
-        json = json.Replace("{\"blocks\":[", "");
-        json = json.Replace("]}", "");
-
-        string[] json_array = Regex.Split(json, @"(?<=}),");  // 要素に分ける
-
-        // jsonからBlockを生成
-        List<Block> blocks = new List<Block>();
-        for (int i = 0; i < json_array.Length; i++)
-        {
-            Block block = JsonUtility.FromJson<Block>(json_array[i]);
-            blocks.Add(block);
-        }
-
-        return blocks;
-    }
-
-    void placeBlock(List<Block> blocks)
+    public void PlaceBlock(Block[] blocks)
     {
         Object cube = (GameObject)Resources.Load("Cube");
-        for (int i = 0; i < blocks.Count; i++)
+        for (int i = 0; i < blocks.Length; i++)
         {
-            GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
+            GameObject instance = Instantiate(cube, blocks[i].GetPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blocks[i].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
-            blocks_data.Add((blocks[i], instance));
+            IncludingBlockInfo blockInfo = instance.GetComponent<IncludingBlockInfo>();
+            blockInfo.SetBlockData(blocks[i]);
+            blocks_data.Add((blockInfo, instance));
         }
+    }
+
+    private void ApplyColorRules()
+    {
+        string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"17411e0b-f945-47b0-9a87-974434eb5993\", \"to\": 1 }] }";
+        Rule[] ruleData = CommunicationManager.JsonHelper.FromJson<Rule>(rulesJson, "Rules");
+        for (int i = 0; i < ruleData.Length; i++)
+        {
+            string type = ruleData[i].type;
+            string target = ruleData[i].target;
+            Material toColorMaterial = Resources.Load("Color" + ruleData[i].to) as Material;
+            if (toColorMaterial != null)
+            {
+                if (type == "color")
+                {
+                    string targetColorName = "Color" + target;
+                    List<GameObject> targetObjectList = SearchBlockByColor(targetColorName);
+                    for (int j = 0; j < targetObjectList.Count; j++)
+                    {
+                        targetObjectList[j].GetComponent<Renderer>().sharedMaterial = toColorMaterial;
+                    }
+
+                }
+                else if (type == "ID")
+                {
+                    string targetID = target;
+                    GameObject targetObject = SearchBlockByID(targetID);
+                    targetObject.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
+                }
+                else
+                {
+                    Debug.Log("Type is Invalid.");
+                }
+            }
+            else
+            {
+                Debug.Log("To is Invalid.");
+            }
+        }
+    }
+
+    private List<GameObject> SearchBlockByColor(string targetColorName)
+    {
+        List<GameObject> blockObjectList = new List<GameObject>();
+        Material targetColorMaterial = Resources.Load(targetColorName) as Material;
+        if (targetColorMaterial != null)
+        {
+            for (int i = 0; i < blocks_data.Count; i++)
+            {
+                if ("Color" + blocks_data[i].block_Info.colorID == targetColorName)
+                {
+                    blockObjectList.Add(blocks_data[i].block_instance);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Target(Color) is Invalid.");
+        }
+
+        return blockObjectList;
+    }
+
+    private GameObject SearchBlockByID(string targetID)
+    {
+        GameObject blockObject = null;
+        for (int i = 0; i < blocks_data.Count; i++)
+        {
+            if (blocks_data[i].block_Info.ID == targetID)
+            {
+                blockObject = blocks_data[i].block_instance;
+                break;
+            }
+        }
+        if (blockObject == null) Debug.Log("Target(ID) is Invalid.");
+
+        return blockObject;
     }
 }

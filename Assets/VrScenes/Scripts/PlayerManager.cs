@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.XR;
 
+
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] int default_move_speed = 1;
@@ -9,7 +10,7 @@ public class PlayerManager : MonoBehaviour
     
     private bool isDefault_speed = true;
 
-    public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
+    public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown, isTouchButton;
 
 /* 
     public enum XAxisMove{

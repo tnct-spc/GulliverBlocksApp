@@ -147,7 +147,7 @@ public class InputManager : MonoBehaviour
 
     public void DestroyBlocks()
     {
-        BlockManager.DestroyBlocks();
+        BlockManager.ClearBlocks();
         SeekBar.value = 0;
     }
 

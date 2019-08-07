@@ -40,6 +40,7 @@ public class BlockManager : MonoBehaviour
     Toggle PlayButton;
     GameManager GameManager;
     Block[] blockJson;
+    GameObject[] Cube;
 
     private void Start()
     {
@@ -49,7 +50,6 @@ public class BlockManager : MonoBehaviour
         PlayButton = InputManager.PlayButton;
         GameManager = GameSystem.GetComponent<GameManager>();
         StartCoroutine("FetchAndPlaceBlocks");
-        if (GameManager.Mode == "View") InitialPlacementInViewMode();
     }
 
     IEnumerator FetchAndPlaceBlocks()
@@ -69,17 +69,30 @@ public class BlockManager : MonoBehaviour
         else
         {
             blockJson = CommunicationManager.JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
+            Cube = new GameObject[GetBlockJsonLength()];
+            InitialPlacement();
             ApplyColorRules();
         }
     }
 
-    async void InitialPlacementInViewMode()
+    void InitialPlacement()
     {
-        await Task.Delay(1000);
-        PlaceBlocks(GetBlockJsonLength());
+        Object cube = (GameObject)Resources.Load("Cube");
+        for (int i = 0; i < GetBlockJsonLength(); i++)
+        {
+            Cube[i] = Instantiate(cube, blockJson[i].GetPosition(), Quaternion.identity) as GameObject;
+            string colorName = "Color" + blockJson[i].colorID.ToString();
+            Material colorMaterial = Resources.Load(colorName) as Material;
+            Cube[i].GetComponent<Renderer>().sharedMaterial = colorMaterial;
+            IncludingBlockInfo blockInfo = Cube[i].GetComponent<IncludingBlockInfo>();
+            blockInfo.SetBlockData(blockJson[i]);
+            Cube[i].name = "Cube" + i;
+            blocks_data.Add((blockInfo, Cube[i]));
+            if (GameManager.Mode == "Vr") Cube[i].SetActive(false);
+        }
     }
 
-    public float GetBlockJsonLength()
+    public int GetBlockJsonLength()
     {
         return blockJson.Length;
     }
@@ -97,29 +110,20 @@ public class BlockManager : MonoBehaviour
         isRepeating = false;
     }
 
-    public void DestroyBlocks()
+    public void ClearBlocks()
     {
         for (int i = 0; i < blockJson.Length; i++)
         {
-            GameObject cube = GameObject.Find("Cube" + i);
-            Destroy(cube);
+            Cube[i].SetActive(false);
         }
     }
 
     public void PlaceBlocks(float value)
     {
-        DestroyBlocks();
-        Object cube = (GameObject)Resources.Load("Cube");
+        ClearBlocks();
         for (int i = 0; i < value; i++)
         {
-            GameObject instance = Instantiate(cube, blockJson[i].GetPosition(), Quaternion.identity) as GameObject;
-            string colorName = "Color" + blockJson[i].colorID.ToString();
-            Material colorMaterial = Resources.Load(colorName) as Material;
-            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
-            IncludingBlockInfo blockInfo = instance.GetComponent<IncludingBlockInfo>();
-            blockInfo.SetBlockData(blockJson[i]);
-            instance.name = "Cube" + i;
-            blocks_data.Add((blockInfo, instance));
+            Cube[i].SetActive(true);
         }
         BlockNumber = value;
     }

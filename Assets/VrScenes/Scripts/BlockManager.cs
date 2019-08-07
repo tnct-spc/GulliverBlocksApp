@@ -72,6 +72,7 @@ public class BlockManager : MonoBehaviour
             Cube = new GameObject[GetBlockJsonLength()];
             InitialPlacement();
             ApplyColorRules();
+            if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
         }
     }
 

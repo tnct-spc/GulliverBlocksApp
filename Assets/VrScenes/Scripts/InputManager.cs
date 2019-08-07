@@ -44,7 +44,7 @@ public class InputManager : MonoBehaviour
         FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayMode;
         FlyingModeCheck(isPlayMode);
         PlayButton.GetComponent<Toggle>().isOn = false;
-        PlayModeUI.SetActive(isPlayMode);
+        PlayModeUI.SetActive(false);
         SeekBar.maxValue = 100;
     }
 

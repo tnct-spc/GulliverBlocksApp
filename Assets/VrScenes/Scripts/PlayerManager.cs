@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.XR;
-
+using UnityEngine.EventSystems;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -38,6 +38,9 @@ public class PlayerManager : MonoBehaviour
     private Vector3 lastMousePosition;
     Quaternion lastGyro = Quaternion.identity;
     public Vector2 rotationSpeed = Vector2.one;
+
+    InputManager inputManager = new InputManager();
+    
     
 
     private void Awake()
@@ -131,9 +134,13 @@ public class PlayerManager : MonoBehaviour
     void RefleshRotationByTouch(){
         if (Input.touchCount > 0)
         {
-            var lastTransformEuler = transform.rotation.eulerAngles;
-            var deltaTouchPos = Input.GetTouch(0).deltaPosition;
-            lastTransformRotate *= Quaternion.Euler(new Vector3(deltaTouchPos.y * rotationSpeed.y, -deltaTouchPos.x*rotationSpeed.x, 0));
+            if(!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)){
+                if(!inputManager.isSliderSelect){
+                    var lastTransformEuler = transform.rotation.eulerAngles;
+                    var deltaTouchPos = Input.GetTouch(0).deltaPosition;
+                    lastTransformRotate *= Quaternion.Euler(new Vector3(deltaTouchPos.y * rotationSpeed.y, -deltaTouchPos.x*rotationSpeed.x, 0));
+                }
+            }
             //transform.rotation = Quaternion.Euler(new Vector3(lastTransform.rotation.eulerAngles.x , lastTransform.rotation.eulerAngles.y , lastTransformEuler.z));
             //lastTransform = Quaternion.Euler(deltaTouchPos.y * rotationSpeed.y, -deltaTouchPos.x*rotationSpeed.x, 0);
             //transform.rotation *= Quaternion.Euler(lastTransform.eulerAngles.x, lastTransform.eulerAngles.y, 0);
@@ -149,4 +156,8 @@ public class PlayerManager : MonoBehaviour
             player_rigidbody.useGravity = true;
         }
     }
+
+
+
+    
 }

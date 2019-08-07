@@ -26,8 +26,11 @@ public class InputManager : MonoBehaviour
     public GameObject RuntimeInspector;
     bool push = true;
 
+    public bool isSliderSelect;
+
     void Start()
     {
+        isSliderSelect = false;
         player = GameObject.FindGameObjectWithTag("Player");
         playermanager = player.GetComponent<PlayerManager>();
 
@@ -47,6 +50,13 @@ public class InputManager : MonoBehaviour
         PlayButton.GetComponent<Toggle>().isOn = false;
         PlayModeUI.SetActive(false);
         SeekBar.maxValue = 100;
+    }
+
+    public void OnPointerDown(){
+        isSliderSelect = false;
+    }
+    public void OnPointerUp(){
+        isSliderSelect = false;
     }
 
     private void Update()

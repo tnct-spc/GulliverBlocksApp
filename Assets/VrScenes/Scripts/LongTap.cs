@@ -70,5 +70,4 @@ public class LongTap : MonoBehaviour
         isPressDown = false;
     }
 
-   
 }

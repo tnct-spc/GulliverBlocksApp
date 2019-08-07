@@ -29,7 +29,7 @@ public class PlayerManager : MonoBehaviour
     {
         Rotate();
         Move();
-        CheckPlayerisFall();
+        CheckPlayerFall();
     }
 
     void Move()
@@ -88,7 +88,7 @@ public class PlayerManager : MonoBehaviour
         transform.position = Vector3.zero;
     }
 
-    private void CheckPlayerIsFalling()
+    private void CheckPlayerFall()
     {
         if(transform.position.y < -1){
             RespawnPlayer();

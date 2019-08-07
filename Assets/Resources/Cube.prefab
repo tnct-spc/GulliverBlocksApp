@@ -112,6 +112,7 @@ MonoBehaviour:
   time: 0
   put: 0
   colorID: 
+  texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!114 &2307061800879618600
 MonoBehaviour:
   m_ObjectHideFlags: 0

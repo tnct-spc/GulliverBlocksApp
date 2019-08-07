@@ -83,15 +83,15 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    private void RespornPlayer()
+    private void RespawnPlayer()
     {
-        transform.position = new Vector3(0,0,0);
+        transform.position = Vector3.zero;
     }
 
-    private void CheckPlayerisFall()
+    private void CheckPlayerIsFalling()
     {
         if(transform.position.y < -1){
-            RespornPlayer();
+            RespawnPlayer();
         }
     }
 }

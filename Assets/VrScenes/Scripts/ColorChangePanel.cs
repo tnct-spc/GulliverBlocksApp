@@ -6,28 +6,12 @@ using System.Linq;
 
 public class ColorChangePanel : MonoBehaviour
 {
-    List<Material> contentMaterials = new List<Material>();
     [SerializeField] public GameObject panelPref;
-    GameObject contentObject;
-    ToggleGroup toggleGroup;
-    GameObject target;
-
-    private void OnDisable()
-    {
-        contentMaterials.Clear();
-        toggleGroup = null;
-        foreach(Transform childTransform in contentObject.transform)
-        {
-            Destroy(childTransform.gameObject);
-        }
-    }
-
-    public void SetupColorChangePanel(GameObject targetObject)
-    {
-        contentObject = GameObject.Find("Canvas/ColorChangePanel/Scroll View/Viewport/Content");
-        target = targetObject;
-        SetColorPanel(targetObject);
-    }
+    private List<Material> contentMaterials = new List<Material>();
+    private GameObject contentObject;
+    private GameObject colorChangePanel;
+    private ToggleGroup toggleGroup;
+    private GameObject target;
 
     public void OnEnable()
     {
@@ -40,19 +24,40 @@ public class ColorChangePanel : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        foreach(Transform childTransform in contentObject.transform)
+        {
+            Destroy(childTransform.gameObject);
+        }
+    }
+
+    public void SetupColorChangePanel(GameObject targetObject)
+    {
+        colorChangePanel = GameObject.Find("Canvas/ColorChangePanel");
+        contentObject = GameObject.Find("Canvas/ColorChangePanel/Scroll View/Viewport/Content");
+        target = targetObject;
+        SetColorPanel(targetObject);
+    }
+
+    public Material CopyTo2DMaterial(Material original)
+    {
+        Material material2D = new Material(Shader.Find("UI/Default"));
+        material2D.color = original.color;
+        return material2D;
+    }
+
     public void SetColorPanel(GameObject targetObject)
     { 
         int materialCount = contentMaterials.Count;
         Material currentMaterial = targetObject.GetComponent<Renderer>().material;
 
-        //Content取得(ボタンを並べる場所)
-        GameObject colorChangePanel = GameObject.Find("Canvas/ColorChangePanel");
+        //currentColorPanelの設定
         Transform currentColorPanel = colorChangePanel.transform.Find("CurrentColorPanel");
         currentColorPanel.Find("CurrentNameText").gameObject.GetComponent<Text>().text = currentMaterial.name;
-        Material currentMaterial2D = new Material(Shader.Find("UI/Default"));
-        currentMaterial2D.color = currentMaterial.color;
-        currentColorPanel.Find("CurrentRawImage").gameObject.GetComponent<RawImage>().material = currentMaterial2D;
-        RectTransform content = colorChangePanel.transform.Find("Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
+        currentColorPanel.Find("CurrentRawImage").gameObject.GetComponent<RawImage>().material = CopyTo2DMaterial(currentMaterial);
+
+        RectTransform content = contentObject.GetComponent<RectTransform>();
 
         //Contentの高さ決定
         float panelSpace = content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得
@@ -63,8 +68,6 @@ public class ColorChangePanel : MonoBehaviour
         for (int i = 0; i < materialCount; i++)
         {
             int panelNum = i;
-            Material material = new Material(Shader.Find("UI/Default"));
-            material.color = contentMaterials[i].color;
             GameObject panel = (GameObject)Instantiate(panelPref);
 
             panel.transform.SetParent(content, false);
@@ -78,7 +81,7 @@ public class ColorChangePanel : MonoBehaviour
             textMaterialNameLabel.text = contentMaterials[i].name;
 
             RawImage rawImage = toggleObject.transform.Find("MaterialRawImage").gameObject.GetComponent<RawImage>();
-            rawImage.material = material;
+            rawImage.material = CopyTo2DMaterial(contentMaterials[i]);
 
             if (isFirst)
             {
@@ -100,7 +103,6 @@ public class ColorChangePanel : MonoBehaviour
 
     public void OnClickCancelButton()
     {
-        GameObject colorChangePanel = GameObject.Find("Canvas/ColorChangePanel");
         colorChangePanel.SetActive(false);
     }
 }

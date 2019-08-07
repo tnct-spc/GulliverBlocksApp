@@ -35,10 +35,28 @@ public class IncludingBlockInfo : MonoBehaviour
         GameObject canvas = GameObject.Find("Canvas");
         GameObject panel = canvas.transform.Find("ColorChangePanel").gameObject;
 
-        if (panel.activeSelf) panel.SetActive(false);
+        if (panel.activeSelf)
+        {
+            panel.SetActive(false);
+        }
         panel.SetActive(true);
 
         ColorChangePanel colorChangePanel = panel.GetComponent<ColorChangePanel>();
+        Material material = gameObject.GetComponent<Renderer>().material;
+        Color color = material.color;
+        if (colorChangePanel.lightUpObject == null)
+        {
+            material.EnableKeyword("_EMISSION");
+            material.SetColor("_EmissionColor", color);
+            colorChangePanel.lightUpObject = gameObject;
+        }
+        if (gameObject.GetComponent<IncludingBlockInfo>().ID != colorChangePanel.lightUpObject.GetComponent<IncludingBlockInfo>().ID)
+        {
+            material.EnableKeyword("_EMISSION");
+            material.SetColor("_EmissionColor", color);
+            colorChangePanel.lightUpObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+            colorChangePanel.lightUpObject = gameObject;
+        }
         colorChangePanel.SetupColorChangePanel(gameObject);
     }
 }

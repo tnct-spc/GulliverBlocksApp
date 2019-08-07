@@ -12,6 +12,7 @@ public class ColorChangePanel : MonoBehaviour
     private GameObject colorChangePanel;
     private ToggleGroup toggleGroup;
     private GameObject targetBlock;
+    public GameObject lightUpObject = null;
 
     public void OnEnable()
     {

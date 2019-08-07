@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 using UnityEngine.XR;
 
 public class InputManager : MonoBehaviour
@@ -11,12 +12,19 @@ public class InputManager : MonoBehaviour
 
     GameManager gamemanager;
     GameObject gamesystem;
+    BlockManager BlockManager;
 
-    public Toggle toggle;
+    public Toggle FlyingModeToggle;
     public GameObject FlyingButtons;
+    public Toggle PlayButton;
+    public GameObject PlayModeUI;
+    public GameObject ResetButton;
+    public Slider SeekBar;
+
     public GameObject BackToTheGame;
     public GameObject RuntimeHierarchy;
     public GameObject RuntimeInspector;
+    bool push = true;
 
     void Start()
     {
@@ -25,11 +33,20 @@ public class InputManager : MonoBehaviour
 
         gamesystem = GameObject.Find("GameSystem");
         gamemanager = gamesystem.GetComponent<GameManager>();
+        BlockManager = gamesystem.GetComponent<BlockManager>();
 
-        toggle.onValueChanged.AddListener(FlyingModeCheck);
+        FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
+        SeekBar.onValueChanged.AddListener(PlaceBlockBySeekBar);
+        PlayButton.onValueChanged.AddListener(Play);
 
-        FlyingButtons.SetActive(false);
-        toggle.GetComponent<Toggle>().isOn = false;
+        bool isPlayMode = false;
+        if (GameManager.Mode == "Vr") isPlayMode = true;
+        FlyingButtons.SetActive(isPlayMode);
+        FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayMode;
+        FlyingModeCheck(isPlayMode);
+        PlayButton.GetComponent<Toggle>().isOn = false;
+        PlayModeUI.SetActive(false);
+        SeekBar.maxValue = 100;
     }
 
     private void Update()
@@ -125,6 +142,31 @@ public class InputManager : MonoBehaviour
     {
         playermanager.MoveDown = false;
     }
+    public void Play(bool isActive)
+    {
+        SeekBar.maxValue = BlockManager.GetBlockJsonLength();
+        if (isActive)
+        {
+            if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
+            ResetButton.SetActive(false);
+        }
+        else
+        {
+            ResetButton.SetActive(true);
+        }
+    }
+
+    public void DestroyBlocks()
+    {
+        BlockManager.ClearBlocks();
+        SeekBar.value = 0;
+    }
+
+    public void PlaceBlockBySeekBar(float value)
+    {
+        SeekBar.maxValue = BlockManager.GetBlockJsonLength();
+        BlockManager.PlaceBlocks(value);
+    }
 
     public void VR_ModeOn()
     {
@@ -145,4 +187,3 @@ public class InputManager : MonoBehaviour
     }
 
 }
-

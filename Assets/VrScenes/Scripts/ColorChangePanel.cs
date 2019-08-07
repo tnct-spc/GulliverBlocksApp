@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class ColorChangePanel : MonoBehaviour
 {
     List<Material> contentMaterials = new List<Material>();
     [SerializeField] public GameObject panelPref;
+    ToggleGroup toggleGroup;
+    GameObject target;
 
     public void SetupColorChangePanel(GameObject targetObject)
     {
-        //Material material = targetObject.GetComponent<Material>();
+        target = targetObject;
         FetchMaterial();
         SetColorPanel(targetObject);
     }
@@ -45,7 +48,6 @@ public class ColorChangePanel : MonoBehaviour
         content.sizeDelta = new Vector2(0, (panelHeight + panelSpace) * materialCount); // 上２つの要素からcontentの高さを作成
 
         bool isFirst = true;
-        ToggleGroup toggleGroup = null;
         for (int i = 0; i < materialCount; i++)
         {
             int panelNum = i;
@@ -75,5 +77,18 @@ public class ColorChangePanel : MonoBehaviour
 
             toggle.group = toggleGroup;
         }
+    }
+
+    public void OnClickChangeButton()
+    {
+        Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
+        string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
+        target.GetComponent<Renderer>().material = Resources.Load(toMaterialName) as Material;
+    }
+
+    public void OnClickCancelButton()
+    {
+        GameObject colorChangePanel = GameObject.Find("Canvas/ColorChangePanel");
+        colorChangePanel.SetActive(false);
     }
 }

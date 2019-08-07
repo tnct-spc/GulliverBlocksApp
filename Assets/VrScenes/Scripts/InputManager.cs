@@ -143,6 +143,5 @@ public class InputManager : MonoBehaviour
         this.RuntimeInspector.SetActive(false);
         Debug.Log("Back to Game");
     }
-
 }
 

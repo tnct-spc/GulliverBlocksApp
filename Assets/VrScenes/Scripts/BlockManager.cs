@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using UnityEngine.Networking;
 
 [System.Serializable]
@@ -27,16 +31,30 @@ public class BlockManager : MonoBehaviour
     private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
     public static string WorldID;
     public string ServerAddress = "gulliverblocks.herokuapp.com";
+    GameObject GameSystem;
+    static string response_json;
+    public float BlockNumber = 0;
+    public bool isRepeating = false;
+    InputManager InputManager;
+    Slider SeekBar;
+    Toggle PlayButton;
+    GameManager GameManager;
+    Block[] blockJson;
+    GameObject[] Cube;
 
     private void Start()
     {
+        GameSystem = GameObject.Find("GameSystem");
+        InputManager = GameSystem.GetComponent<InputManager>();
+        SeekBar = InputManager.SeekBar;
+        PlayButton = InputManager.PlayButton;
+        GameManager = GameSystem.GetComponent<GameManager>();
         StartCoroutine("FetchAndPlaceBlocks");
     }
 
     IEnumerator FetchAndPlaceBlocks()
     {
         string server_url = "https://" + ServerAddress + "/get_blocks/" + WorldID + "/";
-
         //URLをGETで用意
         UnityWebRequest webRequest = UnityWebRequest.Get(server_url);
         //URLに接続して結果が戻ってくるまで待機
@@ -50,25 +68,65 @@ public class BlockManager : MonoBehaviour
         }
         else
         {
-            Block[] blockJson = CommunicationManager.JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
-            PlaceBlock(blockJson);
+            blockJson = CommunicationManager.JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
+            Cube = new GameObject[GetBlockJsonLength()];
+            InitialPlacement();
             ApplyColorRules();
+            if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
         }
     }
 
-    public void PlaceBlock(Block[] blocks)
+    void InitialPlacement()
     {
         Object cube = (GameObject)Resources.Load("Cube");
-        for (int i = 0; i < blocks.Length; i++)
+        for (int i = 0; i < GetBlockJsonLength(); i++)
         {
-            GameObject instance = Instantiate(cube, blocks[i].GetPosition(), Quaternion.identity) as GameObject;
-            string colorName = "Color" + blocks[i].colorID.ToString();
+            Cube[i] = Instantiate(cube, blockJson[i].GetPosition(), Quaternion.identity) as GameObject;
+            string colorName = "Color" + blockJson[i].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
-            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
-            IncludingBlockInfo blockInfo = instance.GetComponent<IncludingBlockInfo>();
-            blockInfo.SetBlockData(blocks[i]);
-            blocks_data.Add((blockInfo, instance));
+            Cube[i].GetComponent<Renderer>().sharedMaterial = colorMaterial;
+            IncludingBlockInfo blockInfo = Cube[i].GetComponent<IncludingBlockInfo>();
+            blockInfo.SetBlockData(blockJson[i]);
+            Cube[i].name = "Cube" + i;
+            blocks_data.Add((blockInfo, Cube[i]));
+            if (GameManager.Mode == "Vr") Cube[i].SetActive(false);
         }
+    }
+
+    public int GetBlockJsonLength()
+    {
+        return blockJson.Length;
+    }
+
+    public async void RepeatPlaceBlocks()
+    {
+        isRepeating = true;
+        while(BlockNumber < blockJson.Length)
+        {
+            while (PlayButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
+            SeekBar.value++;
+            await Task.Delay(1000);
+        }
+        PlayButton.GetComponent<Toggle>().isOn = false;
+        isRepeating = false;
+    }
+
+    public void ClearBlocks()
+    {
+        for (int i = 0; i < blockJson.Length; i++)
+        {
+            Cube[i].SetActive(false);
+        }
+    }
+
+    public void PlaceBlocks(float value)
+    {
+        ClearBlocks();
+        for (int i = 0; i < value; i++)
+        {
+            Cube[i].SetActive(true);
+        }
+        BlockNumber = value;
     }
 
     private void ApplyColorRules()

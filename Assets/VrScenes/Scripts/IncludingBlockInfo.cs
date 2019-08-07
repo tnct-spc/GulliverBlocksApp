@@ -34,6 +34,7 @@ public class IncludingBlockInfo : MonoBehaviour
     {
         GameObject canvas = GameObject.Find("Canvas");
         GameObject panel = canvas.transform.Find("ColorChangePanel").gameObject;
+        if (panel.activeSelf) panel.SetActive(false);
         panel.SetActive(true);
         ColorChangePanel colorChangePanel = panel.GetComponent<ColorChangePanel>();
         colorChangePanel.SetupColorChangePanel(gameObject);

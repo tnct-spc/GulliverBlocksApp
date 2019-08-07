@@ -8,18 +8,30 @@ public class ColorChangePanel : MonoBehaviour
 {
     List<Material> contentMaterials = new List<Material>();
     [SerializeField] public GameObject panelPref;
+    GameObject contentObject;
     ToggleGroup toggleGroup;
     GameObject target;
 
+    private void OnDisable()
+    {
+        contentMaterials.Clear();
+        toggleGroup = null;
+        foreach(Transform childTransform in contentObject.transform)
+        {
+            Destroy(childTransform.gameObject);
+        }
+    }
+
     public void SetupColorChangePanel(GameObject targetObject)
     {
+        contentObject = GameObject.Find("Canvas/ColorChangePanel/Scroll View/Viewport/Content");
         target = targetObject;
-        FetchMaterial();
         SetColorPanel(targetObject);
     }
 
-    public void FetchMaterial()
+    public void OnEnable()
     {
+        contentMaterials.Clear();
         for (int i = 0; i < 10; i++)
         {
             string materialName = "Color" + i.ToString();

@@ -8,7 +8,14 @@ public class ColorChangePanel : MonoBehaviour
     List<Material> contentMaterials = new List<Material>();
     [SerializeField] public GameObject panelPref;
 
-    void OnEnable()
+    public void SetupColorChangePanel(GameObject targetObject)
+    {
+        //Material material = targetObject.GetComponent<Material>();
+        FetchMaterial();
+        SetColorPanel(targetObject);
+    }
+
+    public void FetchMaterial()
     {
         for (int i = 0; i < 10; i++)
         {
@@ -16,16 +23,21 @@ public class ColorChangePanel : MonoBehaviour
             Material material = Resources.Load(materialName, typeof(Material)) as Material;
             contentMaterials.Add(material);
         }
-        SetColorPanel();
     }
 
-    public void SetColorPanel()
+    public void SetColorPanel(GameObject targetObject)
     { 
         int materialCount = contentMaterials.Count;
+        Material currentMaterial = targetObject.GetComponent<Renderer>().material;
 
         //Content取得(ボタンを並べる場所)
-        GameObject canvas = GameObject.Find("Canvas");
-        RectTransform content = canvas.transform.Find("ColorChangePanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
+        GameObject colorChangePanel = GameObject.Find("Canvas/ColorChangePanel");
+        Transform currentColorPanel = colorChangePanel.transform.Find("CurrentColorPanel");
+        currentColorPanel.Find("CurrentNameText").gameObject.GetComponent<Text>().text = currentMaterial.name;
+        Material currentMaterial2D = new Material(Shader.Find("UI/Default"));
+        currentMaterial2D.color = currentMaterial.color;
+        currentColorPanel.Find("CurrentRawImage").gameObject.GetComponent<RawImage>().material = currentMaterial2D;
+        RectTransform content = colorChangePanel.transform.Find("Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
 
         //Contentの高さ決定
         float panelSpace = content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得

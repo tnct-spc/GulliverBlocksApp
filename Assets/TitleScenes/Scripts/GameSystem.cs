@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR;
 
 public class GameSystem : MonoBehaviour
 {
@@ -13,11 +14,23 @@ public class GameSystem : MonoBehaviour
 
     private void Awake()
     {
+        XRSettings.enabled = false;
         ModeSelectPanel.SetActive(false);
     }
     public void SelectGameMode()
     {
         ModeSelectPanel.SetActive(true);
+    }
+
+    private void Update()
+    {
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                ModeSelectPanel.SetActive(false);
+            }
+        }
     }
 
     public void OnClickWorldSelectButton(string ID)

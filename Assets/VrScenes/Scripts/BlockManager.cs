@@ -41,9 +41,11 @@ public class BlockManager : MonoBehaviour
     GameManager GameManager;
     Block[] blockJson;
     GameObject[] Cube;
+    public GameObject LoadingWindow;
 
     private void Start()
     {
+        LoadingWindow.SetActive(true);
         GameSystem = GameObject.Find("GameSystem");
         InputManager = GameSystem.GetComponent<InputManager>();
         SeekBar = InputManager.SeekBar;
@@ -73,6 +75,7 @@ public class BlockManager : MonoBehaviour
             InitialPlacement();
             ApplyColorRules();
             if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
+            LoadingWindow.SetActive(false);
         }
     }
 

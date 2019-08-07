@@ -29,7 +29,7 @@ public class BlockManager : MonoBehaviour
 
         public Vector3 getPosition()
         {
-            Vector3 position = new Vector3(8*x, 9.6f*y, 8*z);
+            Vector3 position = new Vector3(0.4f*x, 0.45f*y, 0.4f*z);
             return position;
         }
     }

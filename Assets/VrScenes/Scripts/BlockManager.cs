@@ -29,7 +29,7 @@ public class BlockManager : MonoBehaviour
 
         public Vector3 getPosition()
         {
-            Vector3 position = new Vector3(0.4f*x, 0.45f*y, 0.4f*z);
+            Vector3 position = new Vector3(0.32f*x, 0.384f*y, 0.32f*z);
             return position;
         }
     }
@@ -79,14 +79,14 @@ public class BlockManager : MonoBehaviour
 
     void placeBlock(List<Block> blocks)
     {
-        Object rego = (GameObject)Resources.Load("regoblock1_1 red");
+        Object rego = (GameObject)Resources.Load("pblock1x1");
         for (int i = 0; i < blocks.Count; i++)
         {
             GameObject instance = Instantiate(rego, blocks[i].getPosition(), Quaternion.identity) as GameObject;
-            // string colorName = "Color" + blocks[i].colorID.ToString();
-            // Material colorMaterial = Resources.Load(colorName) as Material;
-            // instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
-            // blocks_data.Add((blocks[i], instance));
+            string colorName = "Color" + blocks[i].colorID.ToString();
+            Material colorMaterial = Resources.Load(colorName) as Material;
+            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial;
+            blocks_data.Add((blocks[i], instance));
         }
     }
 }

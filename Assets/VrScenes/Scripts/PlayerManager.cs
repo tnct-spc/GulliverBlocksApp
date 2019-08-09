@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.XR;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class PlayerManager : MonoBehaviour
     {
         Rotate();
         Move();
+        CheckPlayerFall();
     }
 
     void Move()
@@ -79,6 +81,18 @@ public class PlayerManager : MonoBehaviour
             player_rigidbody.useGravity = false;
         }else{
             player_rigidbody.useGravity = true;
+        }
+    }
+
+    private void RespawnPlayer()
+    {
+        transform.position = Vector3.zero;
+    }
+
+    private void CheckPlayerFall()
+    {
+        if(transform.position.y < -1){
+            RespawnPlayer();
         }
     }
 }

@@ -20,7 +20,7 @@ public struct Block
 
     public Vector3 GetPosition()
     {
-        Vector3 position = new Vector3(x, y, z);
+        Vector3 position = new Vector3(0.32f*x, 0.384f*y, 0.32f*z);
         return position;
     }
 }
@@ -81,10 +81,10 @@ public class BlockManager : MonoBehaviour
 
     void InitialPlacement()
     {
-        Object cube = (GameObject)Resources.Load("Cube");
+        Object block = (GameObject)Resources.Load("pblock1x1");
         for (int i = 0; i < GetBlockJsonLength(); i++)
         {
-            Cube[i] = Instantiate(cube, blockJson[i].GetPosition(), Quaternion.identity) as GameObject;
+            Cube[i] = Instantiate(block, blockJson[i].GetPosition(), Quaternion.identity) as GameObject;
             string colorName = "Color" + blockJson[i].colorID.ToString();
             Material colorMaterial = Resources.Load(colorName) as Material;
             Cube[i].GetComponent<Renderer>().sharedMaterial = colorMaterial;

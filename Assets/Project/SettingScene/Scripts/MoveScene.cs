@@ -2,15 +2,18 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class MoveScene : MonoBehaviour
+namespace SettingScene
 {
-
-    //　Titleを押したら実行する
-    public void MoveTitle()
+    public class MoveScene : MonoBehaviour
     {
-        SceneManager.LoadScene("Title");
 
-        Screen.orientation = ScreenOrientation.LandscapeLeft;
+        //　Titleを押したら実行する
+        public void MoveTitle()
+        {
+            SceneManager.LoadScene("Title");
 
+            Screen.orientation = ScreenOrientation.LandscapeLeft;
+
+        }
     }
 }

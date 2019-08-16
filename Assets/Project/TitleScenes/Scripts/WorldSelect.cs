@@ -3,13 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-
-[System.Serializable]
-public struct World
-{
-    public string ID;
-    public string name;
-}
+using JsonFormats;
 
 namespace TitleScene
 {

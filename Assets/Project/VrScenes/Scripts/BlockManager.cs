@@ -6,32 +6,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
-
-[System.Serializable]
-public struct Block
-{
-    public float x;
-    public float y;
-    public float z;
-    public string ID;
-    public float time;
-    public bool put;
-    public string colorID;
-
-    public Vector3 GetPosition()
-    {
-        Vector3 position = new Vector3(x, y, z);
-        return position;
-    }
-}
-
-[System.Serializable]
-public struct Rule
-{
-    public string type;
-    public string target;
-    public string to;
-}
+using JsonFormats;
 
 namespace VrScene
 {
@@ -90,10 +65,10 @@ namespace VrScene
 
         void InitialPlacement()
         {
-            Object cube = (GameObject)Resources.Load("Cube");
+            Object block = (GameObject)Resources.Load("pblock1x1");
             for (int i = 0; i < GetBlockJsonLength(); i++)
             {
-                Cube[i] = Instantiate(cube, blockJson[i].GetPosition(), Quaternion.identity) as GameObject;
+                Cube[i] = Instantiate(block, blockJson[i].GetPosition(), Quaternion.identity) as GameObject;
                 string colorName = "Color" + blockJson[i].colorID.ToString();
                 Material colorMaterial = Resources.Load(colorName) as Material;
                 Cube[i].GetComponent<Renderer>().sharedMaterial = colorMaterial;
@@ -218,4 +193,5 @@ namespace VrScene
             return blockObject;
         }
     }
+
 }

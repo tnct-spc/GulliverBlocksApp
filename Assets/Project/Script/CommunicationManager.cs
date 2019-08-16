@@ -64,7 +64,7 @@ namespace JsonFormats
 
         public Vector3 GetPosition()
         {
-            Vector3 position = new Vector3(x, y, z);
+            Vector3 position = new Vector3(0.32f*x, 0.384f*y, 0.32f*z);
             return position;
         }
     }

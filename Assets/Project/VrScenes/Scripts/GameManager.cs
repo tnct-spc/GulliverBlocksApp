@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+namespace VrScene
 {
-    public static string Mode = "Vr";
-    public void Back_To_Title_If_Android()
+    public class GameManager : MonoBehaviour
     {
-        if (Application.platform == RuntimePlatform.Android)
+        public static string Mode = "Vr";
+        public void Back_To_Title_If_Android()
         {
+            if (Application.platform == RuntimePlatform.Android)
+            {
                 SceneManager.LoadScene("Title");
+            }
         }
     }
 }

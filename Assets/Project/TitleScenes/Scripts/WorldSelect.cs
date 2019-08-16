@@ -11,83 +11,79 @@ public struct World
     public string name;
 }
 
-[System.Serializable]
-public struct Rule
+namespace TitleScene
 {
-    public string type;
-    public string target;
-    public string to;
-}
 
-public class WorldSelect : MonoBehaviour
-{
-    GameSystem gameSystem;
-    [SerializeField] private GameObject btnPref;  //ボタンプレハブ
-    const string SERVER_URL = "https://gulliverblocks.herokuapp.com/get_maps/";
-    public World[] WorldsData;
-
-
-    private void Start()
+    public class WorldSelect : MonoBehaviour
     {
-        StartCoroutine("GetWorlds", SERVER_URL);
-    }
+        GameSystem gameSystem;
+        [SerializeField] private GameObject btnPref;  //ボタンプレハブ
+        const string SERVER_URL = "https://gulliverblocks.herokuapp.com/get_maps/";
+        public World[] WorldsData;
 
-    public IEnumerator GetWorlds(string url)
-    {
-        //URLをGETで用意
-        UnityWebRequest webRequest = UnityWebRequest.Get(url);
-        //URLに接続して結果が戻ってくるまで待機
-        yield return webRequest.SendWebRequest();
 
-        //エラーが出ていないかチェック
-        if (webRequest.isNetworkError)
+        private void Start()
         {
-            //通信失敗
-            Debug.Log(webRequest.error);
+            StartCoroutine("GetWorlds", SERVER_URL);
         }
-        else
+
+        public IEnumerator GetWorlds(string url)
         {
-            //通信成功
-            WorldsData = CommunicationManager.JsonHelper.FromJson<World>(webRequest.downloadHandler.text, "Maps");
+            //URLをGETで用意
+            UnityWebRequest webRequest = UnityWebRequest.Get(url);
+            //URLに接続して結果が戻ってくるまで待機
+            yield return webRequest.SendWebRequest();
 
-            yield return null;
+            //エラーが出ていないかチェック
+            if (webRequest.isNetworkError)
+            {
+                //通信失敗
+                Debug.Log(webRequest.error);
+            }
+            else
+            {
+                //通信成功
+                WorldsData = CommunicationManager.JsonHelper.FromJson<World>(webRequest.downloadHandler.text, "Maps");
 
-            setWorldSelectButton();
+                yield return null;
+
+                setWorldSelectButton();
+            }
         }
-    }
 
-    // ButtonをScrollViewに追加する関数
-    public void setWorldSelectButton()
-    {
-        int btnCount = WorldsData.Length;
-
-        //Content取得(ボタンを並べる場所)
-        GameObject canvas = GameObject.Find("Canvas");
-        RectTransform content = canvas.transform.Find("SelectPanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
-
-        //Contentの高さ決定
-        float btnSpace = content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得
-        float btnHeight = btnPref.GetComponent<LayoutElement>().preferredHeight;   // WorldSelectButton自体の高さを取得
-        content.sizeDelta = new Vector2(0, (btnHeight + btnSpace) * btnCount); // 上２つの要素からcontentの高さを作成
-
-        gameSystem = gameObject.GetComponent<GameSystem>();
-
-        for (int i = 0; i < btnCount; i++)
+        // ButtonをScrollViewに追加する関数
+        public void setWorldSelectButton()
         {
-            int btnNum = i;
+            int btnCount = WorldsData.Length;
 
-            //ボタン生成
-            GameObject btn = (GameObject)Instantiate(btnPref);
+            //Content取得(ボタンを並べる場所)
+            GameObject canvas = GameObject.Find("Canvas");
+            RectTransform content = canvas.transform.Find("SelectPanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
 
-            //ボタンをContentの子に設定
-            btn.transform.SetParent(content, false);
+            //Contentの高さ決定
+            float btnSpace = content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得
+            float btnHeight = btnPref.GetComponent<LayoutElement>().preferredHeight;   // WorldSelectButton自体の高さを取得
+            content.sizeDelta = new Vector2(0, (btnHeight + btnSpace) * btnCount); // 上２つの要素からcontentの高さを作成
 
-            //ボタンのテキスト変更
-            btn.transform.GetComponentInChildren<Text>().text = WorldsData[btnNum].name;
+            gameSystem = gameObject.GetComponent<GameSystem>();
 
-            //ボタンのクリックイベント登録
-            btn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].ID));
+            for (int i = 0; i < btnCount; i++)
+            {
+                int btnNum = i;
 
+                //ボタン生成
+                GameObject btn = (GameObject)Instantiate(btnPref);
+
+                //ボタンをContentの子に設定
+                btn.transform.SetParent(content, false);
+
+                //ボタンのテキスト変更
+                btn.transform.GetComponentInChildren<Text>().text = WorldsData[btnNum].name;
+
+                //ボタンのクリックイベント登録
+                btn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].ID));
+
+            }
         }
     }
 }

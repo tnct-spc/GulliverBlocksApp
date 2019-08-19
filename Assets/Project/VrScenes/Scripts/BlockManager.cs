@@ -48,14 +48,18 @@ namespace VrScene
             checkLoadingStatus();
         }
 
-        private void checkLoadingStatus()
+        private async void checkLoadingStatus()
         {
             // UnityのAPIはメインスレッドでしか叩けないため
             switch (this.LoadingStatus)
             {
                 case "start":
                     this.LoadingStatus = "fetching";
-                    FetchAndPlaceBlocksAsync();
+                    await CommunicationManager.fetchMapBlocksAsync(WorldID).ContinueWith(task =>
+                    {
+                        this.blockJson = task.Result;
+                        this.LoadingStatus = "fetched";
+                    });
                     return;
                 case "fetched":
                     this.Cube = new GameObject[this.blockJson.Length];
@@ -69,16 +73,6 @@ namespace VrScene
                     return;
             }
         }
-
-        private async void FetchAndPlaceBlocksAsync()
-        {
-            await CommunicationManager.fetchMapBlocksAsync(WorldID)
-            .ContinueWith(task =>
-             {
-                this.blockJson = task.Result;
-                this.LoadingStatus = "fetched";
-            });
-         }
 
         void InitialPlacement()
         {

@@ -41,12 +41,12 @@ namespace TitleScene
 
                 yield return null;
 
-                setWorldSelectButton();
+                SetWorldSelectButton();
             }
         }
 
         // ButtonをScrollViewに追加する関数
-        public void setWorldSelectButton()
+        public void SetWorldSelectButton()
         {
             int btnCount = WorldsData.Length;
 

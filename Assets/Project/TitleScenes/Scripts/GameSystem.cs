@@ -46,12 +46,18 @@ namespace TitleScene
                 .First().GetComponentsInChildren<Text>()
                 .First(t => t.name == "Label").text;
 
-            GameManager.Mode = selectedLabel.Replace("Mode", "");
+            if(selectedLabel == "MergeMode")
+            {
+                Debug.Log("merge");
+            }
+            else
+            {
+                GameManager.Mode = selectedLabel.Replace("Mode", "");
 
-            // VrSceneを読み込む
-            SceneManager.LoadScene("Vr");
-            Screen.orientation = ScreenOrientation.LandscapeLeft;
-
+                // VrSceneを読み込む
+                SceneManager.LoadScene("Vr");
+                Screen.orientation = ScreenOrientation.LandscapeLeft;
+            }
         }
 
         public void MoveSetting()

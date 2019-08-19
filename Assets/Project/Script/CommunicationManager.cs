@@ -16,6 +16,13 @@ public class CommunicationManager
         return JsonHelper.FromJson<Block>(jsonStr, "Blocks");
     }
 
+    public async Task<World[]> fetchMapsAsync()
+    {
+        var apiUrl = "https://" + ServerAddress + "/get_maps/";
+        var jsonStr = await GetRequest(apiUrl);
+        return JsonHelper.FromJson<World>(jsonStr, "Maps");
+    }
+
     private static async Task<string> GetRequest(string url)
     {
 

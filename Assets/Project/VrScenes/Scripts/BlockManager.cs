@@ -14,7 +14,6 @@ namespace VrScene
     {
         private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
         public static string WorldID;
-        public string ServerAddress = "gulliverblocks.herokuapp.com";
         GameObject GameSystem;
         static string response_json;
         public float BlockNumber = 0;
@@ -26,6 +25,13 @@ namespace VrScene
         Block[] blockJson;
         GameObject[] Cube;
         public GameObject LoadingWindow;
+        CommunicationManager CommunicationManager;
+        string LoadingStatus = "start";
+
+        private void Awake()
+        {
+            CommunicationManager = new CommunicationManager();
+        }
 
         private void Start()
         {
@@ -35,33 +41,44 @@ namespace VrScene
             SeekBar = InputManager.SeekBar;
             PlayButton = InputManager.PlayButton;
             GameManager = GameSystem.GetComponent<GameManager>();
-            StartCoroutine("FetchAndPlaceBlocks");
         }
 
-        IEnumerator FetchAndPlaceBlocks()
+        private void Update()
         {
-            string server_url = "https://" + ServerAddress + "/get_blocks/" + WorldID + "/";
-            //URLをGETで用意
-            UnityWebRequest webRequest = UnityWebRequest.Get(server_url);
-            //URLに接続して結果が戻ってくるまで待機
-            yield return webRequest.SendWebRequest();
+            checkLoadingStatus();
+        }
 
-            //エラーが出ていないかチェック
-            if (webRequest.isNetworkError)
+        private void checkLoadingStatus()
+        {
+            // UnityのAPIはメインスレッドでしか叩けないため
+            switch (this.LoadingStatus)
             {
-                //通信失敗
-                Debug.Log(webRequest.error);
-            }
-            else
-            {
-                blockJson = CommunicationManager.JsonHelper.FromJson<Block>(webRequest.downloadHandler.text, "Blocks");
-                Cube = new GameObject[GetBlockJsonLength()];
-                InitialPlacement();
-                ApplyColorRules();
-                if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
-                LoadingWindow.SetActive(false);
+                case "start":
+                    this.LoadingStatus = "fetching";
+                    FetchAndPlaceBlocksAsync();
+                    return;
+                case "fetched":
+                    this.Cube = new GameObject[this.blockJson.Length];
+                    InitialPlacement();
+                    ApplyColorRules();
+                    if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
+                    LoadingWindow.SetActive(false);
+                    this.LoadingStatus = "done";
+                    return;
+            default:
+                    return;
             }
         }
+
+        private async void FetchAndPlaceBlocksAsync()
+        {
+            await CommunicationManager.fetchMapBlocksAsync(WorldID)
+            .ContinueWith(task =>
+             {
+                this.blockJson = task.Result;
+                this.LoadingStatus = "fetched";
+            });
+         }
 
         void InitialPlacement()
         {

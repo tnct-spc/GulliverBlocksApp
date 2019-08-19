@@ -21,6 +21,7 @@ namespace VrScene
         public Toggle PlayButton;
         public GameObject PlayModeUI;
         public GameObject ResetButton;
+        public GameObject NonTwoEyesModeUI;
         public Slider SeekBar;
 
         public GameObject BackToTheGame;
@@ -173,11 +174,13 @@ namespace VrScene
         public void VR_ModeOn()
         {
             XRSettings.enabled = true;
+            NonTwoEyesModeUI.SetActive(false);
         }
 
         public void VR_ModeOff()
         {
             XRSettings.enabled = false;
+            NonTwoEyesModeUI.SetActive(true);
         }
 
         public void OnClickBackToTheGame()

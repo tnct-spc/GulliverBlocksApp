@@ -1,9 +1,44 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
+using System.Threading.Tasks;
+using JsonFormats;
 
 public class CommunicationManager
 {
+    public static string ServerAddress = "gulliverblocks.herokuapp.com";
+
+    public async Task<Block[]> fetchMapBlocksAsync(string mapId)
+    {
+        var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
+        var jsonStr = await GetRequest(apiUrl);
+        return JsonHelper.FromJson<Block>(jsonStr, "Blocks");
+    }
+
+    public async Task<World[]> fetchMapsAsync()
+    {
+        var apiUrl = "https://" + ServerAddress + "/get_maps/";
+        var jsonStr = await GetRequest(apiUrl);
+        return JsonHelper.FromJson<World>(jsonStr, "Maps");
+    }
+
+    private static async Task<string> GetRequest(string url)
+    {
+
+        UnityWebRequest req = UnityWebRequest.Get(url);
+        await req.SendWebRequest();
+        if (req.isNetworkError || req.isHttpError)
+        {
+            Debug.Log(req.error);
+            return "";
+        }
+        else
+        {
+            return req.downloadHandler.text;
+        }
+    }
+
     public static class JsonHelper
     {
         public static T[] FromJson<T>(string json, string command)

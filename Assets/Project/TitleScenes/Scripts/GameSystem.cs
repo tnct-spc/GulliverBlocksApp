@@ -13,6 +13,7 @@ namespace TitleScene
     {
         public GameObject MapSelectPanel;
         public GameObject SelectMergingMapPanel;
+        public GameObject MergePanel;
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
 
@@ -59,6 +60,11 @@ namespace TitleScene
                 SceneManager.LoadScene("Vr");
                 Screen.orientation = ScreenOrientation.LandscapeLeft;
             }
+        }
+
+        public void OnClickMergeButton()
+        {
+            MergePanel.SetActive(true);
         }
 
         public void MoveSetting()

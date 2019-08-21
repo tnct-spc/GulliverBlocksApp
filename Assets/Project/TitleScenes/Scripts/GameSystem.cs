@@ -46,6 +46,7 @@ namespace TitleScene
             if(selectedLabel == "MergeMode")
             {
                 SelectMergingMapPanel.SetActive(true);
+                SelectMergingMapPanel.GetComponent<MergeMapSelect>().mergedMapID = ID;
             }
             else
             {

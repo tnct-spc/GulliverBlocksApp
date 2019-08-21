@@ -3166,6 +3166,7 @@ GameObject:
   - component: {fileID: 1655072275}
   - component: {fileID: 1655072277}
   - component: {fileID: 1655072276}
+  - component: {fileID: 1655072278}
   m_Layer: 5
   m_Name: SelectMergingMapPanel
   m_TagString: Untagged
@@ -3191,7 +3192,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.09008789, y: -0.88998413}
+  m_AnchoredPosition: {x: -0.09008789, y: -0.89001465}
   m_SizeDelta: {x: 106.56006, y: 55.58008}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1655072276
@@ -3231,6 +3232,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1655072274}
   m_CullTransparentMesh: 0
+--- !u!114 &1655072278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1655072274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de4c3c14c538cca438afdf2ae2b3a5d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WorldsData: []
+  mergingMapPref: {fileID: 848021475187221586, guid: 4189135008b097945bc9df965cd4812a,
+    type: 3}
+  mergedMapID: 
 --- !u!1 &1697230994
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Networking;
 using JsonFormats;
 
 namespace TitleScene
@@ -12,37 +11,39 @@ namespace TitleScene
     {
         GameSystem gameSystem;
         [SerializeField] private GameObject btnPref;  //ボタンプレハブ
-        const string SERVER_URL = "https://gulliverblocks.herokuapp.com/get_maps/";
         public World[] WorldsData;
+        CommunicationManager CommunicationManager;
+        private string fetchStatus = "start";
 
 
-        private void Start()
+        private void Awake()
         {
-            Debug.Log("start");
-            StartCoroutine("GetWorlds", SERVER_URL);
+            CommunicationManager = new CommunicationManager();
         }
 
-        public IEnumerator GetWorlds(string url)
+        private void Update()
         {
-            //URLをGETで用意
-            UnityWebRequest webRequest = UnityWebRequest.Get(url);
-            //URLに接続して結果が戻ってくるまで待機
-            yield return webRequest.SendWebRequest();
+            checkFetchStatus();
+        }
 
-            //エラーが出ていないかチェック
-            if (webRequest.isNetworkError)
+        private async void checkFetchStatus()
+        {
+            switch (this.fetchStatus)
             {
-                //通信失敗
-                Debug.Log(webRequest.error);
-            }
-            else
-            {
-                //通信成功
-                WorldsData = CommunicationManager.JsonHelper.FromJson<World>(webRequest.downloadHandler.text, "Maps");
-
-                yield return null;
-
-                SetWorldSelectButton();
+                case "start":
+                    this.fetchStatus = "fetching";
+                    await CommunicationManager.fetchMapsAsync().ContinueWith(task =>
+                    {
+                        this.WorldsData = task.Result;
+                        this.fetchStatus = "fetched";
+                    });
+                    return;
+                case "fetched":
+                    SetWorldSelectButton();
+                    this.fetchStatus = "done";
+                    return;
+            default:
+                    return;
             }
         }
 

@@ -13,6 +13,7 @@ namespace TitleScene
         private string fetchStatus = "start";
         public GameObject mergingMapPref;
         public string mergedMapID;
+        private ToggleGroup toggleGroup;
 
         private void OnEnable()
         {
@@ -66,17 +67,29 @@ namespace TitleScene
             float mapHeight = mergingMapPref.GetComponent<LayoutElement>().preferredHeight;
             content.sizeDelta = new Vector2(0, (mapHeight + mapSpace) * mergingMapCount);
 
+            bool isFirst = true;
             for (int i = 0; i < mergingMapCount; i++)
             {
                 int mapNum = i;
 
                 //ボタン生成
-                GameObject btn = (GameObject)Instantiate(mergingMapPref);
+                GameObject mapToggle = (GameObject)Instantiate(mergingMapPref);
+                mapToggle.transform.SetParent(content, false);
 
-                //ボタンをContentの子に設定
-                btn.transform.SetParent(content, false);
+                mapToggle.transform.Find("Label").gameObject.GetComponent<Text>().text = WorldsData[i].name;
 
-                btn.transform.Find("Label").gameObject.GetComponent<Text>().text = WorldsData[i].name;
+                Toggle toggle = mapToggle.GetComponent<Toggle>();
+                toggle.isOn = false;
+
+                //ToggleGroupの設定
+                if (isFirst)
+                {
+                    toggle.isOn = true;
+                    toggleGroup = mapToggle.AddComponent<ToggleGroup>();
+                    isFirst = false;
+                }
+
+                toggle.group = toggleGroup;
             }
         }
 

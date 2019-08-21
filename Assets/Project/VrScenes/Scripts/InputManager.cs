@@ -78,6 +78,22 @@ namespace VrScene
                     gamemanager.Back_To_Title_If_Android();
                 }
             }
+
+            if (XRSettings.enabled == true)
+            {
+                if (Input.touchCount > 0)
+                {
+                    Touch touch = Input.GetTouch(0);
+                    if (touch.phase == TouchPhase.Began)
+                    {
+                        Player_Forward();
+                    }
+                    else if (touch.phase == TouchPhase.Ended)
+                    {
+                        Player_StopForward();
+                    }
+                }
+            }
         }
 
         public void FlyingModeCheck(bool isActive)

@@ -2446,6 +2446,7 @@ GameObject:
   - component: {fileID: 784364640}
   - component: {fileID: 784364638}
   - component: {fileID: 784364641}
+  - component: {fileID: 784364642}
   m_Layer: 0
   m_Name: GameSystem
   m_TagString: Untagged
@@ -2501,7 +2502,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1309685b345aed1488820d5b623307a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ServerAddress: gulliverblocks.herokuapp.com
   BlockNumber: 0
   isRepeating: 0
   LoadingWindow: {fileID: 2042658755}
@@ -2515,6 +2515,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 999a763357c17ed4e83122bf797d7598, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &784364642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784364637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6891ffc3946ea7e4980919654b90c77f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &813201307
@@ -2956,6 +2968,7 @@ GameObject:
   - component: {fileID: 963194233}
   - component: {fileID: 963194229}
   - component: {fileID: 963194231}
+  - component: {fileID: 963194234}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -3103,6 +3116,18 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_MaxRayIntersections: 0
+--- !u!114 &963194234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cb675514703329409a9cc3bd774ffcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &979611538
 GameObject:
   m_ObjectHideFlags: 0

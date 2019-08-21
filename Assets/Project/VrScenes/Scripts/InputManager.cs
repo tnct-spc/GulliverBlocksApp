@@ -94,6 +94,7 @@ namespace VrScene
                     }
                 }
             }
+            NonTwoEyesModeUI.SetActive(!XRSettings.enabled);
         }
 
         public void FlyingModeCheck(bool isActive)
@@ -190,13 +191,11 @@ namespace VrScene
         public void VR_ModeOn()
         {
             XRSettings.enabled = true;
-            NonTwoEyesModeUI.SetActive(false);
         }
 
         public void VR_ModeOff()
         {
             XRSettings.enabled = false;
-            NonTwoEyesModeUI.SetActive(true);
         }
 
         public void OnClickBackToTheGame()

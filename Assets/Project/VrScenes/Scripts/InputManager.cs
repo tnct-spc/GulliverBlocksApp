@@ -29,6 +29,8 @@ namespace VrScene
         public GameObject RuntimeInspector;
         bool push = true;
 
+        Touch touch;
+
         void Start()
         {
             player = GameObject.FindGameObjectWithTag("Player");
@@ -81,9 +83,9 @@ namespace VrScene
 
             if (XRSettings.enabled == true)
             {
+                InputTracking.disablePositionalTracking = true;
                 if (Input.touchCount > 0)
                 {
-                    Touch touch = Input.GetTouch(0);
                     if (touch.phase == TouchPhase.Began)
                     {
                         Player_Forward();

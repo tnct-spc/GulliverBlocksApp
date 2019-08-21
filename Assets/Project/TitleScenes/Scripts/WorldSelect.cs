@@ -18,6 +18,7 @@ namespace TitleScene
 
         private void Start()
         {
+            Debug.Log("start");
             StartCoroutine("GetWorlds", SERVER_URL);
         }
 

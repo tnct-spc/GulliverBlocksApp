@@ -11,18 +11,18 @@ namespace TitleScene
 {
     public class GameSystem : MonoBehaviour
     {
-        public GameObject ModeSelectPanel;
+        public GameObject MapSelectPanel;
+        public GameObject SelectMergingMapPanel;
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
 
         private void Awake()
         {
             XRSettings.enabled = false;
-            ModeSelectPanel.SetActive(false);
         }
         public void SelectGameMode()
         {
-            ModeSelectPanel.SetActive(true);
+            MapSelectPanel.SetActive(true);
         }
 
         private void Update()
@@ -31,16 +31,13 @@ namespace TitleScene
             {
                 if (Input.GetKeyDown(KeyCode.Escape))
                 {
-                    ModeSelectPanel.SetActive(false);
+                    MapSelectPanel.SetActive(false);
                 }
             }
         }
 
         public void OnClickWorldSelectButton(string ID)
         {
-            // BlockManagerにIDを渡す
-            BlockManager.WorldID = ID;
-
             // GameManagerにModeを渡す
             string selectedLabel = toggleGroup.ActiveToggles()
                 .First().GetComponentsInChildren<Text>()
@@ -48,10 +45,13 @@ namespace TitleScene
 
             if(selectedLabel == "MergeMode")
             {
-                Debug.Log("merge");
+                SelectMergingMapPanel.SetActive(true);
             }
             else
             {
+                // BlockManagerにIDを渡す
+                BlockManager.WorldID = ID;
+
                 GameManager.Mode = selectedLabel.Replace("Mode", "");
 
                 // VrSceneを読み込む

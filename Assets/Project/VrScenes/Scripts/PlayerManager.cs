@@ -20,35 +20,29 @@ namespace VrScene
 
         public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
 
-        private Quaternion lastTransformRotate;
-        private Vector3 lastMousePosition;
-        Quaternion lastGyro = Quaternion.identity;
-        public Vector2 rotationSpeed = Vector2.one;
+
+        RotateManager RotateManagerI;
 
         GameObject gamesystem;
-        InputManager inputManager;
-        private GameObject PlayerCamera;
 
 
         private void Awake()
         {
             player_rigidbody = GetComponent<Rigidbody>();
             gamesystem = GameObject.Find("GameSystem");
-            inputManager = gamesystem.GetComponent<InputManager>();
-            PlayerCamera = GameObject.Find("PlayerCamera");
+            var playerCamera = GameObject.Find("PlayerCamera");
+            RotateManagerI = new RotateManager(playerCamera.transform, transform);
         }
         void Start()
         {
             Input.gyro.enabled = true;
-            lastTransformRotate = Quaternion.Euler(Vector3.zero);
-            lastGyro = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
         }
 
         void Update()
         {
-            RefleshRotate();
             Move();
             CheckPlayerFall();
+            RotateManagerI.UpdateRotate();
         }
 
         void Move()
@@ -82,68 +76,9 @@ namespace VrScene
 
         public void RefleshRotate()
         {
-            #if UNITY_EDITOR //unityEditorでのデバッグ時
-            transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
-            RefleshRotationByMouseDrag();
-            #else
-            RefleshRotationByTouch();
-            //RefleshRotationByGyro();
-            #endif
         }
 
-
-    #if UNITY_EDITOR
-
-        void RefleshRotationByMouseDrag()
-        {
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                lastMousePosition = Input.mousePosition;
-            }
-            else if (Input.GetMouseButton(0))
-            {
-                Debug.Log(PlayerCamera.transform.rotation);
-                var currentMousePos = Input.mousePosition;
-                var deltaMousePos = currentMousePos - lastMousePosition;
-                PlayerCamera.transform.Rotate(deltaMousePos.y * rotationSpeed.y, -deltaMousePos.x * rotationSpeed.x, 0);
-                PlayerCamera.transform.rotation *= Quaternion.Euler(new Vector3(deltaMousePos.y * rotationSpeed.y, -deltaMousePos.x * rotationSpeed.x, 0));
-                var transformVec3 = PlayerCamera.transform.rotation.eulerAngles;
-                transformVec3.z = 0;
-                PlayerCamera.transform.rotation = Quaternion.Euler(PlayerCamera.transform.rotation.eulerAngles.x, PlayerCamera.transform.rotation.eulerAngles.y, 0);
-                print(PlayerCamera.transform.rotation.eulerAngles);
-                lastMousePosition = currentMousePos;
-            }
-
-        }
-    #else
-    void RefleshRotationByGyro(){
-        //var currentGyro = Input.gyro.attitude;
-        var currentGyro = Quaternion.AngleAxis(90.0f, Vector3.right) * Input.gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward);
-        //var deltaRotation = currentGyro * Quaternion.Inverse(lastGyro);
-        //transform.rotation *= Quaternion.Inverse(deltaRotation);
-        var gyroEuler = currentGyro.eulerAngles;
-        //transform.rotation = currentGyro;
-        transform.rotation = Quaternion.Euler(new Vector3(lastTransformRotate.eulerAngles.x + gyroEuler.x , lastTransformRotate.eulerAngles.y + gyroEuler.y, gyroEuler.z));
-        //lastGyro = currentGyro;
-    }
-
-    void RefleshRotationByTouch(){
-        if (Input.touchCount > 0)
-        {
-            if(!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)){
-                if(!inputManager.isSliderSelect){
-                    var lastTransformEuler = transform.rotation.eulerAngles;
-                    var deltaTouchPos = Input.GetTouch(0).deltaPosition;
-                    lastTransformRotate *= Quaternion.Euler(new Vector3(deltaTouchPos.y * rotationSpeed.y, -deltaTouchPos.x*rotationSpeed.x, 0));
-                }
-            }
-            //transform.rotation = Quaternion.Euler(new Vector3(lastTransform.rotation.eulerAngles.x , lastTransform.rotation.eulerAngles.y , lastTransformEuler.z));
-            //lastTransform = Quaternion.Euler(deltaTouchPos.y * rotationSpeed.y, -deltaTouchPos.x*rotationSpeed.x, 0);
-            //transform.rotation *= Quaternion.Euler(lastTransform.eulerAngles.x, lastTransform.eulerAngles.y, 0);
-        }
-    }
-    #endif
+  
         public void Flying(bool value)
         {
             if (value == true)
@@ -166,6 +101,78 @@ namespace VrScene
             if (transform.position.y < -1)
             {
                 RespawnPlayer();
+            }
+        }
+
+        class RotateManager
+        {
+            public Vector2 rotationSpeed = Vector2.one;
+
+            private Transform CameraTransform;
+            private Transform PlayerTransform;
+            private Vector2 lastMousePosition;
+            private bool TouchMoveEnable;
+            private float CurrentRightLeftRotate;
+
+            public RotateManager(Transform cameraTransform,Transform playerTransform)
+            {
+                this.CameraTransform = cameraTransform;
+                this.PlayerTransform = playerTransform;
+                this.lastMousePosition = Vector2.zero;
+                this.CurrentRightLeftRotate = 0f;
+
+            }
+
+            public void UpdateRotate()
+            {
+                PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    if (Input.touchCount > 0)
+                    {
+                        var touch = Input.GetTouch(0);
+                        if (touch.phase == TouchPhase.Began)
+                        {
+                            this.OnClick(touch.position);
+                        } else if (touch.phase == TouchPhase.Moved)
+                        {
+                            this.OnMove(touch.position);
+                        }
+                    }
+                } else
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        this.OnClick(Input.mousePosition);
+                    } else if (Input.GetMouseButton(0))
+                    {
+                        this.OnMove(Input.mousePosition);
+                    }
+                }
+            }
+
+            private void OnClick(Vector2 position)
+            {
+                var tappedObject = EventSystem.current.currentSelectedGameObject;
+                this.TouchMoveEnable = tappedObject == null || tappedObject.tag == "block" ||  tappedObject.tag == "floor";
+
+                this.lastMousePosition = position;
+            }
+
+            private void OnMove(Vector2 position)
+            {
+                if (!this.TouchMoveEnable) return;
+                var x = position.x - this.lastMousePosition.x;
+                var y = position.y - this.lastMousePosition.y;
+                RotateXY(new Vector2(x, y)*10);
+                this.lastMousePosition = position;
+            }
+
+            private void RotateXY(Vector2 direction)
+            {
+                 // 上下方向はカメラを, 左右方向は本体ごと回す
+                this.CurrentRightLeftRotate -= direction.x * Time.deltaTime;
+                CameraTransform.RotateAround(PlayerTransform.position, PlayerTransform.right, direction.y * Time.deltaTime);
             }
         }
     }

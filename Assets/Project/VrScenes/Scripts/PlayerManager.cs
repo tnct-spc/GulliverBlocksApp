@@ -106,14 +106,13 @@ namespace VrScene
 
         class RotateManager
         {
-            public Vector2 rotationSpeed = Vector2.one;
 
             private Transform CameraTransform;
             private Transform PlayerTransform;
             private Vector2 lastMousePosition;
             private bool TouchMoveEnable;
             private float CurrentRightLeftRotate;
-            private float CurrentZRotate; //車のハンドル方向の回転
+            private float CurrentZRotate;
             private Gyroscope gyro;
             private Vector3 LastGyroRotate;
 
@@ -130,10 +129,16 @@ namespace VrScene
 
             public void UpdateRotate()
             {
-                /* Zはハンドル方向, 端末の画面に垂直な線を軸に回転
+                /*
+                 * # 各回転
+                 *   X: 上下
+                 *   Y: 左右
+                 *   Z:ハンドル方向, 端末の画面に垂直な線を軸に回転
+                 *
+                 *　左右(Y)方向の回転は移動の前の基準となるのでPlayer本体を回転させてる
+                 *　X,Z方向の回転はPlayerを回転させたくないのでPlayerCameraを回転させてる
                  * 
                  */
-                PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation; 
@@ -160,10 +165,15 @@ namespace VrScene
                         this.OnMove(Input.mousePosition);
                     }
                 }
+                PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
             }
 
             private void OnClick(Vector2 position)
             {
+                /*
+                 *カーソル(or タッチ)が初めてされたときの処理
+                 */
+
                 var tappedObject = EventSystem.current.currentSelectedGameObject;
                 this.TouchMoveEnable = tappedObject == null || tappedObject.tag == "block" ||  tappedObject.tag == "floor";
 
@@ -172,6 +182,9 @@ namespace VrScene
 
             private void OnMove(Vector2 position)
             {
+                /*
+                 *カーソル(or タッチ位置)が動いたときの処理
+                 */
                 if (!this.TouchMoveEnable) return;
                 Vector2 vec = position - this.lastMousePosition;
                 vec = Quaternion.Euler(0, 0, this.CurrentZRotate) * vec;
@@ -181,20 +194,17 @@ namespace VrScene
 
             private void RotateXY(Vector3 direction)
             {
-                 // 上下方向はカメラを, 左右方向は本体ごと回す
-
                 this.CurrentRightLeftRotate -= direction.x;
-                CameraTransform.RotateAround(PlayerTransform.position, PlayerTransform.right, direction.y);
                 this.CurrentZRotate += direction.z;
+                CameraTransform.RotateAround(PlayerTransform.position, PlayerTransform.right, direction.y);
             }
             private Vector3 GyroDiff()
             {
-                var cGyro = (Quaternion.AngleAxis(90.0f, Vector3.right) * gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward)).eulerAngles;
-                //var cGyro = gyro.attitude.eulerAngles;
-                var x = cGyro.x - LastGyroRotate.x;
-                var y = cGyro.y - LastGyroRotate.y;
-                var z = cGyro.z - LastGyroRotate.z;
-                LastGyroRotate = cGyro;
+                var currentGyro = (Quaternion.AngleAxis(90.0f, Vector3.right) * gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward)).eulerAngles;
+                var x = currentGyro.x - LastGyroRotate.x;
+                var y = currentGyro.y - LastGyroRotate.y;
+                var z = currentGyro.z - LastGyroRotate.z;
+                LastGyroRotate = currentGyro;
                 return new Vector3(-y, x, z);
             }
         }

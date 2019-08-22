@@ -113,6 +113,7 @@ namespace VrScene
             private Vector2 lastMousePosition;
             private bool TouchMoveEnable;
             private float CurrentRightLeftRotate;
+            private Gyroscope gyro;
 
             public RotateManager(Transform cameraTransform,Transform playerTransform)
             {
@@ -120,6 +121,7 @@ namespace VrScene
                 this.PlayerTransform = playerTransform;
                 this.lastMousePosition = Vector2.zero;
                 this.CurrentRightLeftRotate = 0f;
+                this.gyro = Input.gyro;
 
             }
 
@@ -128,6 +130,7 @@ namespace VrScene
                 PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
                 if (Application.platform == RuntimePlatform.Android)
                 {
+                    this.RotateXY(new Vector2(gyro.rotationRate.y, -gyro.rotationRate.x) * 60);
                     if (Input.touchCount > 0)
                     {
                         var touch = Input.GetTouch(0);

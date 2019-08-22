@@ -27,6 +27,7 @@ namespace VrScene
 
         GameObject gamesystem;
         InputManager inputManager;
+        private GameObject PlayerCamera;
 
 
         private void Awake()
@@ -34,6 +35,7 @@ namespace VrScene
             player_rigidbody = GetComponent<Rigidbody>();
             gamesystem = GameObject.Find("GameSystem");
             inputManager = gamesystem.GetComponent<InputManager>();
+            PlayerCamera = GameObject.Find("PlayerCamera");
         }
         void Start()
         {
@@ -81,6 +83,7 @@ namespace VrScene
         public void RefleshRotate()
         {
             #if UNITY_EDITOR //unityEditorでのデバッグ時
+            transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
             RefleshRotationByMouseDrag();
             #else
             RefleshRotationByTouch();
@@ -100,14 +103,15 @@ namespace VrScene
             }
             else if (Input.GetMouseButton(0))
             {
+                Debug.Log(PlayerCamera.transform.rotation);
                 var currentMousePos = Input.mousePosition;
                 var deltaMousePos = currentMousePos - lastMousePosition;
-                transform.Rotate(deltaMousePos.y * rotationSpeed.y, -deltaMousePos.x * rotationSpeed.x, 0);
-                transform.rotation *= Quaternion.Euler(new Vector3(deltaMousePos.y * rotationSpeed.y, -deltaMousePos.x * rotationSpeed.x, 0));
-                var transformVec3 = transform.rotation.eulerAngles;
+                PlayerCamera.transform.Rotate(deltaMousePos.y * rotationSpeed.y, -deltaMousePos.x * rotationSpeed.x, 0);
+                PlayerCamera.transform.rotation *= Quaternion.Euler(new Vector3(deltaMousePos.y * rotationSpeed.y, -deltaMousePos.x * rotationSpeed.x, 0));
+                var transformVec3 = PlayerCamera.transform.rotation.eulerAngles;
                 transformVec3.z = 0;
-                transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
-                print(transform.rotation.eulerAngles);
+                PlayerCamera.transform.rotation = Quaternion.Euler(PlayerCamera.transform.rotation.eulerAngles.x, PlayerCamera.transform.rotation.eulerAngles.y, 0);
+                print(PlayerCamera.transform.rotation.eulerAngles);
                 lastMousePosition = currentMousePos;
             }
 

@@ -124,17 +124,16 @@ namespace VrScene
                     if (type == "color")
                     {
                         string targetColorName = "Color" + target;
-                        List<GameObject> targetObjectList = SearchBlockByColor(targetColorName);
-                        for (int j = 0; j < targetObjectList.Count; j++)
-                        {
-                            targetObjectList[j].GetComponent<Renderer>().sharedMaterial = toColorMaterial;
-                        }
+                        List<(IncludingBlockInfo block_Info, GameObject block_instance)> targetBlocks = this.blocks_data.FindAll(block => block.block_Info.colorID == target);
+                        targetBlocks.ForEach(block => {
+                            block.block_instance.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
+                        });
 
                     }
                     else if (type == "ID")
                     {
                         string targetID = target;
-                        GameObject targetObject = SearchBlockByID(targetID);
+                        GameObject targetObject = this.blocks_data.Find(block => block.block_Info.ID == targetID).block_instance; 
                         targetObject.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
                     }
                     else
@@ -147,44 +146,6 @@ namespace VrScene
                     Debug.Log("To is Invalid.");
                 }
             }
-        }
-
-        private List<GameObject> SearchBlockByColor(string targetColorName)
-        {
-            List<GameObject> blockObjectList = new List<GameObject>();
-            Material targetColorMaterial = Resources.Load(targetColorName) as Material;
-            if (targetColorMaterial != null)
-            {
-                for (int i = 0; i < blocks_data.Count; i++)
-                {
-                    if ("Color" + blocks_data[i].block_Info.colorID == targetColorName)
-                    {
-                        blockObjectList.Add(blocks_data[i].block_instance);
-                    }
-                }
-            }
-            else
-            {
-                Debug.Log("Target(Color) is Invalid.");
-            }
-
-            return blockObjectList;
-        }
-
-        private GameObject SearchBlockByID(string targetID)
-        {
-            GameObject blockObject = null;
-            for (int i = 0; i < blocks_data.Count; i++)
-            {
-                if (blocks_data[i].block_Info.ID == targetID)
-                {
-                    blockObject = blocks_data[i].block_instance;
-                    break;
-                }
-            }
-            if (blockObject == null) Debug.Log("Target(ID) is Invalid.");
-
-            return blockObject;
         }
     }
 

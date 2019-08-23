@@ -23,13 +23,9 @@ namespace VrScene
 
         RotateManager RotateManagerI;
 
-        GameObject gamesystem;
-
-
         private void Awake()
         {
             player_rigidbody = GetComponent<Rigidbody>();
-            gamesystem = GameObject.Find("GameSystem");
             var playerCamera = GameObject.Find("PlayerCamera");
             RotateManagerI = new RotateManager(playerCamera.transform, transform);
         }
@@ -74,11 +70,6 @@ namespace VrScene
             else player_rigidbody.velocity = run_move_speed * moveDirection;
         }
 
-        public void RefleshRotate()
-        {
-        }
-
-  
         public void Flying(bool value)
         {
             if (value == true)

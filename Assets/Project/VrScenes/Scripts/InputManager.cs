@@ -16,8 +16,6 @@ namespace VrScene
         GameObject gamesystem;
         BlockManager BlockManager;
         
-        public bool isSliderSelect = false;
-
         public Toggle FlyingModeToggle;
         public GameObject FlyingButtons;
         public Toggle PlayButton;

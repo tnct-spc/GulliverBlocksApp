@@ -23,13 +23,12 @@ namespace VrScene
         public GameObject ResetButton;
         public GameObject NonTwoEyesModeUI;
         public Slider SeekBar;
+        public GameObject TouchPanel;
 
         public GameObject BackToTheGame;
         public GameObject RuntimeHierarchy;
         public GameObject RuntimeInspector;
         bool push = true;
-
-        Touch touch;
 
         void Start()
         {
@@ -82,24 +81,7 @@ namespace VrScene
                     gamemanager.Back_To_Title_If_Android();
                 }
             }
-
-            touch = Input.GetTouch(0);
-            if (XRSettings.enabled == true)
-            {
-                if (Input.touchCount > 0)
-                {
-                    touch = Input.GetTouch(0);
-                    if (touch.phase == TouchPhase.Began)
-                    {
-                        Player_Forward();
-                    }
-                    else if (touch.phase == TouchPhase.Ended)
-                    {
-                        Player_StopForward();
-                    }
-                }
-                else touch.phase = TouchPhase.Ended;
-            }
+            TouchPanel.SetActive(XRSettings.enabled);
             NonTwoEyesModeUI.SetActive(!XRSettings.enabled);
         }
         public void FlyingModeCheck(bool isActive)

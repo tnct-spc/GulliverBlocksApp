@@ -6,7 +6,7 @@ namespace VrScene
 {
     public class PlayerManager : MonoBehaviour
     {
-        [SerializeField] int default_move_speed = 1;
+        public int default_move_speed = 1;
         [SerializeField] int run_move_speed = 2;
         Rigidbody player_rigidbody;
         private bool isDefault_speed = true;
@@ -38,8 +38,7 @@ namespace VrScene
         {
             Move();
             CheckPlayerFall();
-            if(!XRSettings.enabled)
-                RotateManagerI.UpdateRotate();
+            if (!XRSettings.enabled)RotateManagerI.UpdateRotate();
         }
 
         void Move()
@@ -60,17 +59,16 @@ namespace VrScene
             moveDirection.y *= player_rigidbody.transform.up.y;
             moveDirection.z *= player_rigidbody.transform.forward.z;
 
-            if (MoveRight) moveDirection.z += player_rigidbody.transform.right.z;
-            if (MoveLeft) moveDirection.z += player_rigidbody.transform.right.z * -1;
-            if (MoveForward) moveDirection.x += player_rigidbody.transform.forward.x;
-            if (MoveBack) moveDirection.x += player_rigidbody.transform.forward.x * -1;
+                if (MoveRight) moveDirection.z += player_rigidbody.transform.right.z;
+                if (MoveLeft) moveDirection.z += player_rigidbody.transform.right.z * -1;
+                if (MoveForward) moveDirection.x += player_rigidbody.transform.forward.x;
+                if (MoveBack) moveDirection.x += player_rigidbody.transform.forward.x * -1;
 
             moveDirection.Normalize();
 
             if (isDefault_speed) player_rigidbody.velocity = default_move_speed * moveDirection;
             else player_rigidbody.velocity = run_move_speed * moveDirection;
         }
-
         public void Flying(bool value)
         {
             if (value == true)

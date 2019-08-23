@@ -38,7 +38,8 @@ namespace VrScene
         {
             Move();
             CheckPlayerFall();
-            RotateManagerI.UpdateRotate();
+            if(!XRSettings.enabled)
+                RotateManagerI.UpdateRotate();
         }
 
         void Move()

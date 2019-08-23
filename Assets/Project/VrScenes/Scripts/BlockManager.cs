@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using UnityEngine.Networking;
 using JsonFormats;
 
 namespace VrScene
@@ -26,7 +23,6 @@ namespace VrScene
         GameObject[] Cube;
         public GameObject LoadingWindow;
         CommunicationManager CommunicationManager;
-        string LoadingStatus = "start";
 
         private void Awake()
         {
@@ -41,37 +37,24 @@ namespace VrScene
             SeekBar = InputManager.SeekBar;
             PlayButton = InputManager.PlayButton;
             GameManager = GameSystem.GetComponent<GameManager>();
+            StartCoroutine("FetchData");
         }
 
         private void Update()
         {
-            checkLoadingStatus();
         }
 
-        private async void checkLoadingStatus()
+        IEnumerator FetchData()
         {
-            // UnityのAPIはメインスレッドでしか叩けないため
-            switch (this.LoadingStatus)
-            {
-                case "start":
-                    this.LoadingStatus = "fetching";
-                    await CommunicationManager.fetchMapBlocksAsync(WorldID).ContinueWith(task =>
-                    {
-                        this.blockJson = task.Result;
-                        this.LoadingStatus = "fetched";
-                    });
-                    return;
-                case "fetched":
-                    this.Cube = new GameObject[this.blockJson.Length];
-                    InitialPlacement();
-                    ApplyColorRules();
-                    if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
-                    LoadingWindow.SetActive(false);
-                    this.LoadingStatus = "done";
-                    return;
-            default:
-                    return;
-            }
+            var task = CommunicationManager.fetchMapBlocksAsync(WorldID);
+            yield return new WaitUntil(() => task.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
+            this.blockJson = task.Result;
+            // 以下Blockのデータを取得してから行いたい処理
+            this.Cube = new GameObject[this.blockJson.Length];
+            InitialPlacement();
+            ApplyColorRules();
+            if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
+            LoadingWindow.SetActive(false);
         }
 
         void InitialPlacement()

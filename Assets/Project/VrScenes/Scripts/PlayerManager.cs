@@ -38,8 +38,8 @@ namespace VrScene
         {
             Move();
             CheckPlayerFall();
-            if(!XRSettings.enabled)
-                RotateManagerI.UpdateRotate();
+            RotateManagerI.UpdateRotate();
+
         }
 
         void Move()
@@ -131,6 +131,11 @@ namespace VrScene
                  *　X,Z方向の回転はPlayerを回転させたくないのでPlayerCameraを回転させてる
                  * 
                  */
+            　　if(XRSettings.enabled)
+                {
+                    PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
+                    return;
+                }
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation; 

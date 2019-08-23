@@ -52,6 +52,8 @@ namespace VrScene
             PlayButton.GetComponent<Toggle>().isOn = false;
             PlayModeUI.SetActive(false);
             SeekBar.maxValue = 100;
+
+            InputTracking.disablePositionalTracking = true;
         }
 
         private void Update()
@@ -81,11 +83,12 @@ namespace VrScene
                 }
             }
 
+            touch = Input.GetTouch(0);
             if (XRSettings.enabled == true)
             {
-                InputTracking.disablePositionalTracking = true;
                 if (Input.touchCount > 0)
                 {
+                    touch = Input.GetTouch(0);
                     if (touch.phase == TouchPhase.Began)
                     {
                         Player_Forward();
@@ -95,10 +98,10 @@ namespace VrScene
                         Player_StopForward();
                     }
                 }
+                else touch.phase = TouchPhase.Ended;
             }
             NonTwoEyesModeUI.SetActive(!XRSettings.enabled);
         }
-
         public void FlyingModeCheck(bool isActive)
         {
             playermanager.Flying(isActive);

@@ -19,7 +19,7 @@ namespace VrScene
         Slider SeekBar;
         Toggle PlayButton;
         GameManager GameManager;
-        Block[] blockJson;
+        List<Block> blockJson;
         GameObject[] Cube;
         public GameObject LoadingWindow;
         CommunicationManager CommunicationManager;
@@ -50,7 +50,7 @@ namespace VrScene
             yield return new WaitUntil(() => task.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             this.blockJson = task.Result;
             // 以下Blockのデータを取得してから行いたい処理
-            this.Cube = new GameObject[this.blockJson.Length];
+            this.Cube = new GameObject[this.blockJson.Count];
             InitialPlacement();
             ApplyColorRules();
             if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
@@ -76,13 +76,13 @@ namespace VrScene
 
         public int GetBlockJsonLength()
         {
-            return blockJson.Length;
+            return blockJson.Count;
         }
 
         public async void RepeatPlaceBlocks()
         {
             isRepeating = true;
-            while (BlockNumber < blockJson.Length)
+            while (BlockNumber < blockJson.Count)
             {
                 while (PlayButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
                 SeekBar.value++;
@@ -94,7 +94,7 @@ namespace VrScene
 
         public void ClearBlocks()
         {
-            for (int i = 0; i < blockJson.Length; i++)
+            for (int i = 0; i < blockJson.Count; i++)
             {
                 Cube[i].SetActive(false);
             }
@@ -113,8 +113,8 @@ namespace VrScene
         private void ApplyColorRules()
         {
             string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"8831ab9d-31b6-449b-8077-d523020de32c\", \"to\": 1 }] }";
-            Rule[] ruleData = CommunicationManager.JsonHelper.FromJson<Rule>(rulesJson, "Rules");
-            for (int i = 0; i < ruleData.Length; i++)
+            List<Rule> ruleData = CommunicationManager.JsonHelper.FromJson<Rule>(rulesJson, "Rules");
+            for (int i = 0; i < ruleData.Count; i++)
             {
                 string type = ruleData[i].type;
                 string target = ruleData[i].target;

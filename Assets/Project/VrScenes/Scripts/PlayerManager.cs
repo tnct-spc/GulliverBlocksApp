@@ -114,7 +114,6 @@ namespace VrScene
                 this.CurrentRightLeftRotate = 0f;
                 this.CurrentZRotate = 0f;
                 this.gyro = Input.gyro;
-
             }
 
             public void UpdateRotate()
@@ -129,6 +128,11 @@ namespace VrScene
                  *　X,Z方向の回転はPlayerを回転させたくないのでPlayerCameraを回転させてる
                  * 
                  */
+            　　if(XRSettings.enabled)
+                {
+                    PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
+                    return;
+                }
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation; 

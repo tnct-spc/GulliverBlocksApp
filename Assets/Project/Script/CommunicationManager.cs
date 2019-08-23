@@ -11,14 +11,21 @@ public class CommunicationManager
 
     public async Task<Block[]> fetchMapBlocksAsync(string mapId)
     {
-        var apiUrl = "https://" + ServerAddress + "/get_merged_blocks/" + mapId + "/";
+        var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
         var jsonStr = await GetRequest(apiUrl);
+        
+        if (jsonStr == "{\"blocks\":[]}\n")
+        {
+            apiUrl = "https://" + ServerAddress + "/get_merged_blocks/" + mapId + "/";
+            jsonStr = await GetRequest(apiUrl);
+        }
+        
         return JsonHelper.FromJson<Block>(jsonStr, "Blocks");
     }
 
     public async Task<World[]> fetchMapsAsync()
     {
-        var apiUrl = "https://" + ServerAddress + "/get_maps";
+        var apiUrl = "https://" + ServerAddress + "/get_maps/";
         var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<World>(jsonStr, "Maps");
     }

@@ -38,7 +38,7 @@ namespace TitleScene
                     {
                         this.WorldsData = task.Result;
                         //this.fetchStatus = "fetched";
-                    });
+                    });                 
                     await CommunicationManager.fetchMergesAsync().ContinueWith(task =>
                     {
                         //this.WorldsData = task.Result;
@@ -46,7 +46,6 @@ namespace TitleScene
                         //通常マップの配列とマージされたマップの配列の結合
                         this.WorldsData = this.WorldsData.Concat(task.Result).ToArray();
                         this.fetchStatus = "fetched";
-
                     });
                     return;
                 case "fetched":

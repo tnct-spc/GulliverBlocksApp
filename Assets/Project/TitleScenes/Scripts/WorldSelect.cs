@@ -13,7 +13,6 @@ namespace TitleScene
         GameSystem gameSystem;
         [SerializeField] private GameObject btnPref;  //ボタンプレハブ
         public World[] WorldsData;
-        //public List<World> WorldsData;
         CommunicationManager CommunicationManager;
         private string fetchStatus = "start";
 
@@ -37,12 +36,9 @@ namespace TitleScene
                     await CommunicationManager.fetchMapsAsync().ContinueWith(task =>
                     {
                         this.WorldsData = task.Result;
-                        //this.fetchStatus = "fetched";
                     });                 
                     await CommunicationManager.fetchMergesAsync().ContinueWith(task =>
                     {
-                        //this.WorldsData = task.Result;
-
                         //通常マップの配列とマージされたマップの配列の結合
                         this.WorldsData = this.WorldsData.Concat(task.Result).ToArray();
                         this.fetchStatus = "fetched";

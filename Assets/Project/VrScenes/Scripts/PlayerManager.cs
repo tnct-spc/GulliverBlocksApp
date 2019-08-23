@@ -39,7 +39,6 @@ namespace VrScene
             Move();
             CheckPlayerFall();
             RotateManagerI.UpdateRotate();
-
         }
 
         void Move()
@@ -116,7 +115,6 @@ namespace VrScene
                 this.CurrentRightLeftRotate = 0f;
                 this.CurrentZRotate = 0f;
                 this.gyro = Input.gyro;
-
             }
 
             public void UpdateRotate()

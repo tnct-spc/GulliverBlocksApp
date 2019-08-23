@@ -15,7 +15,7 @@ namespace VrScene
         GameManager gamemanager;
         GameObject gamesystem;
         BlockManager BlockManager;
-        
+
         public Toggle FlyingModeToggle;
         public GameObject FlyingButtons;
         public Toggle PlayButton;

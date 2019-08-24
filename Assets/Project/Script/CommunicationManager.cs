@@ -9,11 +9,11 @@ public class CommunicationManager
 {
     public static string ServerAddress = "gulliverblocks.herokuapp.com";
 
-    public async Task<List<Block>> fetchMapBlocksAsync(string mapId)
+    public async Task<List<BlockInfo>> fetchMapBlocksAsync(string mapId)
     {
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
         var jsonStr = await GetRequest(apiUrl);
-        return JsonHelper.FromJson<Block>(jsonStr, "Blocks");
+        return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
     }
 
     public async Task<List<World>> fetchMapsAsync()
@@ -87,7 +87,7 @@ public class CommunicationManager
 namespace JsonFormats
 {
     [System.Serializable]
-    public struct Block
+    public struct BlockInfo
     {
         public float x;
         public float y;

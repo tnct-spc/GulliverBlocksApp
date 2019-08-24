@@ -9,18 +9,16 @@ namespace VrScene
 {
     public class BlockManager : MonoBehaviour
     {
-        private List<(IncludingBlockInfo block_Info, GameObject block_instance)> blocks_data = new List<(IncludingBlockInfo block_info, GameObject block_instance)>();
+        public int BlocksCount;
+        private List<Block> Blocks = new List<Block> { };
         public static string WorldID;
         GameObject GameSystem;
-        static string response_json;
         public float BlockNumber = 0;
         public bool isRepeating = false;
         InputManager InputManager;
         Slider SeekBar;
         Toggle PlayButton;
         GameManager GameManager;
-        List<Block> blockJson;
-        GameObject[] Cube;
         public GameObject LoadingWindow;
         CommunicationManager CommunicationManager;
 
@@ -40,49 +38,36 @@ namespace VrScene
             StartCoroutine("FetchData");
         }
 
-        private void Update()
-        {
-        }
-
         IEnumerator FetchData()
         {
             var task = CommunicationManager.fetchMapBlocksAsync(WorldID);
             yield return new WaitUntil(() => task.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
-            this.blockJson = task.Result;
-            // 以下Blockのデータを取得してから行いたい処理
-            this.Cube = new GameObject[this.blockJson.Count];
-            InitialPlacement();
+            task.Result.ForEach(this.AddBlock);// 全てのブロックを配置
             ApplyColorRules();
             if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
         }
 
-        void InitialPlacement()
+        void InitialPlacement(List<BlockInfo> blocksInfo)
         {
-            Object block = (GameObject)Resources.Load("pblock1x1");
-            for (int i = 0; i < GetBlockJsonLength(); i++)
-            {
-                Cube[i] = Instantiate(block, blockJson[i].GetPosition(), Quaternion.identity) as GameObject;
-                string colorName = "Color" + blockJson[i].colorID.ToString();
-                Material colorMaterial = Resources.Load(colorName) as Material;
-                Cube[i].GetComponent<Renderer>().sharedMaterial = colorMaterial;
-                IncludingBlockInfo blockInfo = Cube[i].GetComponent<IncludingBlockInfo>();
-                blockInfo.SetBlockData(blockJson[i]);
-                Cube[i].name = "Cube" + i;
-                blocks_data.Add((blockInfo, Cube[i]));
-                if (GameManager.Mode == "Vr") Cube[i].SetActive(false);
-            }
+            blocksInfo.ForEach(b => AddBlock(b));
         }
 
-        public int GetBlockJsonLength()
+        private void AddBlock(BlockInfo blockInfo)
         {
-            return blockJson.Count;
+            Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
+            Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
+            block.SetColor(blockInfo.colorID);
+            block.SetBlockData(blockInfo);
+            if (GameManager.Mode == "Vr") block.SetActive(false);
+            this.Blocks.Add(block);
+            this.BlocksCount += 1;
         }
 
         public async void RepeatPlaceBlocks()
         {
             isRepeating = true;
-            while (BlockNumber < blockJson.Count)
+            while (BlockNumber < this.BlocksCount)
             {
                 while (PlayButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
                 SeekBar.value++;
@@ -94,9 +79,9 @@ namespace VrScene
 
         public void ClearBlocks()
         {
-            for (int i = 0; i < blockJson.Count; i++)
+            for (int i = 0; i < this.BlocksCount; i++)
             {
-                Cube[i].SetActive(false);
+                Blocks[i].SetActive(false);
             }
         }
 
@@ -105,7 +90,7 @@ namespace VrScene
             ClearBlocks();
             for (int i = 0; i < value; i++)
             {
-                Cube[i].SetActive(true);
+                Blocks[i].SetActive(true);
             }
             BlockNumber = value;
         }
@@ -118,35 +103,34 @@ namespace VrScene
             {
                 string type = ruleData[i].type;
                 string target = ruleData[i].target;
-                Material toColorMaterial = Resources.Load("Color" + ruleData[i].to) as Material;
-                if (toColorMaterial != null)
+                string to = ruleData[i].to;
+                Material toColorMaterial = Resources.Load("Color" + to) as Material;
+                if (toColorMaterial == null)
                 {
-                    if (type == "color")
-                    {
-                        string targetColorName = "Color" + target;
-                        List<(IncludingBlockInfo block_Info, GameObject block_instance)> targetBlocks = this.blocks_data.FindAll(block => block.block_Info.colorID == target);
-                        targetBlocks.ForEach(block => {
-                            block.block_instance.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
-                        });
+                    Debug.Log("To is Invalid.");
+                    break;
+                }
+                if (type == "color")
+                {
+                    string targetColorName = "Color" + target;
+                    List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == target);
+                    targetBlocks.ForEach(block => {
+                        block.SetColor(to);
+                    });
 
-                    }
-                    else if (type == "ID")
-                    {
-                        string targetID = target;
-                        GameObject targetObject = this.blocks_data.Find(block => block.block_Info.ID == targetID).block_instance; 
-                        targetObject.GetComponent<Renderer>().sharedMaterial = toColorMaterial;
-                    }
-                    else
-                    {
-                        Debug.Log("Type is Invalid.");
-                    }
+                }
+                else if (type == "ID")
+                {
+                    string targetID = target;
+                    Block targetBlock = this.Blocks.Find(block => block.ID == targetID);
+                    if (targetBlock == null) break;
+                    targetBlock.SetColor(to);
                 }
                 else
                 {
-                    Debug.Log("To is Invalid.");
+                    Debug.Log("Type is Invalid.");
                 }
             }
         }
     }
-
 }

@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project/SettingScene/SettingScene.unity
     guid: d1a04244326c8a54cb623f87bc67e74b
+  - enabled: 1
+    path: Assets/Project/SettingScene/ColorSetting.unity
+    guid: fef78b97a27a07b44a2f9c32a99ae8db
   m_configObjects: {}

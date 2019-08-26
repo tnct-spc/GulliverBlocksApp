@@ -9,14 +9,14 @@ public class CommunicationManager
 {
     public static string ServerAddress = "gulliverblocks.herokuapp.com";
 
-    public async Task<Block[]> fetchMapBlocksAsync(string mapId)
+    public async Task<List<BlockInfo>> fetchMapBlocksAsync(string mapId)
     {
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
         var jsonStr = await GetRequest(apiUrl);
-        return JsonHelper.FromJson<Block>(jsonStr, "Blocks");
+        return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
     }
 
-    public async Task<World[]> fetchMapsAsync()
+    public async Task<List<World>> fetchMapsAsync()
     {
         var apiUrl = "https://" + ServerAddress + "/get_maps/";
         var jsonStr = await GetRequest(apiUrl);
@@ -41,7 +41,7 @@ public class CommunicationManager
 
     public static class JsonHelper
     {
-        public static T[] FromJson<T>(string json, string command)
+        public static List<T> FromJson<T>(string json, string command)
         {
             if (command == "Maps")
             {
@@ -67,19 +67,19 @@ public class CommunicationManager
         [System.Serializable]
         private class MapsWrapper<T>
         {
-            public T[] maps;
+            public List<T> maps;
         }
 
         [System.Serializable]
         private class RulesWrapper<T>
         {
-            public T[] rules;
+            public List<T> rules;
         }
 
         [System.Serializable]
         private class BlocksWrapper<T>
         {
-            public T[] blocks;
+            public List<T> blocks;
         }
     }
 }
@@ -87,7 +87,7 @@ public class CommunicationManager
 namespace JsonFormats
 {
     [System.Serializable]
-    public struct Block
+    public struct BlockInfo
     {
         public float x;
         public float y;

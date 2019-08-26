@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using JsonFormats;
 
 namespace VrScene
 {
@@ -15,6 +16,9 @@ namespace VrScene
         private ToggleGroup toggleGroup;
         private GameObject targetBlock;
         public GameObject lightUpObject = null;
+        private string fetchStatus = "start";
+        CommunicationManager CommunicationManager;
+        public Colors[] ColorRules;
 
         public void OnEnable()
         {
@@ -25,6 +29,11 @@ namespace VrScene
                 Material material = Resources.Load(materialName) as Material;
                 contentMaterials.Add(material);
             }
+        }
+
+        private void Awake()
+        {
+            CommunicationManager = new CommunicationManager();
         }
 
         private void OnDisable()

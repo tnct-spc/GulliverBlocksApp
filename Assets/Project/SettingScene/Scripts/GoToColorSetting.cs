@@ -1,22 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class GoToColorSetting : MonoBehaviour
+namespace SettingScene
 {
-    // Start is called before the first frame update
-    void Start()
+    public class GoToColorSetting : MonoBehaviour
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
+        //　Titleを押したら実行する
+        public void MoveTitle()
         {
             SceneManager.LoadScene("ColorSetting");
+
+            Screen.orientation = ScreenOrientation.LandscapeLeft;
+
         }
     }
 }
+

@@ -11,7 +11,7 @@ namespace VrScene
     {
         public int BlocksCount;
         private List<Block> Blocks = new List<Block> { };
-        public static string WorldID;
+        public static string WorldID = "114e3ba9-a403-4c5c-a018-c7219c5bcc90";
         GameObject GameSystem;
         public float BlockNumber = 0;
         public bool isRepeating = false;

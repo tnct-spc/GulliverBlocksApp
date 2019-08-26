@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems; 
+using UnityEngine.EventSystems;
 
 namespace VrScene
 {
@@ -29,6 +29,14 @@ namespace VrScene
         public void Tapped()
         {
             TapCount++;
+            StartCoroutine("waittime");
+        }
+
+        IEnumerator waittime()
+        {
+            int NowTapCount = TapCount;
+            yield return new WaitForSeconds(1);
+            if (NowTapCount == TapCount) TapCount = 0;
         }
     }
 }

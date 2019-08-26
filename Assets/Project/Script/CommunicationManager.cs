@@ -23,11 +23,11 @@ public class CommunicationManager
         return JsonHelper.FromJson<World>(jsonStr, "Maps");
     }
 
-    public async Task<Colors[]> fetchColorsAsync(string mapid)
+    public async Task<List<Rule>> fetchColorsAsync(string mapid)
     {
-        var apiUrl = "https://" + ServerAddress + "/get_color_rules/" + mapid;
+        var apiUrl = "https://" + ServerAddress + "/get_color_rules/" + mapid + "/";
         var jsonStr = await GetRequest(apiUrl);
-        return JsonHelper.FromJson<Colors>(jsonStr, "Colors");
+        return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
 
     }
 
@@ -65,7 +65,8 @@ public class CommunicationManager
             {
                 BlocksWrapper<T> wrapper = JsonUtility.FromJson<BlocksWrapper<T>>(json);
                 return wrapper.blocks;
-            } else if (command == "Colors")
+            }
+            else if (command == "ColorRules")
             {
                 ColorWrapper<T> wrapper = JsonUtility.FromJson<ColorWrapper<T>>(json);
                 return wrapper.colors;
@@ -96,7 +97,7 @@ public class CommunicationManager
 
         private class ColorWrapper<T>
         {
-            public T[] colors;
+            public List<T> colors;
         }
     }
 }
@@ -125,8 +126,10 @@ namespace JsonFormats
     public struct Rule
     {
         public string type;
-        public string target;
+        public string block_id;
+        public string origin;
         public string to;
+        public string map_id;
     }
 
     [System.Serializable]
@@ -136,12 +139,4 @@ namespace JsonFormats
         public string name;
     }
 
-    public struct Color
-    {
-        public string type;
-        public string blockID;
-        public int origin;
-        public int to;
-        public string mapID;
-    }
 }

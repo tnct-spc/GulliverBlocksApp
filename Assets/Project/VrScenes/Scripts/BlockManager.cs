@@ -36,6 +36,7 @@ namespace VrScene
             PlayButton = InputManager.PlayButton;
             GameManager = GameSystem.GetComponent<GameManager>();
             StartCoroutine("FetchData");
+            //StartCoroutine("FetchRuleData");
         }
 
         IEnumerator FetchData()
@@ -43,8 +44,19 @@ namespace VrScene
             var task = CommunicationManager.fetchMapBlocksAsync(WorldID);
             yield return new WaitUntil(() => task.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             task.Result.ForEach(this.AddBlock);// 全てのブロックを配置
-            ApplyColorRules();
-            if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
+        /*    if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
+            LoadingWindow.SetActive(false);
+
+        }
+
+        IEnumerable FetchRuleData()
+        {*/
+            print("hoge");
+            var _task = CommunicationManager.fetchColorsAsync(WorldID);
+            yield return new WaitUntil(() => _task.IsCompleted);
+            print(_task.Result);
+            _task.Result.ForEach(this.ApplyColorRules);
+             if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
         }
 
@@ -94,11 +106,42 @@ namespace VrScene
             }
             BlockNumber = value;
         }
-
-        private void ApplyColorRules()
+        private void ApplyColorRules(Rule ruleData )
         {
-            string rulesJson = "{ \"rules\": [{ \"type\": \"color\", \"target\": 1, \"to\": 3},{ \"type\": \"ID\", \"target\": \"8831ab9d-31b6-449b-8077-d523020de32c\", \"to\": 1 }] }";
-            List<Rule> ruleData = CommunicationManager.JsonHelper.FromJson<Rule>(rulesJson, "Rules");
+                string type = ruleData.type;
+                string target = ruleData.origin;
+                string to = ruleData.to;
+                Material toColorMaterial = Resources.Load("Color" + to) as Material;
+                if (toColorMaterial == null)
+                {
+                    Debug.Log("To is Invalid.");
+                return;
+                }
+                if (type == "color")
+                {
+                    string targetColorName = "Color" + target;
+                    List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == target);
+                    targetBlocks.ForEach(block => {
+                        block.SetColor(to);
+                    });
+
+                }
+                else if (type == "ID")
+                {
+                    string targetID = target;
+                    Block targetBlock = this.Blocks.Find(block => block.ID == targetID);
+                    if (targetBlock == null) return;
+                    targetBlock.SetColor(to);
+                }
+                else
+                {
+                    Debug.Log("Type is Invalid.");
+                }
+        }
+
+
+/*        private void ApplyColorRules( List<Rule> ruleData )
+        {
             for (int i = 0; i < ruleData.Count; i++)
             {
                 string type = ruleData[i].type;
@@ -131,6 +174,6 @@ namespace VrScene
                     Debug.Log("Type is Invalid.");
                 }
             }
-        }
+        }*/
     }
 }

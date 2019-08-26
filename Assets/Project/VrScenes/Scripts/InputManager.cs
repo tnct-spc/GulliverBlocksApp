@@ -149,7 +149,7 @@ namespace VrScene
         }
         public void Play(bool isActive)
         {
-            SeekBar.maxValue = BlockManager.GetBlockJsonLength();
+            SeekBar.maxValue = BlockManager.BlocksCount;
             if (isActive)
             {
                 if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
@@ -169,7 +169,7 @@ namespace VrScene
 
         public void PlaceBlockBySeekBar(float value)
         {
-            SeekBar.maxValue = BlockManager.GetBlockJsonLength();
+            SeekBar.maxValue = BlockManager.BlocksCount;
             BlockManager.PlaceBlocks(value);
         }
 

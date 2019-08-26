@@ -10,6 +10,7 @@ namespace VrScene
         [SerializeField] int run_move_speed = 2;
         Rigidbody player_rigidbody;
         GameObject PlayerCamera;
+        GameObject TwoEyesModeCamera;
         private bool isDefault_speed = true;
         const string Stop = "Stop";
         const string Forward = "Forward";
@@ -21,13 +22,13 @@ namespace VrScene
 
         public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
 
-
         RotateManager RotateManagerI;
 
         private void Awake()
         {
             player_rigidbody = GetComponent<Rigidbody>();
             PlayerCamera = GameObject.Find("PlayerCamera");
+            TwoEyesModeCamera = GameObject.Find("TwoEyesModeCamera");
             RotateManagerI = new RotateManager(PlayerCamera.transform, transform);
         }
         void Start()
@@ -39,7 +40,23 @@ namespace VrScene
         {
             Move();
             CheckPlayerFall();
-            RotateManagerI.UpdateRotate();
+            PlayerCamera.SetActive(!XRSettings.enabled);
+            TwoEyesModeCamera.SetActive(XRSettings.enabled);
+            if (!XRSettings.enabled)
+            {
+                RotateManagerI.UpdateRotate();
+                PlayerCamera.transform.position = this.transform.position;
+            }
+
+            if (XRSettings.enabled)
+            {
+                RotatePlayerInTwoEyesMode();
+            }
+        }
+        void RotatePlayerInTwoEyesMode()
+        {
+            this.transform.eulerAngles = new Vector3(0f, TwoEyesModeCamera.transform.eulerAngles.y, 0f);
+            TwoEyesModeCamera.transform.position = this.transform.position;
         }
         void Move()
         {
@@ -128,6 +145,11 @@ namespace VrScene
                  *　X,Z方向の回転はPlayerを回転させたくないのでPlayerCameraを回転させてる
                  * 
                  */
+                if (XRSettings.enabled)
+                {
+                    PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
+                }
+
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation; 

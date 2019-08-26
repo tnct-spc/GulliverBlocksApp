@@ -6,9 +6,10 @@ namespace VrScene
 {
     public class PlayerManager : MonoBehaviour
     {
-        public int default_move_speed = 1;
+        [SerializeField] int default_move_speed = 1;
         [SerializeField] int run_move_speed = 2;
         Rigidbody player_rigidbody;
+        GameObject PlayerCamera;
         private bool isDefault_speed = true;
         const string Stop = "Stop";
         const string Forward = "Forward";
@@ -26,8 +27,8 @@ namespace VrScene
         private void Awake()
         {
             player_rigidbody = GetComponent<Rigidbody>();
-            var playerCamera = GameObject.Find("PlayerCamera");
-            RotateManagerI = new RotateManager(playerCamera.transform, transform);
+            PlayerCamera = GameObject.Find("PlayerCamera");
+            RotateManagerI = new RotateManager(PlayerCamera.transform, transform);
         }
         void Start()
         {
@@ -38,9 +39,13 @@ namespace VrScene
         {
             Move();
             CheckPlayerFall();
-            if (!XRSettings.enabled)RotateManagerI.UpdateRotate();
+            if (!XRSettings.enabled) RotateManagerI.UpdateRotate();
+            if (XRSettings.enabled) RotatePlayerInTwoEyesMode();
         }
-
+        void RotatePlayerInTwoEyesMode()
+        {
+            this.transform.rotation = PlayerCamera.transform.rotation;
+        }
         void Move()
         {
             Vector3 Direction = Vector3.zero;

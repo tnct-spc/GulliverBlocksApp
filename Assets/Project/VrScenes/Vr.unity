@@ -44116,7 +44116,6 @@ GameObject:
   - component: {fileID: 784364640}
   - component: {fileID: 784364638}
   - component: {fileID: 784364641}
-  - component: {fileID: 784364642}
   m_Layer: 0
   m_Name: GameSystem
   m_TagString: Untagged
@@ -44188,20 +44187,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 999a763357c17ed4e83122bf797d7598, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &784364642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 784364637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 718aeb402f68e7e41b905c1be4bd7f8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainCamera: {fileID: 2136740896}
-  moveSpeed: 2
 --- !u!1 &785169644
 GameObject:
   m_ObjectHideFlags: 0
@@ -53299,8 +53284,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 784364642}
-          m_MethodName: TouchDown
+        - m_Target: {fileID: 784364638}
+          m_MethodName: Player_Forward
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -53316,8 +53301,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 784364642}
-          m_MethodName: TouchUp
+        - m_Target: {fileID: 784364638}
+          m_MethodName: Player_StopForward
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -53480,6 +53465,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   default_move_speed: 1
   run_move_speed: 2
+  MainCamera: {fileID: 2136740896}
   MoveRight: 0
   MoveLeft: 0
   MoveForward: 0

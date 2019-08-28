@@ -6,8 +6,9 @@ using JsonFormats;
 
 namespace VrScene
 {
-    public class IncludingBlockInfo : MonoBehaviour
+    public class Block : MonoBehaviour
     {
+        GameObject test;
         public float x;
         public float y;
         public float z;
@@ -16,7 +17,8 @@ namespace VrScene
         public bool put;
         public string colorID;
 
-        public void SetBlockData(Block block)
+
+        public void SetBlockData(BlockInfo block)
         {
             x = block.x;
             y = block.y;
@@ -35,6 +37,17 @@ namespace VrScene
 
         public Texture texture;
 
+        public void SetColor(string colorID)
+        {
+            string colorName = "Color" + colorID;
+            Material colorMaterial = Resources.Load(colorName) as Material;
+            GetComponent<Renderer>().sharedMaterial = colorMaterial;
+        }
+
+        public void SetActive(bool f)
+        {
+            this.gameObject.SetActive(f);
+        }
         public void OnClickBlock()
         {
             //Debug.Log(gameObject.GetComponent<Renderer>().material.GetTexture("_MainTex"));
@@ -58,7 +71,7 @@ namespace VrScene
                 material.SetTexture("_MainTex", texture);
                 colorChangePanel.lightUpObject = gameObject;
             }
-            if (gameObject.GetComponent<IncludingBlockInfo>().ID != colorChangePanel.lightUpObject.GetComponent<IncludingBlockInfo>().ID)
+            if (gameObject.GetComponent<Block>().ID != colorChangePanel.lightUpObject.GetComponent<Block>().ID)
             {
                 material.EnableKeyword("_EMISSION");
                 material.SetColor("_EmissionColor", color);

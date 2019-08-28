@@ -12,51 +12,36 @@ namespace TitleScene
     {
         GameSystem gameSystem;
         [SerializeField] private GameObject btnPref;  //ボタンプレハブ
-        public World[] WorldsData;
+        public List<World> WorldsData;
         CommunicationManager CommunicationManager;
-        private string fetchStatus = "start";
 
 
         private void Awake()
         {
             CommunicationManager = new CommunicationManager();
+            StartCoroutine("FetchData");
         }
 
         private void Update()
         {
-            checkFetchStatus();
         }
 
-        private async void checkFetchStatus()
+        IEnumerator FetchData()
         {
-            switch (this.fetchStatus)
-            {
-                case "start":
-                    this.fetchStatus = "fetching";
-                    await CommunicationManager.fetchMapsAsync().ContinueWith(task =>
-                    {
-                        this.WorldsData = task.Result;
-                    });                 
-                    await CommunicationManager.fetchMergesAsync().ContinueWith(task =>
-                    {
-                        //通常マップの配列とマージされたマップの配列の結合
-                        this.WorldsData = this.WorldsData.Concat(task.Result).ToArray();
-                        this.fetchStatus = "fetched";
-                    });
-                    return;
-                case "fetched":
-                    setWorldSelectButton();
-                    this.fetchStatus = "done";
-                    return;
-            default:
-                    return;
-            }
+            var task = CommunicationManager.fetchMapsAsync();
+            yield return new WaitUntil(() => task.IsCompleted);
+            this.WorldsData = task.Result;
+
+            task = CommunicationManager.fetchMergesAsync();
+            yield return new WaitUntil(() => task.IsCompleted);
+            this.WorldsData.AddRange(task.Result);
+            setWorldSelectButton();
         }
 
         // ButtonをScrollViewに追加する関数
         public void setWorldSelectButton()
         {
-            int btnCount = WorldsData.Length;
+            int btnCount = WorldsData.Count;
 
             //Content取得(ボタンを並べる場所)
             GameObject canvas = GameObject.Find("Canvas");

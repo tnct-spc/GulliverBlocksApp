@@ -23,6 +23,7 @@ namespace VrScene
         public GameObject ResetButton;
         public GameObject NonTwoEyesModeUI;
         public Slider SeekBar;
+        public GameObject TouchPanel;
 
         public GameObject BackToTheGame;
         public GameObject RuntimeHierarchy;
@@ -50,6 +51,8 @@ namespace VrScene
             PlayButton.GetComponent<Toggle>().isOn = false;
             PlayModeUI.SetActive(false);
             SeekBar.maxValue = 100;
+
+            InputTracking.disablePositionalTracking = true;
         }
 
         private void Update()
@@ -78,8 +81,9 @@ namespace VrScene
                     gamemanager.Back_To_Title_If_Android();
                 }
             }
+            TouchPanel.SetActive(XRSettings.enabled);
+            NonTwoEyesModeUI.SetActive(!XRSettings.enabled);
         }
-
         public void FlyingModeCheck(bool isActive)
         {
             playermanager.Flying(isActive);
@@ -147,7 +151,7 @@ namespace VrScene
         }
         public void Play(bool isActive)
         {
-            SeekBar.maxValue = BlockManager.GetBlockJsonLength();
+            SeekBar.maxValue = BlockManager.BlocksCount;
             if (isActive)
             {
                 if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
@@ -167,20 +171,18 @@ namespace VrScene
 
         public void PlaceBlockBySeekBar(float value)
         {
-            SeekBar.maxValue = BlockManager.GetBlockJsonLength();
+            SeekBar.maxValue = BlockManager.BlocksCount;
             BlockManager.PlaceBlocks(value);
         }
 
         public void VR_ModeOn()
         {
             XRSettings.enabled = true;
-            NonTwoEyesModeUI.SetActive(false);
         }
 
         public void VR_ModeOff()
         {
             XRSettings.enabled = false;
-            NonTwoEyesModeUI.SetActive(true);
         }
 
         public void OnClickBackToTheGame()

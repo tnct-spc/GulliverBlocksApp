@@ -109,7 +109,6 @@ namespace VrScene
             }
             if (type == "color")
             {
-                string targetColorName = "Color" + ruleData.origin;
                 List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == ruleData.origin);
                 targetBlocks.ForEach(block =>
                 {
@@ -119,8 +118,7 @@ namespace VrScene
             }
             else if (type == "ID")
             {
-                string targetID = ruleData.block_id;
-                Block targetBlock = this.Blocks.Find(block => block.ID == targetID);
+                Block targetBlock = this.Blocks.Find(block => block.ID == ruleData.block_id);
                 if (targetBlock == null) return;
                 targetBlock.SetColor(to);
             }

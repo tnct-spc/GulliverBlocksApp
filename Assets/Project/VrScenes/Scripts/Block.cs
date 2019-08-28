@@ -63,6 +63,11 @@ namespace VrScene
             ColorChangePanel colorChangePanel = panel.GetComponent<ColorChangePanel>();
             Material material = gameObject.GetComponent<Renderer>().material;
             Color color = material.color;
+            print(color.ToString());
+                color.r = color.r + 0.20 > 1 ? color.r + (float)0.20 - 1 : color.r + (float)0.20;
+                color.b = color.b + 0.20 > 1 ? color.b + (float)0.20 - 1 : color.b + (float)0.20;
+                color.g = color.g + 0.20 > 1 ? color.g + (float)0.20 - 1 : color.g + (float)0.20;
+            print(color.ToString());
 
             if (colorChangePanel.lightUpObject == null)
             {

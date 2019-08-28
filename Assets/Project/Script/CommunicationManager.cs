@@ -14,7 +14,7 @@ public class CommunicationManager
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
         var jsonStr = await GetRequest(apiUrl);
         
-        if (jsonStr == "{\"blocks\":[]}\n")
+        if (jsonStr == "{\"blocks\":[],\"pattern_blocks\":{}}\n")
         {
             apiUrl = "https://" + ServerAddress + "/get_merged_blocks/" + mapId + "/";
             jsonStr = await GetRequest(apiUrl);

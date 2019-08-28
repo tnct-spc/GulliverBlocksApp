@@ -36,16 +36,14 @@ namespace VrScene
             PlayButton = InputManager.PlayButton;
             GameManager = GameSystem.GetComponent<GameManager>();
             StartCoroutine("FetchData");
-            //StartCoroutine("FetchRuleData");
         }
 
         IEnumerator FetchData()
         {
             var task = CommunicationManager.fetchMapBlocksAsync(WorldID);
+            var _task = CommunicationManager.fetchColorsAsync(WorldID);
             yield return new WaitUntil(() => task.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             task.Result.ForEach(this.AddBlock);// 全てのブロックを配置
-
-            var _task = CommunicationManager.fetchColorsAsync(WorldID);
             yield return new WaitUntil(() => _task.IsCompleted);
             print(_task.Result);
             _task.Result.ForEach(this.ApplyColorRules);

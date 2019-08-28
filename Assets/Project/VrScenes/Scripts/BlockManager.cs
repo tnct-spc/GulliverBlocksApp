@@ -17,7 +17,7 @@ namespace VrScene
         public bool isRepeating = false;
         InputManager InputManager;
         Slider SeekBar;
-        Toggle PlayButton;
+        Toggle PlayBackButton;
         GameManager GameManager;
         public GameObject LoadingWindow;
         CommunicationManager CommunicationManager;
@@ -33,7 +33,7 @@ namespace VrScene
             GameSystem = GameObject.Find("GameSystem");
             InputManager = GameSystem.GetComponent<InputManager>();
             SeekBar = InputManager.SeekBar;
-            PlayButton = InputManager.PlayButton;
+            PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
             StartCoroutine("FetchData");
         }
@@ -44,7 +44,7 @@ namespace VrScene
             yield return new WaitUntil(() => task.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             task.Result.ForEach(this.AddBlock);// 全てのブロックを配置
             ApplyColorRules();
-            if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
+            if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
         }
 
@@ -59,7 +59,7 @@ namespace VrScene
             Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
             block.SetColor(blockInfo.colorID);
             block.SetBlockData(blockInfo);
-            if (GameManager.Mode == "Vr") block.SetActive(false);
+            if (GameManager.Mode == "PlayBack") block.SetActive(false);
             this.Blocks.Add(block);
             this.BlocksCount += 1;
         }
@@ -69,11 +69,11 @@ namespace VrScene
             isRepeating = true;
             while (BlockNumber < this.BlocksCount)
             {
-                while (PlayButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
+                while (PlayBackButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
                 SeekBar.value++;
                 await Task.Delay(1000);
             }
-            PlayButton.GetComponent<Toggle>().isOn = false;
+            PlayBackButton.GetComponent<Toggle>().isOn = false;
             isRepeating = false;
         }
 

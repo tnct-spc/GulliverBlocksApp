@@ -413,7 +413,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Color:'
+  m_Text: "\u8272:"
 --- !u!1 &3695861112549860681
 GameObject:
   m_ObjectHideFlags: 0
@@ -492,7 +492,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Name:'
+  m_Text: "\u30AB\u30E9\u30FC\u30CA\u30F3\u30D0\u30FC:"
 --- !u!1 &4928279407640781893
 GameObject:
   m_ObjectHideFlags: 0

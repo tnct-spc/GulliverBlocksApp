@@ -23,6 +23,7 @@ namespace VrScene
         public GameObject ResetButton;
         public GameObject NonTwoEyesModeUI;
         public Slider SeekBar;
+        public GameObject TouchPanel;
 
         public GameObject BackToTheGame;
         public GameObject RuntimeHierarchy;
@@ -50,6 +51,7 @@ namespace VrScene
             PlayButton.GetComponent<Toggle>().isOn = false;
             PlayModeUI.SetActive(false);
             SeekBar.maxValue = 100;
+            InputTracking.disablePositionalTracking = true;
         }
 
         private void Update()
@@ -80,6 +82,7 @@ namespace VrScene
             }
 
             NonTwoEyesModeUI.SetActive(!XRSettings.enabled);
+            TouchPanel.SetActive(XRSettings.enabled);
         }
 
         public void FlyingModeCheck(bool isActive)

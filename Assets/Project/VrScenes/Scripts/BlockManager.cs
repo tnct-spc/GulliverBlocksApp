@@ -120,7 +120,7 @@ namespace VrScene
             }
             else if (type == "ID")
             {
-                string targetID = target;
+                string targetID = ruleData.block_id;
                 Block targetBlock = this.Blocks.Find(block => block.ID == targetID);
                 if (targetBlock == null) return;
                 targetBlock.SetColor(to);

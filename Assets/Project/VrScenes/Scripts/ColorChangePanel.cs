@@ -23,6 +23,7 @@ namespace VrScene
             {
                 string materialName = "Color" + i.ToString();
                 Material material = Resources.Load(materialName) as Material;
+                material.name = "No." + i.ToString();
                 contentMaterials.Add(material);
             }
         }

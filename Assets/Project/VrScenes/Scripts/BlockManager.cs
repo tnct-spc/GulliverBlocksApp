@@ -100,7 +100,6 @@ namespace VrScene
         private void ApplyColorRules(Rule ruleData)
         {
             string type = ruleData.type;
-            string target = ruleData.origin;
             string to = ruleData.to;
             Material toColorMaterial = Resources.Load("Color" + to) as Material;
             if (toColorMaterial == null)
@@ -110,8 +109,8 @@ namespace VrScene
             }
             if (type == "color")
             {
-                string targetColorName = "Color" + target;
-                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == target);
+                string targetColorName = "Color" + ruleData.origin;
+                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == ruleData.origin);
                 targetBlocks.ForEach(block =>
                 {
                     block.SetColor(to);

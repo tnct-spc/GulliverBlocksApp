@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using WebSocketSharp;
+using WebSocketSharp.Net;
 
 public class BlockManager : MonoBehaviour
 {
@@ -37,14 +39,44 @@ public class BlockManager : MonoBehaviour
     private List<(Block block_struct, GameObject block_instance)> blocks_data = new List<(Block block_struct, GameObject block_instance)>();
     public static string WorldID;
 
+    WebSocket ws;
+
+
     private void Start()
     {
         var _ =  fetchAndPlaceBlocks();  // 警告メッセージ回避のために変数に代入する
+        ws = new WebSocket("wss://gulliverblocks.herokuapp.com/receive/" + WorldID + "/");
+
+        ws.OnOpen += (sender, e) =>
+        {
+            Debug.Log("WebSocket Open");
+        };
+
+        ws.OnMessage += (sender, e) =>
+        {
+            Debug.Log( "Data: " + e.Data);
+
+            string event_json = e.Data;
+
+            UpdateBlock(jsonToBlock(event_json));
+        };
+
+        ws.OnError += (sender, e) =>
+        {
+            Debug.Log("WebSocket Error Message: " + e.Message);
+        };
+
+        ws.OnClose += (sender, e) =>
+        {
+            Debug.Log("WebSocket Close");
+        };
+
+        ws.Connect();
     }
 
     async System.Threading.Tasks.Task fetchAndPlaceBlocks()
     {
-        string server_url = "http://gulliverblocks.herokuapp.com/get_blocks/" + WorldID + "/";
+        string server_url = "wss://gulliverblocks.herokuapp.com/receive/" + WorldID + "/";
 
         string response_json;
 
@@ -88,5 +120,31 @@ public class BlockManager : MonoBehaviour
             instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
             blocks_data.Add((blocks[i], instance));
         }
+    }
+
+    void UpdateBlock(List<Block> blocks)
+    {
+        Object cube = (GameObject)Resources.Load("Cube");
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            GameObject instance = Instantiate(cube, blocks[i].getPosition(), Quaternion.identity) as GameObject;
+            string colorName = "Color" + blocks[i].colorID.ToString();
+            Material colorMaterial2 = Resources.Load(colorName) as Material;
+            instance.GetComponent<Renderer>().sharedMaterial = colorMaterial2;
+
+            if (blocks[i].put == true)
+            {
+                blocks_data.Add((blocks[i], instance));
+            } else if (blocks[i].put == false)
+            {
+                blocks_data.Remove((blocks[i], instance));
+            }
+        }
+    }
+
+    void OnDestroy()
+    {
+        ws.Close();
+        ws = null;
     }
 }

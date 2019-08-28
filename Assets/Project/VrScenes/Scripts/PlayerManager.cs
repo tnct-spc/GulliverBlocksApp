@@ -76,10 +76,10 @@ namespace VrScene
             moveDirection.y *= player_rigidbody.transform.up.y;
             moveDirection.z *= player_rigidbody.transform.forward.z;
 
-                if (MoveRight) moveDirection.z += player_rigidbody.transform.right.z;
-                if (MoveLeft) moveDirection.z += player_rigidbody.transform.right.z * -1;
-                if (MoveForward) moveDirection.x += player_rigidbody.transform.forward.x;
-                if (MoveBack) moveDirection.x += player_rigidbody.transform.forward.x * -1;
+            if (MoveRight) moveDirection.z += player_rigidbody.transform.right.z;
+            if (MoveLeft) moveDirection.z += player_rigidbody.transform.right.z * -1;
+            if (MoveForward) moveDirection.x += player_rigidbody.transform.forward.x;
+            if (MoveBack) moveDirection.x += player_rigidbody.transform.forward.x * -1;
 
             moveDirection.Normalize();
 
@@ -145,11 +145,6 @@ namespace VrScene
                  *　X,Z方向の回転はPlayerを回転させたくないのでPlayerCameraを回転させてる
                  * 
                  */
-                if (XRSettings.enabled)
-                {
-                    PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
-                }
-
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation; 

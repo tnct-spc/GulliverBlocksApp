@@ -9,8 +9,6 @@ namespace VrScene
         [SerializeField] int default_move_speed = 1;
         [SerializeField] int run_move_speed = 2;
         Rigidbody player_rigidbody;
-        GameObject PlayerCamera;
-        GameObject TwoEyesModeCamera;
         private bool isDefault_speed = true;
         const string Stop = "Stop";
         const string Forward = "Forward";
@@ -22,14 +20,14 @@ namespace VrScene
 
         public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
 
+
         RotateManager RotateManagerI;
 
         private void Awake()
         {
             player_rigidbody = GetComponent<Rigidbody>();
-            PlayerCamera = GameObject.Find("PlayerCamera");
-            TwoEyesModeCamera = GameObject.Find("TwoEyesModeCamera");
-            RotateManagerI = new RotateManager(PlayerCamera.transform, transform);
+            var playerCamera = GameObject.Find("PlayerCamera");
+            RotateManagerI = new RotateManager(playerCamera.transform, transform);
         }
         void Start()
         {
@@ -40,24 +38,9 @@ namespace VrScene
         {
             Move();
             CheckPlayerFall();
-            PlayerCamera.SetActive(!XRSettings.enabled);
-            TwoEyesModeCamera.SetActive(XRSettings.enabled);
-            if (!XRSettings.enabled)
-            {
-                RotateManagerI.UpdateRotate();
-                PlayerCamera.transform.position = this.transform.position;
-            }
+            RotateManagerI.UpdateRotate();
+        }
 
-            if (XRSettings.enabled)
-            {
-                RotatePlayerInTwoEyesMode();
-            }
-        }
-        void RotatePlayerInTwoEyesMode()
-        {
-            this.transform.eulerAngles = new Vector3(0f, TwoEyesModeCamera.transform.eulerAngles.y, 0f);
-            TwoEyesModeCamera.transform.position = this.transform.position;
-        }
         void Move()
         {
             Vector3 Direction = Vector3.zero;
@@ -86,6 +69,7 @@ namespace VrScene
             if (isDefault_speed) player_rigidbody.velocity = default_move_speed * moveDirection;
             else player_rigidbody.velocity = run_move_speed * moveDirection;
         }
+
         public void Flying(bool value)
         {
             if (value == true)
@@ -145,6 +129,11 @@ namespace VrScene
                  *　X,Z方向の回転はPlayerを回転させたくないのでPlayerCameraを回転させてる
                  * 
                  */
+            　　if(XRSettings.enabled)
+                {
+                    PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
+                    return;
+                }
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation; 

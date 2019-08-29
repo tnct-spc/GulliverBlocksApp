@@ -148,6 +148,8 @@ namespace JsonFormats
         public float time;
         public string status;
         public string colorID;
+        public string pattern_name;
+        public string pattern_group_id;
 
         public Vector3 GetPosition()
         {

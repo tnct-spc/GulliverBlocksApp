@@ -89,13 +89,16 @@ namespace VrScene
 
         private void AddBlock(BlockInfo blockInfo)
         {
-            Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
-            Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
-            block.SetColor(blockInfo.colorID);
-            block.SetBlockData(blockInfo);
-            if (GameManager.Mode == "Vr") block.SetActive(false);
-            this.Blocks.Add(block);
-            this.BlocksCount += 1;
+            if (blockInfo.pattern_name == "")
+            {
+                Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
+                Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
+                block.SetColor(blockInfo.colorID);
+                block.SetBlockData(blockInfo);
+                if (GameManager.Mode == "Vr") block.SetActive(false);
+                this.Blocks.Add(block);
+                this.BlocksCount += 1;
+            }
         }
 
         private void DeleteBlock(BlockInfo blockInfo)

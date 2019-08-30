@@ -10,6 +10,7 @@ namespace VrScene
     public class BlockManager : MonoBehaviour
     {
         public int BlocksCount;
+        List<float> NeutralPositions = new List<float>();
         private List<Block> Blocks = new List<Block> { };
         private List<BlockInfo> UpdateBlocks = new List<BlockInfo> { }; // websocketで送られてきたものを一時的に保存
         private List<Rule> ColorRules = new List<Rule> { };
@@ -95,6 +96,7 @@ namespace VrScene
             block.SetBlockData(blockInfo);
             if (GameManager.Mode == "PlayBack") block.SetActive(false);
             this.Blocks.Add(block);
+            NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
             this.BlocksCount += 1;
         }
 
@@ -117,6 +119,7 @@ namespace VrScene
             while (BlockNumber < this.BlocksCount)
             {
                 while (PlayBackButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
+                FallingBlock((int)SeekBar.value);
                 SeekBar.value++;
                 await Task.Delay(1000);
             }
@@ -124,6 +127,21 @@ namespace VrScene
             isRepeating = false;
         }
 
+        async void FallingBlock(int i)
+        {
+            float Accel = 0f;
+            for (float j = NeutralPositions[i]+20; j > NeutralPositions[i]; j -= Accel)
+            {
+                Vector3 pos = Blocks[i].transform.position;
+                pos.y = j;
+                Blocks[i].transform.position = pos;
+                Accel += 0.00981f;
+                await Task.Delay(1);
+            }
+            Vector3 pos2 = Blocks[i].transform.position;
+            pos2.y = NeutralPositions[i];
+            Blocks[i].transform.position = pos2;
+        }
         public void ClearBlocks()
         {
             for (int i = 0; i < this.BlocksCount; i++)

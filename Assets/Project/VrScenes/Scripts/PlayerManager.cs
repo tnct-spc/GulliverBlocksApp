@@ -8,7 +8,6 @@ namespace VrScene
     {
         [SerializeField] int default_move_speed = 1;
         [SerializeField] int run_move_speed = 2;
-        float Gravity = 0;
         Rigidbody player_rigidbody;
         GameObject PlayerCamera;
         GameObject TwoEyesModeCamera;
@@ -42,7 +41,6 @@ namespace VrScene
         {
             Move();
             CheckPlayerFall();
-            AddGravityAcceleration();
             PlayerCamera.SetActive(!XRSettings.enabled);
             TwoEyesModeCamera.SetActive(XRSettings.enabled);
             if (!XRSettings.enabled)
@@ -86,29 +84,11 @@ namespace VrScene
             if (MoveBack) moveDirection.x += player_rigidbody.transform.forward.x * -1;
 
             moveDirection.Normalize();
-            moveDirection.y += Gravity;
+            if (player_rigidbody.useGravity == true) moveDirection.y = player_rigidbody.velocity.y;
 
             if (isDefault_speed) player_rigidbody.velocity = default_move_speed * moveDirection;
             else player_rigidbody.velocity = run_move_speed * moveDirection;
         }
-
-        void AddGravityAcceleration()
-        {
-            if (player_rigidbody.velocity.y == 0)
-            {
-                Gravity = 0;
-            }
-
-            if (player_rigidbody.useGravity == false)
-            {
-                Gravity = 0;
-                return;
-            }
-
-            Gravity -= 9.81f * Time.deltaTime;
-            Debug.Log(Gravity);
-        }
-
         public void Flying(bool value)
         {
             if (value == true)

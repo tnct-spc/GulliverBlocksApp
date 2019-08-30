@@ -11,6 +11,8 @@ namespace VrScene
     {
         public int BlocksCount;
         private List<Block> Blocks = new List<Block> { };
+        private List<BlockInfo> UpdateBlocks = new List<BlockInfo> { }; // websocketで送られてきたものを一時的に保存
+        private List<Rule> ColorRules = new List<Rule> { };
         public static string WorldID = "114e3ba9-a403-4c5c-a018-c7219c5bcc90";
         GameObject GameSystem;
         public float BlockNumber = 0;
@@ -21,12 +23,41 @@ namespace VrScene
         GameManager GameManager;
         public GameObject LoadingWindow;
         CommunicationManager CommunicationManager;
+        CommunicationManager.WsClient WsClient;
 
         private void Awake()
         {
             CommunicationManager = new CommunicationManager();
+            this.WsClient = new CommunicationManager.WsClient(WorldID);
+            this.WsClient.OnBlockReceived += (sender, e) => this.UpdateBlocks = e.Blocks;// WSが来た時のイベント, parse済みのものがe.Blocksに入る
+            this.WsClient.StartConenction();
         }
 
+        private void OnBlockUpdate(List<BlockInfo> blocks)
+        {
+            this.UpdateBlocks = blocks;
+        }
+
+        private void CheckBlockupdate()
+        {
+            /*
+             * 毎フレームwebsocketの受信がないかチェックする,
+             * 一フレームに2回以上送られてくることは想定していない
+             */
+            if (this.UpdateBlocks.Count > 0)
+            {
+                UpdateBlocks.FindAll(b => b.status == "add").ForEach(b => AddBlock(b));
+                UpdateBlocks.FindAll(b => b.status == "delete").ForEach(b => DeleteBlock(b));
+                UpdateBlocks.FindAll(b => b.status == "update").ForEach(b => UpdateBlock(b));
+                this.ColorRules.ForEach(this.ApplyColorRules);
+            }
+            this.UpdateBlocks = new List<BlockInfo> { };
+        }
+
+        private void Update()
+        {
+            CheckBlockupdate();
+        }
         private void Start()
         {
             LoadingWindow.SetActive(true);
@@ -40,13 +71,13 @@ namespace VrScene
 
         IEnumerator FetchData()
         {
-            var task = CommunicationManager.fetchMapBlocksAsync(WorldID);
-            var _task = CommunicationManager.fetchColorsAsync(WorldID);
-            yield return new WaitUntil(() => task.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
-            task.Result.ForEach(this.AddBlock);// 全てのブロックを配置
-            yield return new WaitUntil(() => _task.IsCompleted);
-            print(_task.Result);
-            _task.Result.ForEach(this.ApplyColorRules);
+            var fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldID);
+            var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
+            yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
+            fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
+            yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
+            this.ColorRules = fetchColorRulesTask.Result;
+            this.ColorRules.ForEach(this.ApplyColorRules);
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
         }
@@ -67,6 +98,19 @@ namespace VrScene
             this.BlocksCount += 1;
         }
 
+        private void DeleteBlock(BlockInfo blockInfo)
+        {
+            var block =  this.Blocks.Find(b => b.ID == blockInfo.ID);
+            block.Delete();
+            this.Blocks.Remove(block);
+            this.BlocksCount -= 1;
+        }
+
+        private void UpdateBlock(BlockInfo blockInfo)
+        {
+            var block = this.Blocks.Find(b => b.ID == blockInfo.ID);
+            block.SetBlockData(blockInfo);
+        }
         public async void RepeatPlaceBlocks()
         {
             isRepeating = true;

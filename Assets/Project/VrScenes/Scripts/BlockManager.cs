@@ -10,6 +10,7 @@ namespace VrScene
     public class BlockManager : MonoBehaviour
     {
         public int BlocksCount;
+        List<float> NeutralPositions = new List<float>();
         private List<Block> Blocks = new List<Block> { };
         public static string WorldID = "114e3ba9-a403-4c5c-a018-c7219c5bcc90";
         GameObject GameSystem;
@@ -64,6 +65,7 @@ namespace VrScene
             block.SetBlockData(blockInfo);
             if (GameManager.Mode == "Vr") block.SetActive(false);
             this.Blocks.Add(block);
+            NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
             this.BlocksCount += 1;
         }
 
@@ -73,6 +75,7 @@ namespace VrScene
             while (BlockNumber < this.BlocksCount)
             {
                 while (PlayButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
+                FallingBlock((int)SeekBar.value);
                 SeekBar.value++;
                 await Task.Delay(1000);
             }
@@ -80,6 +83,19 @@ namespace VrScene
             isRepeating = false;
         }
 
+        async void FallingBlock(int i)
+        {
+            for (float j = 20; j > NeutralPositions[i]; j -= 0.1f)
+            {
+                Vector3 pos = Blocks[i].transform.position;
+                pos.y = j;
+                Blocks[i].transform.position = pos;
+                await Task.Delay(1);
+            }
+            Vector3 pos2 = Blocks[i].transform.position;
+            pos2.y = NeutralPositions[i];
+            Blocks[i].transform.position = pos2;
+        }
         public void ClearBlocks()
         {
             for (int i = 0; i < this.BlocksCount; i++)

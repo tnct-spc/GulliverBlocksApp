@@ -22,6 +22,7 @@ namespace VrScene
 
         public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
 
+
         RotateManager RotateManagerI;
 
         private void Awake()
@@ -47,7 +48,7 @@ namespace VrScene
                 RotateManagerI.UpdateRotate();
                 PlayerCamera.transform.position = this.transform.position;
             }
-
+            RotateManagerI.UpdateRotate();
             if (XRSettings.enabled)
             {
                 RotatePlayerInTwoEyesMode();
@@ -58,6 +59,7 @@ namespace VrScene
             this.transform.eulerAngles = new Vector3(0f, TwoEyesModeCamera.transform.eulerAngles.y, 0f);
             TwoEyesModeCamera.transform.position = this.transform.position;
         }
+
         void Move()
         {
             Vector3 Direction = Vector3.zero;
@@ -86,6 +88,7 @@ namespace VrScene
             if (isDefault_speed) player_rigidbody.velocity = default_move_speed * moveDirection;
             else player_rigidbody.velocity = run_move_speed * moveDirection;
         }
+
         public void Flying(bool value)
         {
             if (value == true)

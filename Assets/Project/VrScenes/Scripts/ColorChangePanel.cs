@@ -15,18 +15,17 @@ namespace VrScene
         private ToggleGroup toggleGroup;
         private GameObject targetBlock;
         public GameObject lightUpObject = null;
-
         public void OnEnable()
         {
             contentMaterials.Clear();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i< 10; i++)
             {
                 string materialName = "Color" + i.ToString();
                 Material material = Resources.Load(materialName) as Material;
                 material.name = "No." + i.ToString();
                 contentMaterials.Add(material);
             }
-        }
+         }
 
         private void OnDisable()
         {

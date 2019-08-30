@@ -8649,7 +8649,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 784364642}
         m_MethodName: DestroyBlocks
         m_Mode: 1
         m_Arguments:

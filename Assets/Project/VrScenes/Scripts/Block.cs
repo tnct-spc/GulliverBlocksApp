@@ -14,7 +14,6 @@ namespace VrScene
         public float z;
         public string ID;
         public float time;
-        public bool put;
         public string colorID;
 
 
@@ -25,7 +24,6 @@ namespace VrScene
             z = block.z;
             ID = block.ID;
             time = block.time;
-            put = block.put;
             colorID = block.colorID;
         }
 
@@ -48,6 +46,12 @@ namespace VrScene
         {
             this.gameObject.SetActive(f);
         }
+
+        public void Delete()
+        {
+            Destroy(this.gameObject);
+        }
+
         public void OnClickBlock()
         {
             //Debug.Log(gameObject.GetComponent<Renderer>().material.GetTexture("_MainTex"));

@@ -86,7 +86,7 @@ namespace VrScene
         async void FallingBlock(int i)
         {
             float Accel = 0f;
-            for (float j = 20; j > NeutralPositions[i]; j -= Accel)
+            for (float j = NeutralPositions[i]+20; j > NeutralPositions[i]; j -= Accel)
             {
                 Vector3 pos = Blocks[i].transform.position;
                 pos.y = j;

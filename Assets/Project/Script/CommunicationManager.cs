@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
 using JsonFormats;
+using WebSocketSharp;
+using System;
 
 public class CommunicationManager
 {
@@ -44,6 +46,38 @@ public class CommunicationManager
         else
         {
             return req.downloadHandler.text;
+        }
+    }
+
+    public class WsClient
+    {
+        private WebSocket ws;
+        public event EventHandler<AddBlockEventArgs> OnBlockReceived;
+
+        public WsClient(string mapId)
+        {
+            this.ws = new WebSocket("wss://" + ServerAddress + "/receive/" + mapId + "/");
+            this.ws.OnOpen += (sender, e) => Debug.Log("Websocket Open");
+            this.ws.OnError += (sender, e) => Debug.Log("Websocket error" + e.Message);
+            this.ws.OnClose += (sender, e) => Debug.Log("Websocket Close");
+            this.ws.OnMessage += (sender, e) => this.onMessage(e);
+        }
+
+        public void StartConenction()
+        {
+            this.ws.Connect();
+        }
+        public void onMessage(MessageEventArgs e)
+        {
+            EventHandler<AddBlockEventArgs> handler = OnBlockReceived;
+            AddBlockEventArgs dataE = new AddBlockEventArgs();
+            dataE.Blocks = JsonHelper.FromJson<BlockInfo>(e.Data.Replace('\'', '"'), "Blocks"); //TO-DO server側で"を用いるようにする
+            handler(this, dataE);
+        }
+
+        public class AddBlockEventArgs : EventArgs
+        {
+            public List<BlockInfo> Blocks { get; set; }
         }
     }
 
@@ -112,7 +146,7 @@ namespace JsonFormats
         public float z;
         public string ID;
         public float time;
-        public bool put;
+        public string status;
         public string colorID;
 
         public Vector3 GetPosition()

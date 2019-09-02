@@ -10,65 +10,36 @@ namespace TitleScene
     {
         CommunicationManager CommunicationManager;
         public List<World> WorldsData;
-        private string fetchStatus = "start";
         public GameObject mergingMapPref;
-        public string mergedMapID;
         private ToggleGroup toggleGroup;
 
         private void OnEnable()
-        {
+        { 
             CommunicationManager = new CommunicationManager();
+            SetMergeMaps();
         }
 
         private void OnDisable()
         {
-            mergedMapID = null;
-        }
-
-        private void Update()
-        {
-            checkFetchStatus();
-        }
-
-        private async void checkFetchStatus()
-        {
-            switch (this.fetchStatus)
-            {
-                case "start":
-                    this.fetchStatus = "fetching";
-                    await CommunicationManager.fetchMapsAsync().ContinueWith(task =>
-                    {
-                        this.WorldsData.AddRange(task.Result);
-                        this.fetchStatus = "fetched";
-                    });
-                    return;
-                case "fetched":
-                    SetMergingMaps();
-                    this.fetchStatus = "done";
-                    return;
-                default:
-                    return;
-            }
+            WorldsData.Clear();
         }
 
         // ButtonをScrollViewに追加する関数
-        public void SetMergingMaps()
+        public void SetMergeMaps()
         {
-            RemoveMergedMap();
-
-            int mergingMapCount = WorldsData.Count;
+            int mergeMapCount = WorldsData.Count;
 
             //Content取得(ボタンを並べる場所)
             GameObject canvas = GameObject.Find("Canvas");
-            RectTransform content = canvas.transform.Find("SelectMergingMapPanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
+            RectTransform content = canvas.transform.Find("MergeMapSelectPanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
 
             //Contentの高さ決定
             float mapSpace = content.GetComponent<VerticalLayoutGroup>().spacing;
             float mapHeight = mergingMapPref.GetComponent<LayoutElement>().preferredHeight;
-            content.sizeDelta = new Vector2(0, (mapHeight + mapSpace) * mergingMapCount);
+            content.sizeDelta = new Vector2(0, (mapHeight + mapSpace) * mergeMapCount);
 
             bool isFirst = true;
-            for (int i = 0; i < mergingMapCount; i++)
+            for (int i = 0; i < mergeMapCount; i++)
             {
                 int mapNum = i;
 
@@ -92,18 +63,5 @@ namespace TitleScene
                 toggle.group = toggleGroup;
             }
         }
-
-        private void RemoveMergedMap()
-        {
-            for(int i = 0; i < WorldsData.Count; i++)
-            {
-                if(WorldsData[i].ID == mergedMapID)
-                {
-                    WorldsData.RemoveAt(i);
-                    break;
-                }
-            }
-        }
-
     }
 }

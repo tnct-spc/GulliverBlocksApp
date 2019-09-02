@@ -12,8 +12,8 @@ namespace TitleScene
     public class GameSystem : MonoBehaviour
     {
         public GameObject MapSelectPanel;
-        public GameObject SelectMergingMapPanel;
-        public GameObject MergePanel;
+        public GameObject MergeMapSelectPanel;
+        public GameObject MapLayoutSetPanel;
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
         public GameObject ModeSelectPanel;
@@ -55,10 +55,17 @@ namespace TitleScene
             Screen.orientation = ScreenOrientation.LandscapeLeft;
         }
 
-        public void OnClickMergeButton()
+        public void OnClickCreateMapButton()
+        {
+            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.Clear();
+            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.AddRange(MapSelectPanel.GetComponent<WorldSelect>().WorldsData);
+            MergeMapSelectPanel.SetActive(true);
+        }
+
+        /*public void OnClickMergeButton()
         {
             MergePanel.SetActive(true);
-        }
+        }*/
 
         public void MoveSetting()
         {

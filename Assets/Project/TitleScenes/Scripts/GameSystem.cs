@@ -16,6 +16,9 @@ namespace TitleScene
         public GameObject MergePanel;
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
+        public GameObject ModeSelectPanel;
+        public GameObject PlaybackModeButton;
+        public GameObject ViewModeButton;
 
         private void Awake()
         {
@@ -39,30 +42,17 @@ namespace TitleScene
 
         public void OnClickWorldSelectButton(string ID)
         {
-            // GameManagerにModeを渡す
-            string selectedLabel = toggleGroup.ActiveToggles()
-                .First().GetComponentsInChildren<Text>()
-                .First(t => t.name == "Label").text;
-            if (selectedLabel == "再生モード") selectedLabel = "PlayBack";
+            BlockManager.WorldID = ID;
+            ModeSelectPanel.SetActive(true);
+            PlaybackModeButton.GetComponent<Button>().onClick.AddListener(() => OnClickModeSelectButton("PlayBack"));
+            ViewModeButton.GetComponent<Button>().onClick.AddListener(() => OnClickModeSelectButton("Vr"));
+        }
 
-            GameManager.Mode = selectedLabel;
-
-            if(selectedLabel == "MergeMode")
-            {
-                SelectMergingMapPanel.SetActive(true);
-                SelectMergingMapPanel.GetComponent<MergeMapSelect>().mergedMapID = ID;
-            }
-            else
-            {
-                // BlockManagerにIDを渡す
-                BlockManager.WorldID = ID;
-
-                GameManager.Mode = selectedLabel.Replace("Mode", "");
-
-                // VrSceneを読み込む
-                SceneManager.LoadScene("Vr");
-                Screen.orientation = ScreenOrientation.LandscapeLeft;
-            }
+        public void OnClickModeSelectButton(string Mode)
+        {
+            GameManager.Mode = Mode;
+            SceneManager.LoadScene("Vr");
+            Screen.orientation = ScreenOrientation.LandscapeLeft;
         }
 
         public void OnClickMergeButton()

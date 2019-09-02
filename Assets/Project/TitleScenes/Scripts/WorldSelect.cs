@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using JsonFormats;
+using System.Linq;
 
 namespace TitleScene
 {
@@ -29,12 +30,12 @@ namespace TitleScene
         {
             var task = CommunicationManager.fetchMapsAsync();
             yield return new WaitUntil(() => task.IsCompleted);
-            this.WorldsData = task.Result;
-            SetWorldSelectButton();
+            this.WorldsData.AddRange(task.Result);
+            setWorldSelectButton();
         }
 
         // ButtonをScrollViewに追加する関数
-        public void SetWorldSelectButton()
+        public void setWorldSelectButton()
         {
             int btnCount = WorldsData.Count;
 

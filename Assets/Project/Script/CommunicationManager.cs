@@ -15,6 +15,13 @@ public class CommunicationManager
     {
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
         var jsonStr = await GetRequest(apiUrl);
+        
+        if (jsonStr == "{\"blocks\":[],\"pattern_blocks\":{}}\n")
+        {
+            apiUrl = "https://" + ServerAddress + "/get_merged_blocks/" + mapId + "/";
+            jsonStr = await GetRequest(apiUrl);
+        }
+        
         return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
     }
 
@@ -25,12 +32,18 @@ public class CommunicationManager
         return JsonHelper.FromJson<World>(jsonStr, "Maps");
     }
 
+    public async Task<List<World>> fetchMergesAsync()
+    {
+        var apiUrl = "https://" + ServerAddress + "/get_merges";
+        var jsonStr = await GetRequest(apiUrl);
+        return JsonHelper.FromJson<World>(jsonStr, "Merges");
+    }
+
     public async Task<List<Rule>> fetchColorsAsync(string mapid)
     {
         var apiUrl = "https://" + ServerAddress + "/get_color_rules/" + mapid + "/";
         var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
-
     }
 
     private static async Task<string> GetRequest(string url)
@@ -90,6 +103,11 @@ public class CommunicationManager
                 MapsWrapper<T> wrapper = JsonUtility.FromJson<MapsWrapper<T>>(json);
                 return wrapper.maps;
             }
+            else if (command == "Merges")
+            {
+                MergesWrapper<T> wrapper = JsonUtility.FromJson<MergesWrapper<T>>(json);
+                return wrapper.merges;
+            }
             else if (command == "Rules")
             {
                 RulesWrapper<T> wrapper = JsonUtility.FromJson<RulesWrapper<T>>(json);
@@ -115,6 +133,12 @@ public class CommunicationManager
         private class MapsWrapper<T>
         {
             public List<T> maps;
+        }
+
+        [System.Serializable]
+        private class MergesWrapper<T>
+        {
+            public List<T> merges;
         }
 
         [System.Serializable]

@@ -4,23 +4,33 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
 using JsonFormats;
+using WebSocketSharp;
+using System;
 
 public class CommunicationManager
 {
     public static string ServerAddress = "gulliverblocks.herokuapp.com";
 
-    public async Task<Block[]> fetchMapBlocksAsync(string mapId)
+    public async Task<List<BlockInfo>> fetchMapBlocksAsync(string mapId)
     {
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
         var jsonStr = await GetRequest(apiUrl);
-        return JsonHelper.FromJson<Block>(jsonStr, "Blocks");
+        return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
     }
 
-    public async Task<World[]> fetchMapsAsync()
+    public async Task<List<World>> fetchMapsAsync()
     {
         var apiUrl = "https://" + ServerAddress + "/get_maps/";
         var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<World>(jsonStr, "Maps");
+    }
+
+    public async Task<List<Rule>> fetchColorsAsync(string mapid)
+    {
+        var apiUrl = "https://" + ServerAddress + "/get_color_rules/" + mapid + "/";
+        var jsonStr = await GetRequest(apiUrl);
+        return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
+
     }
 
     private static async Task<string> GetRequest(string url)
@@ -39,9 +49,41 @@ public class CommunicationManager
         }
     }
 
+    public class WsClient
+    {
+        private WebSocket ws;
+        public event EventHandler<AddBlockEventArgs> OnBlockReceived;
+
+        public WsClient(string mapId)
+        {
+            this.ws = new WebSocket("wss://" + ServerAddress + "/receive/" + mapId + "/");
+            this.ws.OnOpen += (sender, e) => Debug.Log("Websocket Open");
+            this.ws.OnError += (sender, e) => Debug.Log("Websocket error" + e.Message);
+            this.ws.OnClose += (sender, e) => Debug.Log("Websocket Close");
+            this.ws.OnMessage += (sender, e) => this.onMessage(e);
+        }
+
+        public void StartConenction()
+        {
+            this.ws.Connect();
+        }
+        public void onMessage(MessageEventArgs e)
+        {
+            EventHandler<AddBlockEventArgs> handler = OnBlockReceived;
+            AddBlockEventArgs dataE = new AddBlockEventArgs();
+            dataE.Blocks = JsonHelper.FromJson<BlockInfo>(e.Data.Replace('\'', '"'), "Blocks"); //TO-DO server側で"を用いるようにする
+            handler(this, dataE);
+        }
+
+        public class AddBlockEventArgs : EventArgs
+        {
+            public List<BlockInfo> Blocks { get; set; }
+        }
+    }
+
     public static class JsonHelper
     {
-        public static T[] FromJson<T>(string json, string command)
+        public static List<T> FromJson<T>(string json, string command)
         {
             if (command == "Maps")
             {
@@ -58,6 +100,11 @@ public class CommunicationManager
                 BlocksWrapper<T> wrapper = JsonUtility.FromJson<BlocksWrapper<T>>(json);
                 return wrapper.blocks;
             }
+            else if (command == "ColorRules")
+            {
+                ColorWrapper<T> wrapper = JsonUtility.FromJson<ColorWrapper<T>>(json);
+                return wrapper.colors;
+            }
             else
             {
                 return null;
@@ -67,19 +114,24 @@ public class CommunicationManager
         [System.Serializable]
         private class MapsWrapper<T>
         {
-            public T[] maps;
+            public List<T> maps;
         }
 
         [System.Serializable]
         private class RulesWrapper<T>
         {
-            public T[] rules;
+            public List<T> rules;
         }
 
         [System.Serializable]
         private class BlocksWrapper<T>
         {
-            public T[] blocks;
+            public List<T> blocks;
+        }
+
+        private class ColorWrapper<T>
+        {
+            public List<T> colors;
         }
     }
 }
@@ -87,14 +139,14 @@ public class CommunicationManager
 namespace JsonFormats
 {
     [System.Serializable]
-    public struct Block
+    public struct BlockInfo
     {
         public float x;
         public float y;
         public float z;
         public string ID;
         public float time;
-        public bool put;
+        public string status;
         public string colorID;
 
         public Vector3 GetPosition()
@@ -108,8 +160,10 @@ namespace JsonFormats
     public struct Rule
     {
         public string type;
-        public string target;
+        public string block_id;
+        public string origin;
         public string to;
+        public string map_id;
     }
 
     [System.Serializable]
@@ -118,4 +172,5 @@ namespace JsonFormats
         public string ID;
         public string name;
     }
+
 }

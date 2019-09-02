@@ -43,6 +43,9 @@ namespace TitleScene
             string selectedLabel = toggleGroup.ActiveToggles()
                 .First().GetComponentsInChildren<Text>()
                 .First(t => t.name == "Label").text;
+            if (selectedLabel == "再生モード") selectedLabel = "PlayBack";
+
+            GameManager.Mode = selectedLabel;
 
             if(selectedLabel == "MergeMode")
             {

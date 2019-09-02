@@ -18,11 +18,12 @@ namespace VrScene
 
         public Toggle FlyingModeToggle;
         public GameObject FlyingButtons;
-        public Toggle PlayButton;
-        public GameObject PlayModeUI;
+        public Toggle PlayBackButton;
+        public GameObject PlayBackModeUI;
         public GameObject ResetButton;
         public GameObject NonTwoEyesModeUI;
         public Slider SeekBar;
+        public GameObject TouchPanel;
 
         public GameObject BackToTheGame;
         public GameObject RuntimeHierarchy;
@@ -40,16 +41,17 @@ namespace VrScene
 
             FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
             SeekBar.onValueChanged.AddListener(PlaceBlockBySeekBar);
-            PlayButton.onValueChanged.AddListener(Play);
+            PlayBackButton.onValueChanged.AddListener(PlayBack);
 
-            bool isPlayMode = false;
-            if (GameManager.Mode == "Vr") isPlayMode = true;
-            FlyingButtons.SetActive(isPlayMode);
-            FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayMode;
-            FlyingModeCheck(isPlayMode);
-            PlayButton.GetComponent<Toggle>().isOn = false;
-            PlayModeUI.SetActive(false);
+            bool isPlayBackMode = false;
+            if (GameManager.Mode == "PlayBack") isPlayBackMode = true;
+            FlyingButtons.SetActive(isPlayBackMode);
+            FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayBackMode;
+            FlyingModeCheck(isPlayBackMode);
+            PlayBackButton.GetComponent<Toggle>().isOn = false;
+            PlayBackModeUI.SetActive(false);
             SeekBar.maxValue = 100;
+            InputTracking.disablePositionalTracking = true;
         }
 
         private void Update()
@@ -78,6 +80,9 @@ namespace VrScene
                     gamemanager.Back_To_Title_If_Android();
                 }
             }
+
+            NonTwoEyesModeUI.SetActive(!XRSettings.enabled);
+            TouchPanel.SetActive(XRSettings.enabled);
         }
 
         public void FlyingModeCheck(bool isActive)
@@ -145,9 +150,9 @@ namespace VrScene
         {
             playermanager.MoveDown = false;
         }
-        public void Play(bool isActive)
+        public void PlayBack(bool isActive)
         {
-            SeekBar.maxValue = BlockManager.GetBlockJsonLength();
+            SeekBar.maxValue = BlockManager.BlocksCount;
             if (isActive)
             {
                 if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
@@ -167,20 +172,18 @@ namespace VrScene
 
         public void PlaceBlockBySeekBar(float value)
         {
-            SeekBar.maxValue = BlockManager.GetBlockJsonLength();
+            SeekBar.maxValue = BlockManager.BlocksCount;
             BlockManager.PlaceBlocks(value);
         }
 
         public void VR_ModeOn()
         {
             XRSettings.enabled = true;
-            NonTwoEyesModeUI.SetActive(false);
         }
 
         public void VR_ModeOff()
         {
             XRSettings.enabled = false;
-            NonTwoEyesModeUI.SetActive(true);
         }
 
         public void OnClickBackToTheGame()

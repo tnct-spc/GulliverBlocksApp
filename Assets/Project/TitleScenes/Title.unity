@@ -2061,7 +2061,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Start
+  m_Text: "\u30B9\u30BF\u30FC\u30C8"
 --- !u!222 &896570595
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2151,7 +2151,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 453231301}
   m_HandleRect: {fileID: 453231300}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2421,7 +2421,7 @@ RectTransform:
   m_GameObject: {fileID: 1093484809}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.1419778, y: 1.1282449, z: 1}
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1}
   m_Children: []
   m_Father: {fileID: 846081298}
   m_RootOrder: 0
@@ -2455,7 +2455,7 @@ MonoBehaviour:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 30
     m_FontStyle: 0
-    m_BestFit: 0
+    m_BestFit: 1
     m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 0
@@ -2464,7 +2464,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Map Select
+  m_Text: "\u30EF\u30FC\u30EB\u30C9\u9078\u629E"
 --- !u!222 &1093484812
 CanvasRenderer:
   m_ObjectHideFlags: 0

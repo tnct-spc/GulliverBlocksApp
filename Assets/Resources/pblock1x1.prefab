@@ -41,7 +41,7 @@ MonoBehaviour:
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
-          m_CallState: 2
+          m_CallState: 1
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
         Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &4584621798571845806
@@ -75,6 +75,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: pblock1x1
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: b3862f69c9396ed45a0024ecda809a9f,
+        type: 3}
+      propertyPath: m_TagString
+      value: block
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: b3862f69c9396ed45a0024ecda809a9f,
         type: 3}

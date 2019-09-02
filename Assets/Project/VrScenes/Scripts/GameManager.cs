@@ -7,7 +7,7 @@ namespace VrScene
 {
     public class GameManager : MonoBehaviour
     {
-        public static string Mode = "Vr";
+        public static string Mode = "PlayBack";
         public void Back_To_Title_If_Android()
         {
             if (Application.platform == RuntimePlatform.Android)

@@ -3032,7 +3032,6 @@ MonoBehaviour:
   WorldsData: []
   mergingMapPref: {fileID: 848021475187221586, guid: 4189135008b097945bc9df965cd4812a,
     type: 3}
-  mergedMapID: 
 --- !u!1 &1679858201
 GameObject:
   m_ObjectHideFlags: 0

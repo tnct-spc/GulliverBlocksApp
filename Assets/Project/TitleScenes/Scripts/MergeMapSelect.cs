@@ -12,6 +12,15 @@ namespace TitleScene
         public List<World> WorldsData;
         public GameObject mergingMapPref;
         private ToggleGroup toggleGroup;
+        GameObject canvas;
+        RectTransform content;
+
+        private void Awake()
+        {
+            //Content取得(ボタンを並べる場所)
+            canvas = GameObject.Find("Canvas");
+            content = canvas.transform.Find("MergeMapSelectPanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
+        }
 
         private void OnEnable()
         { 
@@ -29,16 +38,11 @@ namespace TitleScene
         {
             int mergeMapCount = WorldsData.Count;
 
-            //Content取得(ボタンを並べる場所)
-            GameObject canvas = GameObject.Find("Canvas");
-            RectTransform content = canvas.transform.Find("MergeMapSelectPanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
-
             //Contentの高さ決定
             float mapSpace = content.GetComponent<VerticalLayoutGroup>().spacing;
             float mapHeight = mergingMapPref.GetComponent<LayoutElement>().preferredHeight;
             content.sizeDelta = new Vector2(0, (mapHeight + mapSpace) * mergeMapCount);
 
-            bool isFirst = true;
             for (int i = 0; i < mergeMapCount; i++)
             {
                 int mapNum = i;
@@ -49,19 +53,24 @@ namespace TitleScene
 
                 mapToggle.transform.Find("Label").gameObject.GetComponent<Text>().text = WorldsData[i].name;
 
-                Toggle toggle = mapToggle.GetComponent<Toggle>();
-                toggle.isOn = false;
-
-                //ToggleGroupの設定
-                if (isFirst)
-                {
-                    toggle.isOn = true;
-                    toggleGroup = mapToggle.AddComponent<ToggleGroup>();
-                    isFirst = false;
-                }
-
-                toggle.group = toggleGroup;
+                mapToggle.GetComponent<Toggle>().isOn = false;
             }
+        }
+
+        public void CheckToggles()
+        {
+            List<string> toggleList = new List<string>();
+            Transform children = content.GetComponentInChildren<Transform>();
+            foreach(Transform child in children)
+            {
+                if (child.GetComponent<Toggle>().isOn == true)
+                {
+                    toggleList.Add(child.Find("Label").GetComponent<Text>().text);
+                    Debug.Log(child.Find("Label").GetComponent<Text>().text);
+                }
+            }
+            
+            //return toggleList;
         }
     }
 }

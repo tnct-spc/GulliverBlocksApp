@@ -62,10 +62,10 @@ namespace TitleScene
             MergeMapSelectPanel.SetActive(true);
         }
 
-        /*public void OnClickMergeButton()
+        public void OnClickMergeButton()
         {
-            MergePanel.SetActive(true);
-        }*/
+            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().CheckToggles();
+        }
 
         public void MoveSetting()
         {

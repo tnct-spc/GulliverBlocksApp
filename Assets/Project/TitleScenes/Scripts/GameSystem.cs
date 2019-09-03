@@ -13,12 +13,11 @@ namespace TitleScene
     {
         public GameObject MapSelectPanel;
         public GameObject MergeMapSelectPanel;
-        public GameObject MapLayoutSetPanel;
-        public GameManager GameManager;
-        public ToggleGroup toggleGroup;
         public GameObject ModeSelectPanel;
         public GameObject PlaybackModeButton;
         public GameObject ViewModeButton;
+        public GameManager GameManager;
+        public ToggleGroup toggleGroup;
 
         private void Awake()
         {
@@ -64,6 +63,7 @@ namespace TitleScene
 
         public void OnClickMergeButton()
         {
+            SceneManager.LoadScene("Merge");
             MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().CheckToggles();
         }
 

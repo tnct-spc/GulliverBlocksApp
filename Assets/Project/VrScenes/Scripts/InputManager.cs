@@ -18,8 +18,8 @@ namespace VrScene
 
         public Toggle FlyingModeToggle;
         public GameObject FlyingButtons;
-        public Toggle PlayButton;
-        public GameObject PlayModeUI;
+        public Toggle PlayBackButton;
+        public GameObject PlayBackModeUI;
         public GameObject ResetButton;
         public GameObject NonTwoEyesModeUI;
         public Slider SeekBar;
@@ -41,15 +41,15 @@ namespace VrScene
 
             FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
             SeekBar.onValueChanged.AddListener(PlaceBlockBySeekBar);
-            PlayButton.onValueChanged.AddListener(Play);
+            PlayBackButton.onValueChanged.AddListener(PlayBack);
 
-            bool isPlayMode = false;
-            if (GameManager.Mode == "Vr") isPlayMode = true;
-            FlyingButtons.SetActive(isPlayMode);
-            FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayMode;
-            FlyingModeCheck(isPlayMode);
-            PlayButton.GetComponent<Toggle>().isOn = false;
-            PlayModeUI.SetActive(false);
+            bool isPlayBackMode = false;
+            if (GameManager.Mode == "PlayBack") isPlayBackMode = true;
+            FlyingButtons.SetActive(isPlayBackMode);
+            FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayBackMode;
+            FlyingModeCheck(isPlayBackMode);
+            PlayBackButton.GetComponent<Toggle>().isOn = false;
+            PlayBackModeUI.SetActive(false);
             SeekBar.maxValue = 100;
             InputTracking.disablePositionalTracking = true;
         }
@@ -150,7 +150,7 @@ namespace VrScene
         {
             playermanager.MoveDown = false;
         }
-        public void Play(bool isActive)
+        public void PlayBack(bool isActive)
         {
             SeekBar.maxValue = BlockManager.BlocksCount;
             if (isActive)

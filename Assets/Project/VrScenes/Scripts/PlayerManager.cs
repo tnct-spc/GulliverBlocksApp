@@ -84,11 +84,11 @@ namespace VrScene
             if (MoveBack) moveDirection.x += player_rigidbody.transform.forward.x * -1;
 
             moveDirection.Normalize();
+            if (player_rigidbody.useGravity == true) moveDirection.y = player_rigidbody.velocity.y;
 
             if (isDefault_speed) player_rigidbody.velocity = default_move_speed * moveDirection;
             else player_rigidbody.velocity = run_move_speed * moveDirection;
         }
-
         public void Flying(bool value)
         {
             if (value == true)

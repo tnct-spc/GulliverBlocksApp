@@ -10,6 +10,7 @@ namespace VrScene
     public class BlockManager : MonoBehaviour
     {
         public int BlocksCount;
+        List<float> NeutralPositions = new List<float>();
         private List<Block> Blocks = new List<Block> { };
         private List<BlockInfo> UpdateBlocks = new List<BlockInfo> { }; // websocketで送られてきたものを一時的に保存
         private List<Rule> ColorRules = new List<Rule> { };
@@ -19,11 +20,13 @@ namespace VrScene
         public bool isRepeating = false;
         InputManager InputManager;
         Slider SeekBar;
-        Toggle PlayButton;
+        Toggle PlayBackButton;
         GameManager GameManager;
         public GameObject LoadingWindow;
         CommunicationManager CommunicationManager;
         CommunicationManager.WsClient WsClient;
+        // {"pattern_name": {"pattern_group_id": [(BlockInfo),]}, }
+        private Dictionary<string, Dictionary<string, List<BlockInfo>>> patternBlocks = new Dictionary<string, Dictionary<string, List<BlockInfo>>>();
 
         private void Awake()
         {
@@ -64,7 +67,7 @@ namespace VrScene
             GameSystem = GameObject.Find("GameSystem");
             InputManager = GameSystem.GetComponent<InputManager>();
             SeekBar = InputManager.SeekBar;
-            PlayButton = InputManager.PlayButton;
+            PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
             StartCoroutine("FetchData");
         }
@@ -74,11 +77,43 @@ namespace VrScene
             var fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldID);
             var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
             yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
-            fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
+            fetchBlocksTask.Result.ForEach(this.AddBlock); // 全てのブロックを配置
+            /*
+             パターン認識されたブロックはパターンのオブジェクトに置き換える
+             */
+            List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+            foreach (string patternName in patternNameKeys)
+            {
+                // string patternMaterialName = patternName + "Material";
+                // Material patternMaterial = Resources.Load(patternMaterialName) as Material;
+
+                List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
+                foreach (string patternGroupId in patternGroupIdKeys)
+                {
+                    // 原点に近い順にsort
+                    patternBlocks[patternName][patternGroupId].Sort(
+                        (a, b) => (a.x*a.x + a.y*a.y + a.z*a.z) - (b.x*b.x + b.y*b.y + b.z*b.z)
+                    );
+
+                    BlockInfo nearestBlock = patternBlocks[patternName][patternGroupId][0];
+                    BlockInfo farestBlock = patternBlocks[patternName][patternGroupId][patternBlocks[patternName][patternGroupId].Count-1];
+                    int width = farestBlock.x - nearestBlock.x;
+                    int height = farestBlock.y - nearestBlock.y;
+                    int depth = farestBlock.z - nearestBlock.z;
+
+                    // パターンオブジェクトを生成
+                    GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    patternObject.transform.position = new Vector3(nearestBlock.x, nearestBlock.y, nearestBlock.z);
+                    patternObject.transform.localScale = new Vector3(width, height, depth);
+                    // patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
+
+                }
+            }
+
             yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
             this.ColorRules = fetchColorRulesTask.Result;
             this.ColorRules.ForEach(this.ApplyColorRules);
-            if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
+            if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
         }
 
@@ -98,6 +133,23 @@ namespace VrScene
                 if (GameManager.Mode == "Vr") block.SetActive(false);
                 this.Blocks.Add(block);
                 this.BlocksCount += 1;
+            }
+            else
+            {
+                // pattern_nameがKeysに存在しないなら新しく追加する
+                List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+                if (!(patternNameKeys.IndexOf(blockInfo.pattern_name) >= 0))
+                {
+                    patternBlocks[blockInfo.pattern_name] = new Dictionary<string, List<BlockInfo>>();
+                }
+                // pattern_group_idがKeysに存在しないなら新しく追加する
+                List<string> pattern_group_id_keys = new List<string>(patternBlocks[blockInfo.pattern_name].Keys);
+                if (!(pattern_group_id_keys.IndexOf(blockInfo.pattern_group_id) >= 0))
+                {
+                    patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id] = new List<BlockInfo>();
+                }
+
+                patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo); ;
             }
         }
 
@@ -119,14 +171,30 @@ namespace VrScene
             isRepeating = true;
             while (BlockNumber < this.BlocksCount)
             {
-                while (PlayButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
+                while (PlayBackButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
+                FallingBlock((int)SeekBar.value);
                 SeekBar.value++;
                 await Task.Delay(1000);
             }
-            PlayButton.GetComponent<Toggle>().isOn = false;
+            PlayBackButton.GetComponent<Toggle>().isOn = false;
             isRepeating = false;
         }
 
+        async void FallingBlock(int i)
+        {
+            float Accel = 0f;
+            for (float j = NeutralPositions[i]+20; j > NeutralPositions[i]; j -= Accel)
+            {
+                Vector3 pos = Blocks[i].transform.position;
+                pos.y = j;
+                Blocks[i].transform.position = pos;
+                Accel += 0.00981f;
+                await Task.Delay(1);
+            }
+            Vector3 pos2 = Blocks[i].transform.position;
+            pos2.y = NeutralPositions[i];
+            Blocks[i].transform.position = pos2;
+        }
         public void ClearBlocks()
         {
             for (int i = 0; i < this.BlocksCount; i++)

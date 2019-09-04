@@ -141,9 +141,9 @@ namespace JsonFormats
     [System.Serializable]
     public struct BlockInfo
     {
-        public float x;
-        public float y;
-        public float z;
+        public int x;
+        public int y;
+        public int z;
         public string ID;
         public float time;
         public string status;

@@ -10,6 +10,7 @@ namespace MergeScene
     public class MapManager : MonoBehaviour
     {
         public int BlocksCount;
+        public static string[] WorldList;
         List<float> NeutralPositions = new List<float>();
         private List<Block> Blocks = new List<Block> { };
         private List<Rule> ColorRules = new List<Rule> { };
@@ -28,16 +29,16 @@ namespace MergeScene
 
         IEnumerator FetchMap()
         {
-            Debug.Log("0");
-            var fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldID);
-            Debug.Log("1");
-            //var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
-            yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
-            fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
-            Debug.Log("2");
-            //yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
-            //this.ColorRules = fetchColorRulesTask.Result;
-            //this.ColorRules.ForEach(this.ApplyColorRules);
+            for(int i = 0; i < WorldList.Length; i++)
+            {
+                var fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldList[i]);
+                var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldList[i]);
+                yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
+                fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
+                //yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
+                //this.ColorRules = fetchColorRulesTask.Result;
+                //this.ColorRules.ForEach(this.ApplyColorRules);
+            }
         }
 
         private void AddBlock(BlockInfo blockInfo)

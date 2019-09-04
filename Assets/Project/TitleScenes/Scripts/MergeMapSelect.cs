@@ -57,7 +57,7 @@ namespace TitleScene
             }
         }
 
-        public void CheckToggles()
+        public string[] CheckToggles()
         {
             List<string> toggleList = new List<string>();
             Transform children = content.GetComponentInChildren<Transform>();
@@ -66,11 +66,24 @@ namespace TitleScene
                 if (child.GetComponent<Toggle>().isOn == true)
                 {
                     toggleList.Add(child.Find("Label").GetComponent<Text>().text);
-                    Debug.Log(child.Find("Label").GetComponent<Text>().text);
                 }
             }
             
-            //return toggleList;
+            return WorldNameToID(toggleList).ToArray();
+        }
+
+        private List<string> WorldNameToID(List<string> nameList)
+        {
+            List<string> idList = new List<string>();
+            for(int i = 0; i < WorldsData.Count; i++)
+            {
+                for(int j = 0; j < nameList.Count; j++)
+                {
+                    if (WorldsData[i].name == nameList[j]) idList.Add(WorldsData[i].ID);
+                }
+            }
+
+            return idList;
         }
     }
 }

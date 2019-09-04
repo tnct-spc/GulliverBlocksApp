@@ -6,6 +6,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using VrScene;
+using MergeScene;
 
 namespace TitleScene
 {
@@ -64,7 +65,7 @@ namespace TitleScene
         public void OnClickMergeButton()
         {
             SceneManager.LoadScene("Merge");
-            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().CheckToggles();
+            MapManager.WorldList = MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().CheckToggles();
         }
 
         public void MoveSetting()

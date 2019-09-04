@@ -10,11 +10,11 @@ namespace VrScene
     public class InputManager : MonoBehaviour
     {
         PlayerManager playermanager;
-        GameObject player;
-
         GameManager gamemanager;
-        GameObject gamesystem;
         BlockManager BlockManager;
+
+        public GameObject player;
+        public GameObject gamesystem;
 
         public Toggle FlyingModeToggle;
         public GameObject FlyingButtons;
@@ -28,14 +28,10 @@ namespace VrScene
         public GameObject BackToTheGame;
         public GameObject RuntimeHierarchy;
         public GameObject RuntimeInspector;
-        bool push = true;
 
         void Start()
         {
-            player = GameObject.FindGameObjectWithTag("Player");
             playermanager = player.GetComponent<PlayerManager>();
-
-            gamesystem = GameObject.Find("GameSystem");
             gamemanager = gamesystem.GetComponent<GameManager>();
             BlockManager = gamesystem.GetComponent<BlockManager>();
 

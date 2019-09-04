@@ -8,7 +8,11 @@ namespace MergeScene
     {
         private Vector3 touchStartPos;
         private Vector3 touchEndPos;
+        private GameObject hitObject;
         private bool ishit = false;
+        float blockCoefficientXZ = 0.32f;
+        float X;
+        float Y;
 
         void Update()
         {
@@ -19,15 +23,20 @@ namespace MergeScene
             }
             else if (Input.GetMouseButton(0))
             {
-                if (!ishit)
+                touchEndPos = Input.mousePosition;
+                if (ishit)
                 {
-                    touchEndPos = Input.mousePosition;
+                    CountFlame();
+                }
+                else
+                {
                     MoveCamera();
                 }
             }
             else if (Input.GetMouseButtonUp(0))
             {
                 ishit = false;
+                hitObject = null;
             }
         }
 
@@ -36,6 +45,7 @@ namespace MergeScene
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Physics.Raycast(ray, out hit, 1000);
+            hitObject = hit.transform.root.gameObject;
             return hit;
         }
 
@@ -45,6 +55,30 @@ namespace MergeScene
             float directionY = touchStartPos.y - touchEndPos.y;
             gameObject.transform.Translate(directionX/20, directionY/20, 0);
             touchStartPos = Input.mousePosition;
+        }
+
+        private void MoveMap(GameObject mapObject, Vector3 vector)
+        {
+            mapObject.transform.Translate(vector);
+            touchStartPos = Input.mousePosition;
+        }
+
+        private void CountFlame()
+        {
+            X += touchStartPos.x - touchEndPos.x;
+            Y += touchStartPos.y - touchEndPos.y;
+            if(Mathf.Abs(X) >= blockCoefficientXZ)
+            {
+                if (X > 0) MoveMap(hitObject, new Vector3(-1*blockCoefficientXZ, 0, 0));
+                if (X < 0) MoveMap(hitObject, new Vector3(blockCoefficientXZ, 0, 0));
+                X = 0;
+            }
+            else if(Mathf.Abs(Y) >= blockCoefficientXZ)
+            {
+                if (Y > 0) MoveMap(hitObject, new Vector3(0, 0, -1*blockCoefficientXZ));
+                if (Y < 0) MoveMap(hitObject, new Vector3(0, 0, blockCoefficientXZ));
+                Y = 0;
+            }
         }
     }
 }

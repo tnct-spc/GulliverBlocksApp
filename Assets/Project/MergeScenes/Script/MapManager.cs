@@ -16,12 +16,12 @@ namespace MergeScene
         private List<Rule> ColorRules = new List<Rule> { };
         public float BlockNumber = 0;
         CommunicationManager CommunicationManager;
-        public static string WorldID = "c24f8dd5-238d-45d8-8648-a797334bb8be";
 
         private void Awake()
         {
             CommunicationManager = new CommunicationManager();
         }
+
         private void Start()
         {
             StartCoroutine("FetchMap");
@@ -31,17 +31,20 @@ namespace MergeScene
         {
             for(int i = 0; i < WorldList.Length; i++)
             {
+                GameObject parent = new GameObject("Map" + i.ToString());
                 var fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldList[i]);
                 var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldList[i]);
                 yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
-                fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
-                //yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
-                //this.ColorRules = fetchColorRulesTask.Result;
-                //this.ColorRules.ForEach(this.ApplyColorRules);
+                fetchBlocksTask.Result.ForEach(blocki => this.AddBlock(blocki, parent));// 全てのブロックを配置
+                yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
+                this.ColorRules = fetchColorRulesTask.Result;
+                this.ColorRules.ForEach(this.ApplyColorRules);
+                yield return null;
+                parent.transform.Translate( i* 0.32f*48, 0.0f, 0.0f);
             }
         }
 
-        private void AddBlock(BlockInfo blockInfo)
+        private void AddBlock(BlockInfo blockInfo, GameObject parent)
         {
             Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
             Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
@@ -50,6 +53,7 @@ namespace MergeScene
             this.Blocks.Add(block);
             NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
             this.BlocksCount += 1;
+            block.gameObject.transform.parent = parent.transform;
         }
 
         public void ClearBlocks()
@@ -69,7 +73,7 @@ namespace MergeScene
             }
             BlockNumber = value;
         }
-        /*private void ApplyColorRules(Rule ruleData)
+        private void ApplyColorRules(Rule ruleData)
         {
             string type = ruleData.type;
             string to = ruleData.to;
@@ -98,6 +102,6 @@ namespace MergeScene
             {
                 Debug.Log("Type is Invalid.");
             }
-        }*/
+        }
     }
 }

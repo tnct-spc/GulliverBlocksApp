@@ -43,7 +43,7 @@ namespace MergeScene
         {
             float directionX = touchStartPos.x - touchEndPos.x;
             float directionY = touchStartPos.y - touchEndPos.y;
-            gameObject.transform.Translate(directionX/10, directionY/10, 0);
+            gameObject.transform.Translate(directionX/20, directionY/20, 0);
             touchStartPos = Input.mousePosition;
         }
     }

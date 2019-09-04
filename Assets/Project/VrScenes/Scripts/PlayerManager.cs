@@ -10,7 +10,7 @@ namespace VrScene
         [SerializeField] int run_move_speed = 2;
         Rigidbody player_rigidbody;
         GameObject PlayerCamera;
-        [SerializeField] Camera TwoEyesModeCamera;
+        GameObject TwoEyesModeCamera;
         private bool isDefault_speed = true;
         const string Stop = "Stop";
         const string Forward = "Forward";
@@ -29,6 +29,7 @@ namespace VrScene
         {
             player_rigidbody = GetComponent<Rigidbody>();
             PlayerCamera = GameObject.Find("PlayerCamera");
+            TwoEyesModeCamera = GameObject.Find("TwoEyesModeCamera");
             RotateManagerI = new RotateManager(PlayerCamera.transform, transform);
         }
         void Start()
@@ -41,8 +42,7 @@ namespace VrScene
             Move();
             CheckPlayerFall();
             PlayerCamera.SetActive(!XRSettings.enabled);
-            TwoEyesModeCamera.enabled = XRSettings.enabled;
-            XRDevice.DisableAutoXRCameraTracking(TwoEyesModeCamera, !SettingManager.UseGyro);
+            TwoEyesModeCamera.SetActive(XRSettings.enabled);
             RotateManagerI.UpdateRotate();
             if (!XRSettings.enabled)
             {

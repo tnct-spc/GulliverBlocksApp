@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class SettingManager : MonoBehaviour
 {
     public Toggle UseGyroToggle;
-    public Toggle NotUseGyroToggle;
     public static bool UseGyro = true;
     void Start()
     {

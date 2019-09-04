@@ -18,12 +18,12 @@ namespace MergeScene
         {
             if (Input.GetMouseButtonDown(0))
             {
-                touchStartPos = Input.mousePosition;
+                touchStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 if (ShootingRay().collider != null) ishit = true;
             }
             else if (Input.GetMouseButton(0))
             {
-                touchEndPos = Input.mousePosition;
+                touchEndPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 if (ishit)
                 {
                     CountFlame();
@@ -37,6 +37,8 @@ namespace MergeScene
             {
                 ishit = false;
                 hitObject = null;
+                X = 0f;
+                Y = 0f;
             }
         }
 
@@ -45,6 +47,7 @@ namespace MergeScene
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Physics.Raycast(ray, out hit, 1000);
+            if (hit.transform == null) return hit;
             hitObject = hit.transform.root.gameObject;
             return hit;
         }
@@ -52,33 +55,25 @@ namespace MergeScene
         private void MoveCamera()
         {
             float directionX = touchStartPos.x - touchEndPos.x;
-            float directionY = touchStartPos.y - touchEndPos.y;
-            gameObject.transform.Translate(directionX/20, directionY/20, 0);
-            touchStartPos = Input.mousePosition;
+            float directionY = touchStartPos.z - touchEndPos.z;
+            gameObject.transform.Translate(directionX, directionY, 0);
+            touchStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
         private void MoveMap(GameObject mapObject, Vector3 vector)
         {
             mapObject.transform.Translate(vector);
-            touchStartPos = Input.mousePosition;
+            touchStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
         private void CountFlame()
         {
-            X += touchStartPos.x - touchEndPos.x;
-            Y += touchStartPos.y - touchEndPos.y;
-            if(Mathf.Abs(X) >= blockCoefficientXZ)
-            {
-                if (X > 0) MoveMap(hitObject, new Vector3(-1*blockCoefficientXZ, 0, 0));
-                if (X < 0) MoveMap(hitObject, new Vector3(blockCoefficientXZ, 0, 0));
-                X = 0;
-            }
-            else if(Mathf.Abs(Y) >= blockCoefficientXZ)
-            {
-                if (Y > 0) MoveMap(hitObject, new Vector3(0, 0, -1*blockCoefficientXZ));
-                if (Y < 0) MoveMap(hitObject, new Vector3(0, 0, blockCoefficientXZ));
-                Y = 0;
-            }
+            if (hitObject == null) return;
+            X += touchEndPos.x - touchStartPos.x;
+            Y += touchEndPos.z - touchStartPos.z;
+            MoveMap(hitObject, new Vector3(X - X%blockCoefficientXZ, 0, Y-Y%blockCoefficientXZ));
+            X = X % blockCoefficientXZ;
+            Y = Y % blockCoefficientXZ;
         }
     }
 }

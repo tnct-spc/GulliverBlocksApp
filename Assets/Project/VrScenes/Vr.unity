@@ -53491,6 +53491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   default_move_speed: 1
   run_move_speed: 2
+  TwoEyesModeCamera: {fileID: 1185310052}
   MoveRight: 0
   MoveLeft: 0
   MoveForward: 0

@@ -16,12 +16,12 @@ namespace MergeScene
 
         public void OnClickPlusButton()
         {
-            camera.transform.Translate(0, 0, -100);
+            camera.GetComponent<Camera>().orthographicSize -= 5;
         }
 
         public void OnClickMinusButton()
         {
-            camera.transform.Translate(0, 0, -100);
+            camera.GetComponent<Camera>().orthographicSize += 5;
         }
     }
 }

@@ -152,7 +152,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MapSelectPanel: {fileID: 846081297}
   MergeMapSelectPanel: {fileID: 1655072274}
-  MapLayoutSetPanel: {fileID: 0}
   ModeSelectPanel: {fileID: 119860440}
   PlaybackModeButton: {fileID: 385508147}
   ViewModeButton: {fileID: 843770209}
@@ -1578,6 +1577,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9abf06aec15b78e4ead4ed17200384de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameSystem: {fileID: 21720917}
   btnPref: {fileID: 5939380033943421088, guid: ce877090381bbfa44866327e2a0f65d8, type: 3}
   WorldsData: []
 --- !u!1 &896570592

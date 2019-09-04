@@ -10,7 +10,7 @@ namespace TitleScene
 
     public class WorldSelect : MonoBehaviour
     {
-        GameSystem gameSystem;
+        [SerializeField] GameSystem gameSystem;
         [SerializeField] private GameObject btnPref;  //ボタンプレハブ
         public List<World> WorldsData;
         CommunicationManager CommunicationManager;
@@ -47,8 +47,6 @@ namespace TitleScene
             float btnSpace = content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得
             float btnHeight = btnPref.GetComponent<LayoutElement>().preferredHeight;   // WorldSelectButton自体の高さを取得
             content.sizeDelta = new Vector2(0, (btnHeight + btnSpace) * btnCount); // 上２つの要素からcontentの高さを作成
-
-            gameSystem = gameObject.GetComponent<GameSystem>();
 
             for (int i = 0; i < btnCount; i++)
             {

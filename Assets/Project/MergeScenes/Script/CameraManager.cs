@@ -4,35 +4,42 @@ using UnityEngine;
 
 namespace MergeScene
 {
-    public class PlayerManager : MonoBehaviour
+    public class CameraManager : MonoBehaviour
     {
         private Vector3 touchStartPos;
         private Vector3 touchEndPos;
+        private bool ishit = false;
 
         void Update()
         {
             if (Input.GetMouseButtonDown(0))
             {
                 touchStartPos = Input.mousePosition;
-                ShootingRay();
+                if (ShootingRay().collider != null) ishit = true;
             }
-            if (Input.GetMouseButton(0))
+            else if (Input.GetMouseButton(0))
             {
-                touchEndPos = Input.mousePosition;
-                GetDirection();
+                if (!ishit)
+                {
+                    touchEndPos = Input.mousePosition;
+                    MoveCamera();
+                }
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                ishit = false;
             }
         }
 
-        private void ShootingRay()
+        private RaycastHit ShootingRay()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 1000)) {
-                Debug.Log(hit.collider.gameObject.transform.root.name);
-            }
+            Physics.Raycast(ray, out hit, 1000);
+            return hit;
         }
 
-        private void GetDirection()
+        private void MoveCamera()
         {
             float directionX = touchStartPos.x - touchEndPos.x;
             float directionY = touchStartPos.y - touchEndPos.y;

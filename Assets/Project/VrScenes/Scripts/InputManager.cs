@@ -13,15 +13,18 @@ namespace VrScene
         GameManager gamemanager;
         BlockManager BlockManager;
 
+        List<GameObject> fadeOutObjects = new List<GameObject>();
+
         public GameObject player;
         public GameObject gamesystem;
 
+        // NonTwoEyesModeUIとその子要素
+        public GameObject NonTwoEyesModeUI;
         public Toggle FlyingModeToggle;
         public GameObject FlyingButtons;
         public Toggle PlayBackButton;
         public GameObject PlayBackModeUI;
         public GameObject ResetButton;
-        public GameObject NonTwoEyesModeUI;
         public Slider SeekBar;
         public GameObject TouchPanel;
 
@@ -81,12 +84,82 @@ namespace VrScene
             TouchPanel.SetActive(XRSettings.enabled);
         }
 
+        private List<GameObject> FocusUI(GameObject parent, GameObject focusObject)
+        {
+            List<GameObject> fadeOutObjects = new List<GameObject>();
+            foreach(Transform child in parent.transform)
+            {
+                if (child.name == focusObject.name) continue;
+                fadeOutObjects.Add(child.gameObject);
+                child.gameObject.SetActive(false);
+            }
+
+            return fadeOutObjects;
+        }
+
+        private void ResetFocusUI(List<GameObject> fadeOutObjects)
+        {
+            fadeOutObjects.ForEach(obj => obj.SetActive(true));
+        }
+
+        public void PlayBack(bool isActive)
+        {
+            SeekBar.maxValue = BlockManager.BlocksCount;
+            if (isActive)
+            {
+                if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
+                ResetButton.SetActive(false);
+                fadeOutObjects.Clear();
+                fadeOutObjects.AddRange(FocusUI(NonTwoEyesModeUI, PlayBackModeUI));
+            }
+            else
+            {
+                ResetButton.SetActive(true);
+                ResetFocusUI(fadeOutObjects);
+                fadeOutObjects.Clear();
+            }
+        }
+
+        public void DestroyBlocks()
+        {
+            BlockManager.ClearBlocks();
+            SeekBar.value = 0;
+        }
+
+        public void PlaceBlockBySeekBar(float value)
+        {
+            SeekBar.maxValue = BlockManager.BlocksCount;
+            BlockManager.PlaceBlocks(value);
+        }
+
+        public void VR_ModeOn()
+        {
+            XRSettings.enabled = true;
+        }
+
+        public void VR_ModeOff()
+        {
+            XRSettings.enabled = false;
+        }
+
+        public void OnClickBackToTheGame()
+        {
+            this.BackToTheGame.SetActive(false);
+            this.RuntimeHierarchy.SetActive(false);
+            this.RuntimeInspector.SetActive(false);
+            Debug.Log("Back to Game");
+        }
+
+
+        /*
+         * ここから下の関数は、Player関連
+         */
+
         public void FlyingModeCheck(bool isActive)
         {
             playermanager.Flying(isActive);
             FlyingButtons.SetActive(isActive);
         }
-
 
         public void Player_Forward()
         {
@@ -145,49 +218,6 @@ namespace VrScene
         public void Player_StopDown()
         {
             playermanager.MoveDown = false;
-        }
-        public void PlayBack(bool isActive)
-        {
-            SeekBar.maxValue = BlockManager.BlocksCount;
-            if (isActive)
-            {
-                if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
-                ResetButton.SetActive(false);
-            }
-            else
-            {
-                ResetButton.SetActive(true);
-            }
-        }
-
-        public void DestroyBlocks()
-        {
-            BlockManager.ClearBlocks();
-            SeekBar.value = 0;
-        }
-
-        public void PlaceBlockBySeekBar(float value)
-        {
-            SeekBar.maxValue = BlockManager.BlocksCount;
-            BlockManager.PlaceBlocks(value);
-        }
-
-        public void VR_ModeOn()
-        {
-            XRSettings.enabled = true;
-        }
-
-        public void VR_ModeOff()
-        {
-            XRSettings.enabled = false;
-        }
-
-        public void OnClickBackToTheGame()
-        {
-            this.BackToTheGame.SetActive(false);
-            this.RuntimeHierarchy.SetActive(false);
-            this.RuntimeInspector.SetActive(false);
-            Debug.Log("Back to Game");
         }
     }
 }

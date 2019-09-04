@@ -43,12 +43,11 @@ namespace VrScene
             CheckPlayerFall();
             PlayerCamera.SetActive(!XRSettings.enabled);
             TwoEyesModeCamera.SetActive(XRSettings.enabled);
+            RotateManagerI.UpdateRotate();
             if (!XRSettings.enabled)
             {
-                RotateManagerI.UpdateRotate();
                 PlayerCamera.transform.position = this.transform.position;
             }
-            RotateManagerI.UpdateRotate();
             if (XRSettings.enabled)
             {
                 RotatePlayerInTwoEyesMode();
@@ -150,8 +149,8 @@ namespace VrScene
                  */
                 if (Application.platform == RuntimePlatform.Android)
                 {
-                    CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation; 
-                    this.RotateXY(GyroDiff());
+                    CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
+                    if (SettingManager.UseGyro) this.RotateXY(GyroDiff());
                     if (Input.touchCount > 0)
                     {
                         var touch = Input.GetTouch(0);

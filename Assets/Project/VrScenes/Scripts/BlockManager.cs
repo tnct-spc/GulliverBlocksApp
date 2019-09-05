@@ -25,7 +25,7 @@ namespace VrScene
         public GameObject LoadingWindow;
         CommunicationManager CommunicationManager;
         CommunicationManager.WsClient WsClient;
-        // {"pattern_name": {"pattern_group_id": [(BlockInfo),]}, }
+        // patternBlocksの構造: {"pattern_name": {"pattern_group_id": [(BlockInfo),]}, }
         private Dictionary<string, Dictionary<string, List<BlockInfo>>> patternBlocks = new Dictionary<string, Dictionary<string, List<BlockInfo>>>();
 
         private void Awake()
@@ -97,9 +97,9 @@ namespace VrScene
 
                     BlockInfo nearestBlock = patternBlocks[patternName][patternGroupId][0];
                     BlockInfo farestBlock = patternBlocks[patternName][patternGroupId][patternBlocks[patternName][patternGroupId].Count-1];
-                    int width = farestBlock.x - nearestBlock.x;
-                    int height = farestBlock.y - nearestBlock.y;
-                    int depth = farestBlock.z - nearestBlock.z;
+                    int width = (farestBlock.x - nearestBlock.x)+1;
+                    int height =(farestBlock.y - nearestBlock.y)+1;
+                    int depth = (farestBlock.z - nearestBlock.z)+1;
 
                     // パターンオブジェクトを生成
                     GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);

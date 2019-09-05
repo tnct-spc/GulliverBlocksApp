@@ -70,9 +70,9 @@ namespace MergeScene
             touchStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
-        private void MoveMap(GameObject mapObject, Vector3 vector)
+        private void MoveMap(GameObject mapObject, int x, int y)
         {
-            mapObject.transform.Translate(vector);
+            hitObject.GetComponent<MapParent>().Move(x,y);
             touchStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
@@ -81,7 +81,7 @@ namespace MergeScene
             if (hitObject == null) return;
             X += touchEndPos.x - touchStartPos.x;
             Y += touchEndPos.z - touchStartPos.z;
-            MoveMap(hitObject, new Vector3(X - X%blockCoefficientXZ, 0, Y-Y%blockCoefficientXZ));
+            MoveMap(hitObject,(int)(X/blockCoefficientXZ),(int)(Y/blockCoefficientXZ));
             X = X % blockCoefficientXZ;
             Y = Y % blockCoefficientXZ;
         }

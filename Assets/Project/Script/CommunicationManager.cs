@@ -46,6 +46,14 @@ public class CommunicationManager
         return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
     }
 
+    public async Task<String> uploadMergeAsync(MergeData data)
+    {
+        var apiUrl = "https://" + ServerAddress + "/create_merge/";
+        string jsonStr = JsonUtility.ToJson(data);
+        Debug.Log(jsonStr);
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
     private static async Task<string> GetRequest(string url)
     {
 
@@ -60,6 +68,23 @@ public class CommunicationManager
         {
             return req.downloadHandler.text;
         }
+    }
+
+    private static async Task<string> PostRequest(string url, string jsonParam)
+    {
+        var req = new UnityWebRequest(url, "POST");
+        byte[] postData = System.Text.Encoding.UTF8.GetBytes(jsonParam);
+        req.uploadHandler = new UploadHandlerRaw(postData);
+        req.downloadHandler = new DownloadHandlerBuffer();
+        req.SetRequestHeader("Content-Type", "application/json");
+        await req.SendWebRequest();
+        if (req.isNetworkError || req.isHttpError)
+        {
+            Debug.Log(req.error);
+            Debug.Log(req.downloadHandler.text);
+            return "";
+        }
+        return req.downloadHandler.text;
     }
 
     public class WsClient
@@ -197,4 +222,19 @@ namespace JsonFormats
         public string name;
     }
 
+    [System.Serializable]
+    public struct MergeData
+    {
+        public string name;
+        public List<MergeMap> merge_maps;
+    }
+
+    [System.Serializable]
+    public struct MergeMap
+    {
+        public string map_id;
+        public int x;
+        public int y;
+        public int rotate;
+    }
 }

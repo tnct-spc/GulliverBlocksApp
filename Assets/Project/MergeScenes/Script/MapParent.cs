@@ -8,9 +8,9 @@ namespace MergeScene
 {
     public class MapParent : MonoBehaviour
     {
-
         private List<Block> Blocks = new List<Block> { };
         private List<Rule> ColorRules = new List<Rule> { };
+        public string MapId;
         public Vector2 currentDiff = Vector2.zero;
 
         public void AddBlock(List<BlockInfo> blocksInfo)

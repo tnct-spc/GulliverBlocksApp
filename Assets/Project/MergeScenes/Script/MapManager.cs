@@ -9,13 +9,9 @@ namespace MergeScene
 {
     public class MapManager : MonoBehaviour
     {
-        public int BlocksCount;
         public static string[] WorldList;
-        List<float> NeutralPositions = new List<float>();
-        private List<Block> Blocks = new List<Block> { };
-        private List<Rule> ColorRules = new List<Rule> { };
-        public float BlockNumber = 0;
         CommunicationManager CommunicationManager;
+        List<MapParent> mapParent;
 
         private void Awake()
         {
@@ -31,77 +27,21 @@ namespace MergeScene
         {
             for(int i = 0; i < WorldList.Length; i++)
             {
-                GameObject parent = new GameObject("Map" + i.ToString());
+                //GameObject parent = new GameObject("Map" + i.ToString());
                 var fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldList[i]);
                 var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldList[i]);
                 yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
-                fetchBlocksTask.Result.ForEach(blocki => this.AddBlock(blocki, parent));// 全てのブロックを配置
                 yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
-                this.ColorRules = fetchColorRulesTask.Result;
-                this.ColorRules.ForEach(this.ApplyColorRules);
-                yield return null;
-                parent.transform.Translate( i* 0.32f*48, 0.0f, 0.0f);
+
+                Object mapParentPrefab = (GameObject)Resources.Load("MapParent");
+                MapParent map = (Instantiate(mapParentPrefab, new Vector3(0f,10f, 0f), Quaternion.identity) as GameObject).GetComponent<MapParent>();
+                map.AddBlock(fetchBlocksTask.Result);
+                map.ApplyColorRules(fetchColorRulesTask.Result);
+                map.Move(48*i, 0);
             }
         }
 
-        private void AddBlock(BlockInfo blockInfo, GameObject parent)
-        {
-            Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
-            Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
-            block.SetColor(blockInfo.colorID);
-            block.SetBlockData(blockInfo);
-            this.Blocks.Add(block);
-            NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
-            this.BlocksCount += 1;
-            block.gameObject.transform.parent = parent.transform;
-        }
 
-        public void ClearBlocks()
-        {
-            for (int i = 0; i < this.BlocksCount; i++)
-            {
-                Blocks[i].SetActive(false);
-            }
-        }
-
-        public void PlaceBlocks(float value)
-        {
-            ClearBlocks();
-            for (int i = 0; i < value; i++)
-            {
-                Blocks[i].SetActive(true);
-            }
-            BlockNumber = value;
-        }
-        private void ApplyColorRules(Rule ruleData)
-        {
-            string type = ruleData.type;
-            string to = ruleData.to;
-            Material toColorMaterial = Resources.Load("Color" + to) as Material;
-            if (toColorMaterial == null)
-            {
-                Debug.Log("To is Invalid.");
-                return;
-            }
-            if (type == "color")
-            {
-                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == ruleData.origin);
-                targetBlocks.ForEach(block =>
-                {
-                    block.SetColor(to);
-                });
-
-            }
-            else if (type == "ID")
-            {
-                Block targetBlock = this.Blocks.Find(block => block.ID == ruleData.block_id);
-                if (targetBlock == null) return;
-                targetBlock.SetColor(to);
-            }
-            else
-            {
-                Debug.Log("Type is Invalid.");
-            }
-        }
+        
     }
 }

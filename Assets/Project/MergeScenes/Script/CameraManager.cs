@@ -9,7 +9,7 @@ namespace MergeScene
         private Vector3 touchStartPos;
         private Vector3 touchEndPos;
         private GameObject hitObject;
-        private bool ishit = false;
+        private bool isMap = false;
         float blockCoefficientXZ = 0.32f;
         float X;
         float Y;
@@ -19,12 +19,17 @@ namespace MergeScene
             if (Input.GetMouseButtonDown(0))
             {
                 touchStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (ShootingRay().collider != null) ishit = true;
+                ShootingRay();
+                isMap = (hitObject != null && hitObject.tag == "map_parent");
+                if (isMap)
+                {
+                    hitObject.GetComponent<Renderer>().material.color = new Color32(255, 255, 255, 70);
+                }
             }
             else if (Input.GetMouseButton(0))
             {
                 touchEndPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (ishit)
+                if (isMap)
                 {
                     CountFlame();
                 }
@@ -35,7 +40,12 @@ namespace MergeScene
             }
             else if (Input.GetMouseButtonUp(0))
             {
-                ishit = false;
+                if (isMap)
+                {
+                    hitObject.GetComponent<Renderer>().material.color = new Color32(255, 255, 255, 120);
+
+                }
+                isMap = false;
                 hitObject = null;
                 X = 0f;
                 Y = 0f;
@@ -48,7 +58,7 @@ namespace MergeScene
             RaycastHit hit;
             Physics.Raycast(ray, out hit, 1000);
             if (hit.transform == null) return hit;
-            hitObject = hit.transform.root.gameObject;
+            hitObject = hit.transform.gameObject;
             return hit;
         }
 

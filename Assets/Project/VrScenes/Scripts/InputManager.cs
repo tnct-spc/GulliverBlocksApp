@@ -102,6 +102,7 @@ namespace VrScene
             fadeOutObjects.ForEach(obj => obj.SetActive(true));
         }
 
+        // çƒê∂ÉÇÅ[Éhä÷òA
         public void PlayBack(bool isActive)
         {
             SeekBar.maxValue = BlockManager.BlocksCount;
@@ -124,6 +125,17 @@ namespace VrScene
             BlockManager.PlaceBlocks(value);
         }
 
+        public void OnClickAdvanceSkipButton()
+        {
+            if(PlayBackButton.isOn == false) SeekBar.value++;
+        }
+
+        public void OnClickBackSkipButton()
+        {
+            if (PlayBackButton.isOn == false) SeekBar.value--;
+        }
+
+        // VRÇÃtoggle
         public void VR_ModeOn()
         {
             XRSettings.enabled = true;
@@ -134,6 +146,7 @@ namespace VrScene
             XRSettings.enabled = false;
         }
 
+        // DebugButton
         public void OnClickBackToTheGame()
         {
             this.BackToTheGame.SetActive(false);

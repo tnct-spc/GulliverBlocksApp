@@ -120,6 +120,7 @@ namespace VrScene
             while (BlockNumber < this.BlocksCount)
             {
                 while (PlayBackButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
+                if (SeekBar.value == SeekBar.maxValue) break;
                 FallingBlock((int)SeekBar.value);
                 SeekBar.value++;
                 await Task.Delay(1000);

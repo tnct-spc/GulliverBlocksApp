@@ -127,12 +127,14 @@ namespace VrScene
 
         public void OnClickAdvanceSkipButton()
         {
-            if(PlayBackButton.isOn == false) SeekBar.value++;
+            if(PlayBackButton.isOn == false)
+                SeekBar.value++;
         }
 
         public void OnClickBackSkipButton()
         {
-            if (PlayBackButton.isOn == false) SeekBar.value--;
+            if (PlayBackButton.isOn == false)
+                SeekBar.value--;
         }
 
         // VR‚Ìtoggle

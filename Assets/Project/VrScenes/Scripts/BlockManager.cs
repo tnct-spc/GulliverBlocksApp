@@ -113,6 +113,7 @@ namespace VrScene
             var block = this.Blocks.Find(b => b.ID == blockInfo.ID);
             block.SetBlockData(blockInfo);
         }
+
         public async void RepeatPlaceBlocks()
         {
             isRepeating = true;
@@ -124,6 +125,8 @@ namespace VrScene
                 await Task.Delay(1000);
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;
+            ClearBlocks();
+            SeekBar.value = 0;
             isRepeating = false;
         }
 

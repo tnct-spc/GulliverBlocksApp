@@ -108,22 +108,14 @@ namespace VrScene
             if (isActive)
             {
                 if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
-                ResetButton.SetActive(false);
                 fadeOutObjects.Clear();
                 fadeOutObjects.AddRange(FocusUI(NonTwoEyesModeUI, PlayBackModeUI));
             }
             else
             {
-                ResetButton.SetActive(true);
                 ResetFocusUI(fadeOutObjects);
                 fadeOutObjects.Clear();
             }
-        }
-
-        public void DestroyBlocks()
-        {
-            BlockManager.ClearBlocks();
-            SeekBar.value = 0;
         }
 
         public void PlaceBlockBySeekBar(float value)

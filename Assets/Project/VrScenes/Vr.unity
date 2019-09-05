@@ -8660,7 +8660,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 784364642}
+      - m_Target: {fileID: 0}
         m_MethodName: DestroyBlocks
         m_Mode: 1
         m_Arguments:
@@ -38867,7 +38867,7 @@ RectTransform:
   - {fileID: 1932141158}
   - {fileID: 961816809}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -39375,7 +39375,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &706791885
 GameObject:
@@ -44127,7 +44127,6 @@ GameObject:
   - component: {fileID: 784364640}
   - component: {fileID: 784364638}
   - component: {fileID: 784364641}
-  - component: {fileID: 784364642}
   m_Layer: 0
   m_Name: GameSystem
   m_TagString: Untagged
@@ -44147,12 +44146,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c7e61c5c3fd85a47b6c17d436fb558a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 963194225}
+  gamesystem: {fileID: 784364637}
+  NonTwoEyesModeUI: {fileID: 1783622055}
   FlyingModeToggle: {fileID: 979611540}
   FlyingButtons: {fileID: 577250793}
   PlayBackButton: {fileID: 1281882746}
   PlayBackModeUI: {fileID: 2073376211}
   ResetButton: {fileID: 144928388}
-  NonTwoEyesModeUI: {fileID: 1783622055}
   SeekBar: {fileID: 2119897442}
   TouchPanel: {fileID: 961816808}
   BackToTheGame: {fileID: 853448506}
@@ -44170,7 +44171,7 @@ Transform:
   m_LocalScale: {x: 1.995842, y: 1.995842, z: 1.995842}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &784364640
 MonoBehaviour:
@@ -44198,18 +44199,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 999a763357c17ed4e83122bf797d7598, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &784364642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 784364637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6891ffc3946ea7e4980919654b90c77f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &785169644
@@ -47743,12 +47732,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c7e61c5c3fd85a47b6c17d436fb558a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  gamesystem: {fileID: 0}
+  NonTwoEyesModeUI: {fileID: 0}
   FlyingModeToggle: {fileID: 0}
   FlyingButtons: {fileID: 577250793}
   PlayBackButton: {fileID: 0}
   PlayBackModeUI: {fileID: 0}
   ResetButton: {fileID: 0}
-  NonTwoEyesModeUI: {fileID: 0}
   SeekBar: {fileID: 0}
   TouchPanel: {fileID: 0}
   BackToTheGame: {fileID: 853448506}
@@ -53475,7 +53466,7 @@ Transform:
   m_Children:
   - {fileID: 2136740894}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
@@ -53491,7 +53482,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   default_move_speed: 1
   run_move_speed: 2
-  TwoEyesModeCamera: {fileID: 1185310052}
   MoveRight: 0
   MoveLeft: 0
   MoveForward: 0
@@ -63732,7 +63722,7 @@ Transform:
   - {fileID: 2033003785}
   - {fileID: 1353756424}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1175736446
 GameObject:
@@ -64405,7 +64395,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1185315412
 GameObject:
@@ -70220,8 +70210,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 784364638}
-        m_MethodName: Play
-        m_Mode: 0
+        m_MethodName: PlayBack
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -111626,7 +111616,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2042658756
 RectTransform:
   m_ObjectHideFlags: 0

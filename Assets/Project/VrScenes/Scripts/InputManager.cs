@@ -24,8 +24,8 @@ namespace VrScene
         public GameObject FlyingButtons;
         public Toggle PlayBackButton;
         public GameObject PlayBackModeUI;
-        public GameObject ResetButton;
-        public Slider SeekBar;
+        public GameObject Seekbar;
+        public Slider seekbarSlider;
         public GameObject TouchPanel;
 
         public GameObject BackToTheGame;
@@ -38,8 +38,9 @@ namespace VrScene
             gamemanager = gamesystem.GetComponent<GameManager>();
             BlockManager = gamesystem.GetComponent<BlockManager>();
 
+            seekbarSlider = Seekbar.GetComponent<Slider>();
             FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
-            SeekBar.onValueChanged.AddListener(PlaceBlockBySeekBar);
+            seekbarSlider.onValueChanged.AddListener(PlaceBlockBySeekBar);
             PlayBackButton.onValueChanged.AddListener(PlayBack);
 
             bool isPlayBackMode = false;
@@ -49,7 +50,7 @@ namespace VrScene
             FlyingModeCheck(isPlayBackMode);
             PlayBackButton.GetComponent<Toggle>().isOn = false;
             PlayBackModeUI.SetActive(false);
-            SeekBar.maxValue = 100;
+            seekbarSlider.maxValue = 100;
             InputTracking.disablePositionalTracking = true;
         }
 
@@ -105,9 +106,10 @@ namespace VrScene
         // çƒê∂ÉÇÅ[Éhä÷òA
         public void PlayBack(bool isActive)
         {
-            SeekBar.maxValue = BlockManager.BlocksCount;
+            seekbarSlider.maxValue = BlockManager.BlocksCount;
             if (isActive)
             {
+                if (seekbarSlider.value == seekbarSlider.maxValue) seekbarSlider.value = 0;
                 if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
                 fadeOutObjects.Clear();
                 fadeOutObjects.AddRange(FocusUI(NonTwoEyesModeUI, PlayBackModeUI));
@@ -116,23 +118,24 @@ namespace VrScene
             {
                 ResetFocusUI(fadeOutObjects);
                 fadeOutObjects.Clear();
+                Seekbar.SetActive(false);
             }
         }
 
         public void PlaceBlockBySeekBar(float value)
         {
-            SeekBar.maxValue = BlockManager.BlocksCount;
+            seekbarSlider.maxValue = BlockManager.BlocksCount;
             BlockManager.PlaceBlocks(value);
         }
 
         public void OnClickAdvanceSkipButton()
         {
-            SeekBar.value++;
+            seekbarSlider.value++;
         }
 
         public void OnClickBackSkipButton()
         {
-            SeekBar.value--;
+            seekbarSlider.value--;
         }
 
         // VRÇÃtoggle

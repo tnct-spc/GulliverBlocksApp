@@ -11641,7 +11641,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -44011,8 +44011,8 @@ MonoBehaviour:
   FlyingButtons: {fileID: 577250793}
   PlayBackButton: {fileID: 1281882746}
   PlayBackModeUI: {fileID: 2073376211}
-  ResetButton: {fileID: 0}
-  SeekBar: {fileID: 2119897442}
+  Seekbar: {fileID: 2119897440}
+  seekbarSlider: {fileID: 0}
   TouchPanel: {fileID: 961816808}
   BackToTheGame: {fileID: 853448506}
   RuntimeHierarchy: {fileID: 1637628486}
@@ -47597,8 +47597,8 @@ MonoBehaviour:
   FlyingButtons: {fileID: 577250793}
   PlayBackButton: {fileID: 0}
   PlayBackModeUI: {fileID: 0}
-  ResetButton: {fileID: 0}
-  SeekBar: {fileID: 0}
+  Seekbar: {fileID: 0}
+  seekbarSlider: {fileID: 0}
   TouchPanel: {fileID: 0}
   BackToTheGame: {fileID: 853448506}
   RuntimeHierarchy: {fileID: 1637628486}
@@ -97384,7 +97384,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -115392,7 +115392,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2119897441
 RectTransform:
   m_ObjectHideFlags: 0

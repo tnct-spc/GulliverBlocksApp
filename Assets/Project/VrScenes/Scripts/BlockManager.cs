@@ -19,7 +19,8 @@ namespace VrScene
         public float BlockNumber = 0;
         public bool isRepeating = false;
         InputManager InputManager;
-        Slider SeekBar;
+        GameObject SeekBar;
+        Slider seekbarSlider;
         Toggle PlayBackButton;
         GameManager GameManager;
         public GameObject LoadingWindow;
@@ -64,7 +65,8 @@ namespace VrScene
             LoadingWindow.SetActive(true);
             GameSystem = GameObject.Find("GameSystem");
             InputManager = GameSystem.GetComponent<InputManager>();
-            SeekBar = InputManager.SeekBar;
+            SeekBar = InputManager.Seekbar;
+            seekbarSlider = InputManager.seekbarSlider;
             PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
             StartCoroutine("FetchData");
@@ -117,17 +119,23 @@ namespace VrScene
         public async void RepeatPlaceBlocks()
         {
             isRepeating = true;
+            SeekBar.SetActive(true);
             while (BlockNumber < this.BlocksCount)
             {
-                while (PlayBackButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
-                if (SeekBar.value == SeekBar.maxValue) break;
-                FallingBlock((int)SeekBar.value);
-                SeekBar.value++;
+                while (PlayBackButton.GetComponent<Toggle>().isOn == false)
+                {
+                    SeekBar.SetActive(false);
+                    await Task.Delay(1);
+                }
+                SeekBar.SetActive(true);
+                if (seekbarSlider.value == seekbarSlider.maxValue) break;
+                FallingBlock((int)seekbarSlider.value);
+                seekbarSlider.value++;
                 await Task.Delay(1000);
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;
             ClearBlocks();
-            SeekBar.value = 0;
+            seekbarSlider.value = 0;
             isRepeating = false;
         }
 

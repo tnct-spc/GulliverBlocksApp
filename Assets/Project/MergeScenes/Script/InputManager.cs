@@ -7,11 +7,9 @@ namespace MergeScene
     public class InputManager : MonoBehaviour
     {
         [SerializeField] GameObject camera;
-        CameraManager cameraManager;
 
         private void Start()
         {
-            cameraManager = camera.GetComponent<CameraManager>();
         }
 
         public void OnClickPlusButton()

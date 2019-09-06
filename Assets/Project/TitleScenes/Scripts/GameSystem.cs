@@ -46,9 +46,9 @@ namespace TitleScene
                 .First().GetComponentsInChildren<Text>()
                 .First(t => t.name == "Label").text;
             if (selectedLabel == "再生モード") selectedLabel = "PlayBack";
+            if (selectedLabel == "閲覧モード") selectedLabel = "View";
 
             GameManager.Mode = selectedLabel;
-
 
             // VrSceneを読み込む
             SceneManager.LoadScene("Vr");

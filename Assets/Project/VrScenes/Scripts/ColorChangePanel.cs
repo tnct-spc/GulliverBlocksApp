@@ -10,11 +10,12 @@ namespace VrScene
     {
         [SerializeField] public GameObject panelPref;
         private List<Material> contentMaterials = new List<Material>();
-        private GameObject contentObject;
-        private GameObject colorChangePanel;
+        public GameObject contentObject;
+        public GameObject colorChangePanel;
         private ToggleGroup toggleGroup;
         private GameObject targetBlock;
         public GameObject lightUpObject = null;
+
         public void OnEnable()
         {
             contentMaterials.Clear();
@@ -38,8 +39,6 @@ namespace VrScene
         public void SetupColorChangePanel(GameObject targetObject)
         {
             targetBlock = targetObject;
-            colorChangePanel = GameObject.Find("Canvas/ColorChangePanel");
-            contentObject = GameObject.Find("Canvas/ColorChangePanel/Scroll View/Viewport/Content");
             SetColorPanel(targetBlock);
         }
 

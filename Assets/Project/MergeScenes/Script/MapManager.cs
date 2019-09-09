@@ -1,15 +1,18 @@
 ﻿using System.Collections;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using JsonFormats;
 using VrScene;
+using UnityEngine.SceneManagement;
 
 namespace MergeScene
 {
     public class MapManager : MonoBehaviour
     {
         public static string[] WorldList;
+        public InputField MapNameInputField;
         CommunicationManager CommunicationManager;
         List<MapParent> MapParents = new List<MapParent> { };
 
@@ -42,9 +45,10 @@ namespace MergeScene
                 maps.Add(d);
             });
             data.merge_maps = maps;
-            data.name = "merge data-test";// to-do 
+            data.name = this.MapNameInputField.text;
             var uploadMergeTask = CommunicationManager.uploadMergeAsync(data);
             yield return new WaitUntil(() => uploadMergeTask.IsCompleted);
+            SceneManager.LoadScene("Title");
         }
 
         IEnumerator FetchMap()

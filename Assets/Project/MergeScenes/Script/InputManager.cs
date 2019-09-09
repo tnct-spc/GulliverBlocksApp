@@ -6,20 +6,18 @@ namespace MergeScene
 {
     public class InputManager : MonoBehaviour
     {
-        [SerializeField] GameObject camera;
+        public GameObject SubmitPanel;
+        public GameObject OpenSubmitPanelButton;
+
 
         private void Start()
         {
         }
 
-        public void OnClickPlusButton()
+        public void OnClickOpenMergePanelButton()
         {
-            camera.GetComponent<Camera>().orthographicSize -= 5;
-        }
-
-        public void OnClickMinusButton()
-        {
-            camera.GetComponent<Camera>().orthographicSize += 5;
+            this.OpenSubmitPanelButton.SetActive(false);
+            this.SubmitPanel.SetActive(true);
         }
     }
 }

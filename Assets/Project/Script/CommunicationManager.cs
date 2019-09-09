@@ -15,12 +15,13 @@ public class CommunicationManager
     {
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
         var jsonStr = await GetRequest(apiUrl);
-        
-        if (jsonStr == "{\"blocks\":[],\"pattern_blocks\":{}}\n")
-        {
-            apiUrl = "https://" + ServerAddress + "/get_merged_blocks/" + mapId + "/";
-            jsonStr = await GetRequest(apiUrl);
-        }
+        return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
+    }
+
+    public async Task<List<BlockInfo>> fetchMergedBlocksAsync(string mapId)
+    {
+        var apiUrl = "https://" + ServerAddress + "/get_merged_blocks/" + mapId + "/";
+        var jsonStr = await GetRequest(apiUrl);
         
         return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
     }

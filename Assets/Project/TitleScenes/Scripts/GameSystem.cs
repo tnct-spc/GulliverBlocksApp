@@ -3,10 +3,12 @@ using UnityEngine.UI;
 using System;
 using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using VrScene;
 using MergeScene;
+using JsonFormats;
 
 namespace TitleScene
 {
@@ -40,9 +42,10 @@ namespace TitleScene
             }
         }
 
-        public void OnClickWorldSelectButton(string ID)
+        public void OnClickWorldSelectButton(string ID, bool isMerge)
         {
             BlockManager.WorldID = ID;
+            BlockManager.IsMerge = isMerge;
             ModeSelectPanel.SetActive(true);
             PlaybackModeButton.GetComponent<Button>().onClick.AddListener(() => OnClickModeSelectButton("PlayBack"));
             ViewModeButton.GetComponent<Button>().onClick.AddListener(() => OnClickModeSelectButton("Vr"));
@@ -57,8 +60,14 @@ namespace TitleScene
 
         public void OnClickCreateMapButton()
         {
+            List<World> mapsData = new List<World>() { };
+            MapSelectPanel.GetComponent<WorldSelect>().WorldsData.ForEach(data =>
+            {
+                if (!data.isMerge)
+                    mapsData.Add(data.world);
+            });
             MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.Clear();
-            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.AddRange(MapSelectPanel.GetComponent<WorldSelect>().WorldsData);
+            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.AddRange(mapsData);
             MergeMapSelectPanel.SetActive(true);
         }
 

@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Project/MergeScenes.meta
 guid: 08288f3583269174aa64738e2768d00e
+=======
+guid: 64868d74916818a40b7dc5cc0339c839
+>>>>>>> develop:Assets/Project/VrScenes/Sprites.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

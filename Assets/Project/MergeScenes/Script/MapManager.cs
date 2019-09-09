@@ -38,7 +38,7 @@ namespace MergeScene
                 d.x = (int)map.currentDiff.x;
                 d.y = (int)map.currentDiff.y;
                 d.map_id = map.MapId;
-                d.rotate = 1; //to-do
+                d.rotate = map.currentRotate;
                 maps.Add(d);
             });
             data.merge_maps = maps;

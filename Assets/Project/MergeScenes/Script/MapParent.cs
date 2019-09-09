@@ -12,6 +12,7 @@ namespace MergeScene
         private List<Rule> ColorRules = new List<Rule> { };
         public string MapId;
         public Vector2 currentDiff = Vector2.zero;
+        public int currentRotate = 0;
 
         public void AddBlock(List<BlockInfo> blocksInfo)
         {
@@ -28,10 +29,20 @@ namespace MergeScene
 
         public void Move(int x, int y)
         {
-
             this.currentDiff.x += x;
             this.currentDiff.y += y;
-            this.gameObject.transform.Translate(0.32f*x, 0.0f, 0.32f*y);
+
+            var vec = new Vector3(x*0.32f, 0, y*0.32f);
+            var rotatedVec = Quaternion.Euler(0, this.currentRotate * 90, 0) * vec;
+            this.gameObject.transform.Translate(rotatedVec);
+        }
+
+        public void Rotate(int r)
+        {
+            this.currentRotate -= r;
+            this.currentRotate %= 4;
+            this.transform.rotation = Quaternion.Euler(0.0f, -90f*this.currentRotate, 0.0f);
+            Debug.Log(this.currentRotate);
         }
 
         public void ApplyColorRules(List<Rule> rulesData)

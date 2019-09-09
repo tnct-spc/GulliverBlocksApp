@@ -6,19 +6,31 @@ namespace MergeScene
 {
     public class TouchManager : MonoBehaviour
     {
-        private Vector3 LastTouchPos;
-        private bool isMap = false;
-        float blockCoefficientXZ = 0.32f;
-        Vector2 currentDiff = Vector2.zero;
-        float LastDistance = 0;
-        GameObject CurrentMapParent = null;
         int LastTouchCount = 0;
+        GameObject CurrentMapParent = null;
+ 
+        private Vector3 LastTouchPos;
+        Vector2 currentDiff = Vector2.zero;
+        float blockCoefficientXZ = 0.32f;
+   
+        bool IsRotate = false;
+        Vector2 LastDirection;
+        float LastAngle = 0f;
+        float LastDistance = 0;
 
         void Update()
         {
+            if (Input.touchCount == 0)
+            {
+                if (this.CurrentMapParent != null)
+                {
+                    this.CurrentMapParent.GetComponent<MapParent>().Rotate(0);
+                }
+            }
             ChangeParentColor(this.CurrentMapParent, false);
             if (Input.touchCount == 1)
             { // タッチしてる指が1本のとき
+                this.IsRotate = false;
                 Touch t1 = Input.GetTouch(0);
                 var tappedObject = ShootingRay(t1.position);
                 Vector3 tappedPostion = Camera.main.ScreenToWorldPoint(t1.position);
@@ -48,15 +60,49 @@ namespace MergeScene
                 // タッチしてる指が2本のとき
                 Touch t1 = Input.GetTouch(0);
                 Touch t2 = Input.GetTouch(1);
-                float distance = (t1.position - t2.position).magnitude;
-                if (t1.phase != TouchPhase.Began && t2.phase != TouchPhase.Began)
+                if ( (t1.phase == TouchPhase.Began || t2.phase == TouchPhase.Began) &&(IsMapParent(ShootingRay(t1.position)) || IsMapParent(ShootingRay(t2.position))))
                 {
-                    float cameraScale = this.gameObject.GetComponent<Camera>().orthographicSize;
-                    cameraScale += (this.LastDistance - distance)/ 100;
-                    cameraScale = Mathf.Max(0.2f, cameraScale);
-                    this.gameObject.GetComponent<Camera>().orthographicSize = cameraScale;
+                    this.IsRotate = true;
+                    this.LastDirection = t1.position - t2.position;
+                    this.LastAngle = 0f;
+                    if (IsMapParent(ShootingRay(t1.position)))
+                    {
+                        this.CurrentMapParent = ShootingRay(t1.position);
+                    }
+                    else
+                    {
+                        this.CurrentMapParent = ShootingRay(t2.position);
+                    }
                 }
-                this.LastDistance = distance;
+
+                if (this.IsRotate)
+                {
+                    var currentDirection = t1.position - t2.position;
+                    float angle = Vector2.Angle(this.LastDirection, currentDirection);
+                    angle *= Vector3.Cross(this.LastDirection, currentDirection).z > 0 ? -1 : 1;
+                    if (Mathf.Abs(angle) >= 30f) {
+                        var rotateDirection = angle > 0 ? 1 : -1;
+                        this.LastDirection = currentDirection;
+                        angle = 0f;
+                        this.CurrentMapParent.GetComponent<MapParent>().Rotate(rotateDirection);
+                    };
+                    if (Mathf.Abs(angle) > 5f)
+                    {
+                        this.CurrentMapParent.transform.Rotate(new Vector3(0f, (angle - this.LastAngle) * 3, 0f));
+                    }
+                    this.LastAngle = angle;
+                } else
+                {
+                    float distance = (t1.position - t2.position).magnitude;
+                    if (t1.phase != TouchPhase.Began && t2.phase != TouchPhase.Began)
+                    {
+                        float cameraScale = this.gameObject.GetComponent<Camera>().orthographicSize;
+                        cameraScale += (this.LastDistance - distance)/ 100;
+                        cameraScale = Mathf.Max(0.2f, cameraScale);
+                        this.gameObject.GetComponent<Camera>().orthographicSize = cameraScale;
+                    }
+                    this.LastDistance = distance;
+                }
             }
             this.LastTouchCount = Input.touchCount;
         }

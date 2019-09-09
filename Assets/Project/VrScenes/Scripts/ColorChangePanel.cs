@@ -8,6 +8,7 @@ namespace VrScene
 {
     public class ColorChangePanel : MonoBehaviour
     {
+        BlockManager blockManager;
         [SerializeField] public GameObject panelPref;
         private List<Material> contentMaterials = new List<Material>();
         public GameObject contentObject;
@@ -16,6 +17,11 @@ namespace VrScene
         private GameObject targetBlock;
         public GameObject lightUpObject = null;
 
+        private void Awake()
+        {
+            blockManager = GameObject.Find("GameSystem").GetComponent<BlockManager>();
+        }
+
         public void OnEnable()
         {
             contentMaterials.Clear();
@@ -23,7 +29,6 @@ namespace VrScene
             {
                 string materialName = "Color" + i.ToString();
                 Material material = Resources.Load(materialName) as Material;
-                material.name = "No." + i.ToString();
                 contentMaterials.Add(material);
             }
          }
@@ -102,8 +107,16 @@ namespace VrScene
         public void OnClickChangeButton()
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
+            string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text.Replace("Color", "");
+            targetBlock.GetComponent<Block>().SetColor(toMaterialName);
+        }
+
+        public void OnClickAllColorChangeButton()
+        {
+            Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
-            targetBlock.GetComponent<Renderer>().material = Resources.Load(toMaterialName) as Material;
+            Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
+            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
         }
 
         public void OnClickCancelButton()

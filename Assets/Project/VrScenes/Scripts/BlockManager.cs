@@ -171,7 +171,7 @@ namespace VrScene
             }
             BlockNumber = value;
         }
-        private void ApplyColorRules(Rule ruleData)
+        public void ApplyColorRules(Rule ruleData)
         {
             string type = ruleData.type;
             string to = ruleData.to;
@@ -183,7 +183,8 @@ namespace VrScene
             }
             if (type == "color")
             {
-                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == ruleData.origin);
+                string origin = ruleData.origin.Replace(" (Instance)", "");
+                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == origin);
                 targetBlocks.ForEach(block =>
                 {
                     block.SetColor(to);
@@ -202,5 +203,13 @@ namespace VrScene
             }
         }
 
+        public Rule MakeColorRules(string type, string origin, string to)
+        {
+            Rule rule = new Rule();
+            rule.type = type;
+            rule.origin = origin;
+            rule.to = to;
+            return rule;
+        }
     }
 }

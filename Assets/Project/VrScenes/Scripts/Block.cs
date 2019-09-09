@@ -37,7 +37,8 @@ namespace VrScene
         {
             string colorName = "Color" + colorID;
             Material colorMaterial = Resources.Load(colorName) as Material;
-            GetComponent<Renderer>().sharedMaterial = colorMaterial;
+            GetComponent<Renderer>().material = colorMaterial;
+            this.colorID = colorID;
         }
 
         public void SetActive(bool f)

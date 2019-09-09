@@ -35,7 +35,7 @@ public class CommunicationManager
 
     public async Task<List<World>> fetchMergesAsync()
     {
-        var apiUrl = "https://" + ServerAddress + "/get_merges";
+        var apiUrl = "https://" + ServerAddress + "/get_merges/";
         var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<World>(jsonStr, "Merges");
     }

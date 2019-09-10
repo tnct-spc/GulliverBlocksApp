@@ -11,6 +11,7 @@ namespace VrScene
         Rigidbody player_rigidbody;
         GameObject PlayerCamera;
         GameObject TwoEyesModeCamera;
+        public GameObject corner;
         private bool isDefault_speed = true;
         const string Stop = "Stop";
         const string Forward = "Forward";
@@ -43,7 +44,7 @@ namespace VrScene
             CheckPlayerFall();
             PlayerCamera.SetActive(!XRSettings.enabled);
             TwoEyesModeCamera.SetActive(XRSettings.enabled);
-            RotateManagerI.UpdateRotate();
+            RotateManagerI.UpdateRotate(corner.activeInHierarchy,corner.transform.position);
             if (!XRSettings.enabled)
             {
                 PlayerCamera.transform.position = this.transform.position;
@@ -120,6 +121,7 @@ namespace VrScene
             private Transform PlayerTransform;
             private Vector2 lastMousePosition;
             private bool TouchMoveEnable;
+            private bool isTouchPanel = false;
             private float CurrentRightLeftRotate;
             private float CurrentZRotate;
             private Gyroscope gyro;
@@ -135,7 +137,7 @@ namespace VrScene
                 this.gyro = Input.gyro;
             }
 
-            public void UpdateRotate()
+            public void UpdateRotate(bool isActiveColorPanel,Vector2 CornerPosition)
             {
                 /*
                  * # 各回転
@@ -156,7 +158,8 @@ namespace VrScene
                         var touch = Input.GetTouch(0);
                         if (touch.phase == TouchPhase.Began)
                         {
-                            this.OnClick(touch.position);
+                            this.OnClick(touch.position,CornerPosition,isActiveColorPanel);
+
                         } else if (touch.phase == TouchPhase.Moved)
                         {
                             this.OnMove(touch.position);
@@ -167,7 +170,8 @@ namespace VrScene
                 {
                     if (Input.GetMouseButtonDown(0))
                     {
-                        this.OnClick(Input.mousePosition);
+                        this.OnClick(Input.mousePosition,CornerPosition,isActiveColorPanel);
+
                     } else if (Input.GetMouseButton(0))
                     {
                         this.OnMove(Input.mousePosition);
@@ -176,16 +180,33 @@ namespace VrScene
                 PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
             }
 
-            private void OnClick(Vector2 position)
+            private void OnClick(Vector2 position,Vector2 cornerposition,bool isActive)
             {
                 /*
                  *カーソル(or タッチ)が初めてされたときの処理
                  */
+                if (!isActive)
+                {
+                    var tappedObject = EventSystem.current.currentSelectedGameObject;
+                    this.TouchMoveEnable = tappedObject == null || tappedObject.tag == "block" || tappedObject.tag == "floor";
 
-                var tappedObject = EventSystem.current.currentSelectedGameObject;
-                this.TouchMoveEnable = tappedObject == null || tappedObject.tag == "block" ||  tappedObject.tag == "floor";
+                    this.lastMousePosition = position;
 
-                this.lastMousePosition = position;
+                    isTouchPanel = false;
+                }
+                else if (position.x < cornerposition.x || position.y > cornerposition.y)
+                {
+                    var tappedObject = EventSystem.current.currentSelectedGameObject;
+                    this.TouchMoveEnable = tappedObject == null || tappedObject.tag == "block" || tappedObject.tag == "floor";
+
+                    this.lastMousePosition = position;
+
+                    isTouchPanel = false;
+                }
+                else
+                {
+                    isTouchPanel = true;
+                }
             }
 
             private void OnMove(Vector2 position)
@@ -193,11 +214,14 @@ namespace VrScene
                 /*
                  *カーソル(or タッチ位置)が動いたときの処理
                  */
-                if (!this.TouchMoveEnable) return;
-                Vector2 vec = position - this.lastMousePosition;
-                vec = Quaternion.Euler(0, 0, this.CurrentZRotate) * vec;
-                RotateXY(new Vector3(vec.x, vec.y, 0)*10*Time.deltaTime);
-                this.lastMousePosition = position;
+                if(!isTouchPanel)
+                {
+                    if (!this.TouchMoveEnable) return;
+                    Vector2 vec = position - this.lastMousePosition;
+                    vec = Quaternion.Euler(0, 0, this.CurrentZRotate) * vec;
+                    RotateXY(new Vector3(vec.x, vec.y, 0) * 10 * Time.deltaTime);
+                    this.lastMousePosition = position;
+                }
             }
 
             private void RotateXY(Vector3 direction)

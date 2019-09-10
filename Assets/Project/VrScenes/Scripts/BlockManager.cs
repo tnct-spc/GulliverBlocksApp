@@ -15,6 +15,7 @@ namespace VrScene
         private List<BlockInfo> UpdateBlocks = new List<BlockInfo> { }; // websocketで送られてきたものを一時的に保存
         private List<Rule> ColorRules = new List<Rule> { };
         public static string WorldID = "114e3ba9-a403-4c5c-a018-c7219c5bcc90";
+        public static bool IsMerge = false;
         GameObject GameSystem;
         public float BlockNumber = 0;
         public bool isRepeating = false;
@@ -74,7 +75,8 @@ namespace VrScene
 
         IEnumerator FetchData()
         {
-            var fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldID);
+            var fetchBlocksTask = IsMerge ? CommunicationManager.fetchMergedBlocksAsync(WorldID) :
+                CommunicationManager.fetchMapBlocksAsync(WorldID);
             var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
             yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置

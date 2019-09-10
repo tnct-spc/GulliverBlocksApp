@@ -51,16 +51,9 @@ namespace TitleScene
             ViewModeButton.GetComponent<Button>().onClick.AddListener(() => OnClickModeSelectButton("Vr"));
         }
 
-            // GameManagerにModeを渡す
-            string selectedLabel = toggleGroup.ActiveToggles()
-                .First().GetComponentsInChildren<Text>()
-                .First(t => t.name == "Label").text;
-            if (selectedLabel == "再生モード") selectedLabel = "PlayBack";
-            if (selectedLabel == "閲覧モード") selectedLabel = "View";
-
-            GameManager.Mode = selectedLabel;
-
-            // VrSceneを読み込む
+        public void OnClickModeSelectButton(string Mode)
+        {
+            GameManager.Mode = Mode;
             SceneManager.LoadScene("Vr");
             Screen.orientation = ScreenOrientation.LandscapeLeft;
         }

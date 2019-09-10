@@ -28,9 +28,14 @@ namespace VrScene
         public Slider seekbarSlider;
         public GameObject TouchPanel;
 
+        // DebugButtonŠÖ˜A
         public GameObject BackToTheGame;
         public GameObject RuntimeHierarchy;
         public GameObject RuntimeInspector;
+
+        // GeneralMenuŠÖ˜A
+        public GameObject GeneralMenuButton;
+        public GameObject GeneralMenuPanel;
 
         void Start()
         {
@@ -136,6 +141,19 @@ namespace VrScene
         public void OnClickBackSkipButton()
         {
             seekbarSlider.value--;
+        }
+
+        // GeneralMenu
+        public void OnClicKGeneralMenuButton()
+        {
+            GeneralMenuPanel.SetActive(true);
+            GeneralMenuButton.SetActive(false);
+        }
+
+        public void OnClickGeneralMenuCancelButton()
+        {
+            GeneralMenuButton.SetActive(true);
+            GeneralMenuPanel.SetActive(false);
         }
 
         // VR‚Ìtoggle

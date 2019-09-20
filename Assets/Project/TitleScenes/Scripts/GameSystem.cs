@@ -89,5 +89,13 @@ namespace TitleScene
         {
             currentUI.SetActive(false);
         }
+
+        public void OnClickEndGameButton()
+        {
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #endif
+            UnityEngine.Application.Quit();
+        }
     }
 }

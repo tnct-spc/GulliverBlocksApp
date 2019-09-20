@@ -20,10 +20,5 @@ namespace MergeScene
             this.OpenSubmitPanelButton.SetActive(false);
             this.SubmitPanel.SetActive(true);
         }
-
-        public void OnClickBackButton()
-        {
-            SceneManager.LoadScene("Title");
-        }
     }
 }

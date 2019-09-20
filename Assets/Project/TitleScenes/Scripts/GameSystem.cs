@@ -84,5 +84,10 @@ namespace TitleScene
             Screen.orientation = ScreenOrientation.LandscapeLeft;
 
         }
+
+        public void BackButton(GameObject currentUI)
+        {
+            currentUI.SetActive(false);
+        }
     }
 }

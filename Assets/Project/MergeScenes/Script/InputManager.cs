@@ -20,5 +20,11 @@ namespace MergeScene
             this.OpenSubmitPanelButton.SetActive(false);
             this.SubmitPanel.SetActive(true);
         }
+
+        public void OnClickBackButton(GameObject currentUI)
+        {
+            currentUI.SetActive(false);
+            OpenSubmitPanelButton.SetActive(true);
+        }
     }
 }

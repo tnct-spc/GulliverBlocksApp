@@ -8,9 +8,9 @@ namespace VrScene
     {
         [SerializeField] int default_move_speed = 1;
         [SerializeField] int run_move_speed = 2;
-        Rigidbody player_rigidbody;
-        GameObject PlayerCamera;
-        GameObject TwoEyesModeCamera;
+        public Rigidbody player_rigidbody;
+        public GameObject PlayerCamera;
+        public GameObject TwoEyesModeCamera;
         public GameObject corner;
         private bool isDefault_speed = true;
         const string Stop = "Stop";
@@ -23,16 +23,13 @@ namespace VrScene
 
         public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
 
-
         RotateManager RotateManagerI;
 
         private void Awake()
         {
-            player_rigidbody = GetComponent<Rigidbody>();
-            PlayerCamera = GameObject.Find("PlayerCamera");
-            TwoEyesModeCamera = GameObject.Find("TwoEyesModeCamera");
             RotateManagerI = new RotateManager(PlayerCamera.transform, transform);
         }
+
         void Start()
         {
             Input.gyro.enabled = true;
@@ -49,7 +46,7 @@ namespace VrScene
             {
                 PlayerCamera.transform.position = this.transform.position;
             }
-            if (XRSettings.enabled)
+            else
             {
                 RotatePlayerInTwoEyesMode();
             }

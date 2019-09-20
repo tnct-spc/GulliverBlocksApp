@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.XR;
+using UnityEngine.SceneManagement;
 
 namespace VrScene
 {
@@ -28,9 +29,14 @@ namespace VrScene
         public Slider seekbarSlider;
         public GameObject TouchPanel;
 
+        // DebugButtonŠÖ˜A
         public GameObject BackToTheGame;
         public GameObject RuntimeHierarchy;
         public GameObject RuntimeInspector;
+
+        // GeneralMenuŠÖ˜A
+        public GameObject GeneralMenuButton;
+        public GameObject GeneralMenuPanel;
 
         void Start()
         {
@@ -138,6 +144,19 @@ namespace VrScene
             seekbarSlider.value--;
         }
 
+        // GeneralMenu
+        public void OnClicKGeneralMenuButton()
+        {
+            GeneralMenuPanel.SetActive(true);
+            GeneralMenuButton.SetActive(false);
+        }
+
+        public void OnClickGeneralMenuCancelButton()
+        {
+            GeneralMenuButton.SetActive(true);
+            GeneralMenuPanel.SetActive(false);
+        }
+
         // VR‚Ìtoggle
         public void VR_ModeOn()
         {
@@ -156,6 +175,12 @@ namespace VrScene
             this.RuntimeHierarchy.SetActive(false);
             this.RuntimeInspector.SetActive(false);
             Debug.Log("Back to Game");
+        }
+
+        // BackTitleButton
+        public void OnClickBackTitleButton()
+        {
+            SceneManager.LoadScene("Title");
         }
 
 

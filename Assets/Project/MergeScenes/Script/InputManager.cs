@@ -9,6 +9,8 @@ namespace MergeScene
     {
         public GameObject SubmitPanel;
         public GameObject OpenSubmitPanelButton;
+        public GameObject BackTitlePanel;
+        public GameObject SceneBackButton;
 
 
         private void Start()
@@ -21,10 +23,27 @@ namespace MergeScene
             this.SubmitPanel.SetActive(true);
         }
 
-        public void OnClickBackButton(GameObject currentUI)
+        public void OnClickBackButton()
         {
-            currentUI.SetActive(false);
+            SubmitPanel.SetActive(false);
             OpenSubmitPanelButton.SetActive(true);
+        }
+
+        public void OnClickSceneBackButton()
+        {
+            BackTitlePanel.SetActive(true);
+            SceneBackButton.SetActive(false);
+        }
+
+        public void OnClickCancelButton()
+        {
+            BackTitlePanel.SetActive(false);
+            SceneBackButton.SetActive(true);
+        }
+
+        public void OnClickAcceptButton()
+        {
+            SceneManager.LoadScene("Title");
         }
     }
 }

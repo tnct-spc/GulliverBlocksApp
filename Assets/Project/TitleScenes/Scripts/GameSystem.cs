@@ -85,7 +85,7 @@ namespace TitleScene
 
         }
 
-        public void BackButton(GameObject currentUI)
+        public void OnClickBackButton(GameObject currentUI)
         {
             currentUI.SetActive(false);
         }

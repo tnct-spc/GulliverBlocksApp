@@ -1326,7 +1326,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 21720917}
-        m_MethodName: BackButton
+        m_MethodName: OnClickBackButton
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 846081297}
@@ -3533,7 +3533,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 21720917}
-        m_MethodName: BackButton
+        m_MethodName: OnClickBackButton
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1655072274}
@@ -3577,7 +3577,7 @@ GameObject:
   - component: {fileID: 7881716749424399080}
   - component: {fileID: 7881716749424399081}
   m_Layer: 5
-  m_Name: BackButton
+  m_Name: BackButton(MergeMapSelectPanel)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.XR;
+using UnityEngine.SceneManagement;
 
 namespace VrScene
 {
@@ -174,6 +175,12 @@ namespace VrScene
             this.RuntimeHierarchy.SetActive(false);
             this.RuntimeInspector.SetActive(false);
             Debug.Log("Back to Game");
+        }
+
+        // BackTitleButton
+        public void OnClickBackTitleButton()
+        {
+            SceneManager.LoadScene("Title");
         }
 
 

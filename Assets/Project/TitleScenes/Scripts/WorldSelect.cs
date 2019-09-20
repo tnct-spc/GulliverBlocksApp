@@ -12,6 +12,7 @@ namespace TitleScene
     {
         [SerializeField] GameSystem gameSystem;
         [SerializeField] private GameObject btnPref;  //ボタンプレハブ
+        public GameObject ModeSelectPanel;
         public List<(World world, bool isMerge)> WorldsData = new List<(World world, bool isMerge)>();
         CommunicationManager CommunicationManager;
 
@@ -22,8 +23,9 @@ namespace TitleScene
             StartCoroutine("FetchData");
         }
 
-        private void Update()
+        private void OnEnable()
         {
+            ModeSelectPanel.SetActive(false);
         }
 
         IEnumerator FetchData()

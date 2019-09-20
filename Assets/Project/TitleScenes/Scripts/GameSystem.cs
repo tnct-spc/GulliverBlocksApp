@@ -84,5 +84,18 @@ namespace TitleScene
             Screen.orientation = ScreenOrientation.LandscapeLeft;
 
         }
+
+        public void OnClickBackButton(GameObject currentUI)
+        {
+            currentUI.SetActive(false);
+        }
+
+        public void OnClickEndGameButton()
+        {
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #endif
+            UnityEngine.Application.Quit();
+        }
     }
 }

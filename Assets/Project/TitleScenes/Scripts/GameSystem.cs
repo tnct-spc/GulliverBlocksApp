@@ -19,6 +19,7 @@ namespace TitleScene
         public GameObject ModeSelectPanel;
         public GameObject PlaybackModeButton;
         public GameObject ViewModeButton;
+        public GameObject EditMapNamePanel;
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
 
@@ -96,6 +97,11 @@ namespace TitleScene
                 UnityEditor.EditorApplication.isPlaying = false;
             #endif
             UnityEngine.Application.Quit();
+        }
+
+        public void OnClickEditMapNameButton()
+        {
+            EditMapNamePanel.SetActive(true);
         }
     }
 }

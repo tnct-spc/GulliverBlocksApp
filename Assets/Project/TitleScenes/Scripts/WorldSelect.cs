@@ -71,6 +71,10 @@ namespace TitleScene
                 //ボタンのクリックイベント登録
                 selectBtn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].world.ID, WorldsData[btnNum].isMerge));
 
+                Transform editBtn = panel.transform.Find("EditButton");
+
+                editBtn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickEditMapNameButton());
+
             }
         }
     }

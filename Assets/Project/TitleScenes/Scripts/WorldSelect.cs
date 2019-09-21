@@ -13,6 +13,7 @@ namespace TitleScene
         [SerializeField] GameSystem gameSystem;
         [SerializeField] private GameObject btnPref;  //ボタンプレハブ
         public GameObject ModeSelectPanel;
+        public Transform Content;
         public List<(World world, bool isMerge)> WorldsData = new List<(World world, bool isMerge)>();
         CommunicationManager CommunicationManager;
 
@@ -42,16 +43,18 @@ namespace TitleScene
         // ButtonをScrollViewに追加する関数
         public void setWorldSelectButton()
         {
+            foreach(Transform childTransform in Content)
+            {
+                if (childTransform.name != "CreateMapButton")
+                    Destroy(childTransform.gameObject);
+            }
+
             int btnCount = WorldsData.Count;
 
-            //Content取得(ボタンを並べる場所)
-            GameObject canvas = GameObject.Find("Canvas");
-            RectTransform content = canvas.transform.Find("SelectPanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
-
             //Contentの高さ決定
-            float btnSpace = content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得
+            float btnSpace = Content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得
             float btnHeight = btnPref.GetComponent<LayoutElement>().preferredHeight;   // WorldSelectButton自体の高さを取得
-            content.sizeDelta = new Vector2(0, (btnHeight + btnSpace) * btnCount); // 上２つの要素からcontentの高さを作成
+            Content.GetComponent<RectTransform>().sizeDelta = new Vector2(0, (btnHeight + btnSpace) * btnCount); // 上２つの要素からcontentの高さを作成
 
             for (int i = 0; i < btnCount; i++)
             {
@@ -61,7 +64,7 @@ namespace TitleScene
                 GameObject panel = (GameObject)Instantiate(btnPref);
 
                 //ボタンをContentの子に設定
-                panel.transform.SetParent(content, false);
+                panel.transform.SetParent(Content, false);
 
                 Transform selectBtn = panel.transform.Find("selectButton");
 
@@ -73,7 +76,7 @@ namespace TitleScene
 
                 Transform editBtn = panel.transform.Find("EditButton");
 
-                editBtn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickEditMapNameButton());
+                editBtn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickEditMapNameButton(WorldsData[btnNum].world.name));
 
             }
         }

@@ -99,9 +99,22 @@ namespace TitleScene
             UnityEngine.Application.Quit();
         }
 
-        public void OnClickEditMapNameButton()
+        public void OnClickEditMapNameButton(string mapName)
         {
             EditMapNamePanel.SetActive(true);
+            EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text = mapName;
+        }
+
+        public void OnClickResterMapNameButton()
+        {
+            string mapname = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
+            Debug.Log(mapname);
+            var wordData = MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Find(w => w.world.name == mapname);
+            MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Remove(wordData);
+            wordData.world.name = mapname;
+            MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Insert(0, wordData);
+            MapSelectPanel.GetComponent<WorldSelect>().setWorldSelectButton();
+            EditMapNamePanel.SetActive(false);
         }
     }
 }

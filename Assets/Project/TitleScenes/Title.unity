@@ -1205,7 +1205,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.00001719594}
-  m_SizeDelta: {x: 0, y: 60}
+  m_SizeDelta: {x: 0, y: 70}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &627717764
 MonoBehaviour:
@@ -1778,7 +1778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameSystem: {fileID: 21720917}
-  btnPref: {fileID: 5939380033943421088, guid: ce877090381bbfa44866327e2a0f65d8, type: 3}
+  btnPref: {fileID: 3382357023771609553, guid: ade544afbcdb85b48ac63880622964ed, type: 3}
   ModeSelectPanel: {fileID: 119860440}
 --- !u!1 &896570592
 GameObject:
@@ -3540,8 +3540,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 417.5, y: -30}
-  m_SizeDelta: {x: 825, y: 50}
+  m_AnchoredPosition: {x: 417.5, y: -35}
+  m_SizeDelta: {x: 825, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3158118269027485535
 CanvasRenderer:

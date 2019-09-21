@@ -58,16 +58,18 @@ namespace TitleScene
                 int btnNum = i;
 
                 //ボタン生成
-                GameObject btn = (GameObject)Instantiate(btnPref);
+                GameObject panel = (GameObject)Instantiate(btnPref);
 
                 //ボタンをContentの子に設定
-                btn.transform.SetParent(content, false);
+                panel.transform.SetParent(content, false);
+
+                Transform selectBtn = panel.transform.Find("selectButton");
 
                 //ボタンのテキスト変更
-                btn.transform.GetComponentInChildren<Text>().text = WorldsData[btnNum].world.name;
+                selectBtn.GetComponentInChildren<Text>().text = WorldsData[btnNum].world.name;
 
                 //ボタンのクリックイベント登録
-                btn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].world.ID, WorldsData[btnNum].isMerge));
+                selectBtn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].world.ID, WorldsData[btnNum].isMerge));
 
             }
         }

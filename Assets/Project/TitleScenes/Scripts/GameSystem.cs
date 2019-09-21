@@ -99,18 +99,21 @@ namespace TitleScene
             UnityEngine.Application.Quit();
         }
 
+
+        private string selectMapName;
+
         public void OnClickEditMapNameButton(string mapName)
         {
             EditMapNamePanel.SetActive(true);
             EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text = mapName;
+            selectMapName = mapName;
         }
 
         public void OnClickResterMapNameButton()
         {
             string mapname = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
-            Debug.Log(mapname);
-            var wordData = MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Find(w => w.world.name == mapname);
-            MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Remove(wordData);
+            var wordData = MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Find(w => w.world.name == selectMapName);
+            MapSelectPanel.GetComponent<WorldSelect>().WorldsData.RemoveAll(w => w.world.name == selectMapName);
             wordData.world.name = mapname;
             MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Insert(0, wordData);
             MapSelectPanel.GetComponent<WorldSelect>().setWorldSelectButton();

@@ -109,16 +109,17 @@ namespace TitleScene
             selectMapName = mapName;
         }
 
-        public void OnClickResterMapNameButton()
+        public void OnClickRegisterMapNameButton()
         {
             string changedMapName = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
             if (changedMapName != selectMapName)
             {
-                var wordData = MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Find(w => w.world.name == selectMapName);
-                MapSelectPanel.GetComponent<WorldSelect>().WorldsData.RemoveAll(w => w.world.name == selectMapName);
-                wordData.world.name = changedMapName;
-                MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Insert(0, wordData);
-                MapSelectPanel.GetComponent<WorldSelect>().setWorldSelectButton();
+                WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
+                var changingWordData = worldSelect.WorldsData.Find(w => w.world.name == selectMapName);
+                worldSelect.WorldsData.RemoveAll(w => w.world.name == selectMapName);
+                changingWordData.world.name = changedMapName;
+                worldSelect.WorldsData.Insert(0, changingWordData);
+                worldSelect.setWorldSelectButton();
             }
             EditMapNamePanel.SetActive(false);
         }

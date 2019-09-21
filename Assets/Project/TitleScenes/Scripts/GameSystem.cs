@@ -111,12 +111,15 @@ namespace TitleScene
 
         public void OnClickResterMapNameButton()
         {
-            string mapname = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
-            var wordData = MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Find(w => w.world.name == selectMapName);
-            MapSelectPanel.GetComponent<WorldSelect>().WorldsData.RemoveAll(w => w.world.name == selectMapName);
-            wordData.world.name = mapname;
-            MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Insert(0, wordData);
-            MapSelectPanel.GetComponent<WorldSelect>().setWorldSelectButton();
+            string changedMapName = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
+            if (changedMapName != selectMapName)
+            {
+                var wordData = MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Find(w => w.world.name == selectMapName);
+                MapSelectPanel.GetComponent<WorldSelect>().WorldsData.RemoveAll(w => w.world.name == selectMapName);
+                wordData.world.name = changedMapName;
+                MapSelectPanel.GetComponent<WorldSelect>().WorldsData.Insert(0, wordData);
+                MapSelectPanel.GetComponent<WorldSelect>().setWorldSelectButton();
+            }
             EditMapNamePanel.SetActive(false);
         }
     }

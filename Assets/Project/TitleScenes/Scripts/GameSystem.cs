@@ -20,6 +20,7 @@ namespace TitleScene
         public GameObject PlaybackModeButton;
         public GameObject ViewModeButton;
         public GameObject EditMapNamePanel;
+        public GameObject DeleteMapPanel;
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
 
@@ -102,26 +103,41 @@ namespace TitleScene
 
         private string selectMapName;
 
-        public void OnClickEditMapNameButton(string mapName)
+        public void OnClickEditMapNameButton(string mapName, string command)
         {
-            EditMapNamePanel.SetActive(true);
-            EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text = mapName;
+            if(command == "EditMapName")
+            {
+                EditMapNamePanel.SetActive(true);
+                EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text = mapName;
+            }
+            else if(command == "Delete")
+            {
+                DeleteMapPanel.SetActive(true);
+                DeleteMapPanel.transform.Find("Text(DeletePanel)").GetComponent<Text>().text = mapName;
+            }
             selectMapName = mapName;
         }
 
-        public void OnClickRegisterMapNameButton()
+        public void OnClickRegisterMapNameButton(bool isEdit)
         {
-            string changedMapName = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
-            if (changedMapName != selectMapName)
+            WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
+            if (isEdit)
             {
-                WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
-                var changingWordData = worldSelect.WorldsData.Find(w => w.world.name == selectMapName);
-                worldSelect.WorldsData.RemoveAll(w => w.world.name == selectMapName);
-                changingWordData.world.name = changedMapName;
-                worldSelect.WorldsData.Insert(0, changingWordData);
-                worldSelect.setWorldSelectButton();
+                string changedMapName = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
+                if (changedMapName != selectMapName)
+                {
+                    var changingWordData = worldSelect.WorldsData.Find(w => w.world.name == selectMapName);
+                    changingWordData.world.name = changedMapName;
+                    worldSelect.WorldsData.Insert(0, changingWordData);
+                }
+                EditMapNamePanel.SetActive(false);
             }
-            EditMapNamePanel.SetActive(false);
+            else
+            {
+                DeleteMapPanel.SetActive(false);
+            }
+            worldSelect.WorldsData.RemoveAll(w => w.world.name == selectMapName);
+            worldSelect.setWorldSelectButton();
         }
     }
 }

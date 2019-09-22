@@ -67,16 +67,16 @@ namespace TitleScene
                 panel.transform.SetParent(Content, false);
 
                 Transform selectBtn = panel.transform.Find("selectButton");
+                Transform editBtn = panel.transform.Find("EditButton");
+                Transform deleteBtn = panel.transform.Find("DeleteButton");
 
                 //ボタンのテキスト変更
                 selectBtn.GetComponentInChildren<Text>().text = WorldsData[btnNum].world.name;
 
                 //ボタンのクリックイベント登録
-                selectBtn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].world.ID, WorldsData[btnNum].isMerge));
-
-                Transform editBtn = panel.transform.Find("EditButton");
-
-                editBtn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickEditMapNameButton(WorldsData[btnNum].world.name));
+                selectBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].world.ID, WorldsData[btnNum].isMerge));
+                editBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickEditMapNameButton(WorldsData[btnNum].world.name, "EditMapName"));
+                deleteBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickEditMapNameButton(WorldsData[btnNum].world.name, "Delete"));
 
             }
         }

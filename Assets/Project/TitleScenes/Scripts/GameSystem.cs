@@ -19,6 +19,8 @@ namespace TitleScene
         public GameObject ModeSelectPanel;
         public GameObject PlaybackModeButton;
         public GameObject ViewModeButton;
+        public GameObject EditMapNamePanel;
+        public GameObject DeleteMapPanel;
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
 
@@ -96,6 +98,46 @@ namespace TitleScene
                 UnityEditor.EditorApplication.isPlaying = false;
             #endif
             UnityEngine.Application.Quit();
+        }
+
+
+        private string selectMapName;
+
+        public void OnClickChangeMapButton(string mapName, string command)
+        {
+            if(command == "EditMapName")
+            {
+                EditMapNamePanel.SetActive(true);
+                EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text = mapName;
+            }
+            else if(command == "Delete")
+            {
+                DeleteMapPanel.SetActive(true);
+                DeleteMapPanel.transform.Find("Text(DeletePanel)").GetComponent<Text>().text = mapName;
+            }
+            selectMapName = mapName;
+        }
+
+        public void OnClickAcceptChangeMapButton(bool isEdit)
+        {
+            WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
+            if (isEdit)
+            {
+                string changedMapName = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
+                if (changedMapName != selectMapName)
+                {
+                    var changingWordData = worldSelect.WorldsData.Find(w => w.world.name == selectMapName);
+                    changingWordData.world.name = changedMapName;
+                    worldSelect.WorldsData.Insert(0, changingWordData);
+                }
+                EditMapNamePanel.SetActive(false);
+            }
+            else
+            {
+                DeleteMapPanel.SetActive(false);
+            }
+            worldSelect.WorldsData.RemoveAll(w => w.world.name == selectMapName);
+            worldSelect.setWorldSelectButton();
         }
     }
 }

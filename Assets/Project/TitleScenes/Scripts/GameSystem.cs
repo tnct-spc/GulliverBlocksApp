@@ -103,7 +103,7 @@ namespace TitleScene
 
         private string selectMapName;
 
-        public void OnClickEditMapNameButton(string mapName, string command)
+        public void OnClickChangeMapButton(string mapName, string command)
         {
             if(command == "EditMapName")
             {
@@ -118,7 +118,7 @@ namespace TitleScene
             selectMapName = mapName;
         }
 
-        public void OnClickRegisterMapNameButton(bool isEdit)
+        public void OnClickAcceptChangeMapButton(bool isEdit)
         {
             WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
             if (isEdit)

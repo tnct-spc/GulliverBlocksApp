@@ -27,6 +27,9 @@ namespace VrScene
         CommunicationManager.WsClient WsClient;
         // patternBlocksの構造: {"pattern_name": {"pattern_group_id": [(BlockInfo),]}, }
         private Dictionary<string, Dictionary<string, List<BlockInfo>>> patternBlocks = new Dictionary<string, Dictionary<string, List<BlockInfo>>>();
+        private float X_RATIO = 0.32f;
+        private float Y_RATIO = 0.384f;
+        private float Z_RATIO = 0.32f;
 
         private void Awake()
         {
@@ -78,37 +81,7 @@ namespace VrScene
             var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
             yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             fetchBlocksTask.Result.ForEach(this.AddBlock); // 全てのブロックを配置
-            /*
-             パターン認識されたブロックはパターンのオブジェクトに置き換える
-             */
-            List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
-            foreach (string patternName in patternNameKeys)
-            {
-                // string patternMaterialName = patternName + "Material";
-                // Material patternMaterial = Resources.Load(patternMaterialName) as Material;
-
-                List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
-                foreach (string patternGroupId in patternGroupIdKeys)
-                {
-                    // 原点に近い順にsort
-                    patternBlocks[patternName][patternGroupId].Sort(
-                        (a, b) => (a.x*a.x + a.y*a.y + a.z*a.z) - (b.x*b.x + b.y*b.y + b.z*b.z)
-                    );
-
-                    BlockInfo nearestBlock = patternBlocks[patternName][patternGroupId][0];
-                    BlockInfo farestBlock = patternBlocks[patternName][patternGroupId][patternBlocks[patternName][patternGroupId].Count-1];
-                    int width = (farestBlock.x - nearestBlock.x)+1;
-                    int height =(farestBlock.y - nearestBlock.y)+1;
-                    int depth = (farestBlock.z - nearestBlock.z)+1;
-
-                    // パターンオブジェクトを生成
-                    GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    patternObject.transform.position = new Vector3(nearestBlock.x, nearestBlock.y, nearestBlock.z);
-                    patternObject.transform.localScale = new Vector3(width, height, depth);
-                    // patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
-
-                }
-            }
+            this.ReplacePatternWithObject(); // パターン認識されたブロックをオブジェクトに置き換える
 
             yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
             this.ColorRules = fetchColorRulesTask.Result;
@@ -240,6 +213,52 @@ namespace VrScene
             else
             {
                 Debug.Log("Type is Invalid.");
+            }
+        }
+
+        private void ReplacePatternWithObject()
+        {
+            /*
+             パターン認識されたブロックをオブジェクトに置き換える
+             */
+            List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+            foreach (string patternName in patternNameKeys)
+            {
+                // string patternMaterialName = patternName + "Material";
+                // Material patternMaterial = Resources.Load(patternMaterialName) as Material;
+
+                List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
+                foreach (string patternGroupId in patternGroupIdKeys)
+                {
+                    // 原点に近い順にsort
+                    patternBlocks[patternName][patternGroupId].Sort(
+                        (a, b) => (a.x * a.x + a.y * a.y + a.z * a.z) - (b.x * b.x + b.y * b.y + b.z * b.z)
+                    );
+
+                    BlockInfo nearestBlock = patternBlocks[patternName][patternGroupId][0];
+                    BlockInfo farestBlock = patternBlocks[patternName][patternGroupId][patternBlocks[patternName][patternGroupId].Count - 1];
+                    int width = (farestBlock.x - nearestBlock.x) + 1;
+                    int height = (farestBlock.y - nearestBlock.y) + 1;
+                    int depth = (farestBlock.z - nearestBlock.z) + 1;
+
+                    // パターンオブジェクトを生成
+                    GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    patternObject.transform.position = new Vector3(X_RATIO * nearestBlock.x, Y_RATIO * nearestBlock.y, Z_RATIO * nearestBlock.z);
+                    patternObject.transform.localScale = new Vector3(X_RATIO * width, Y_RATIO * height, Z_RATIO * depth);
+                    // patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
+
+                    // 各パターンに応じた処理をする
+                    switch (patternName)
+                    {
+                        case "road":
+                            // 車の生成
+                            GameObject car3dModel = (GameObject)Resources.Load("Audi S3");
+                            GameObject car = Instantiate(car3dModel, new Vector3(X_RATIO * nearestBlock.x, Y_RATIO * nearestBlock.y + Y_RATIO * height, Z_RATIO * nearestBlock.z), Quaternion.identity) as GameObject;
+                            car.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+                            car.AddComponent<CarMover>();
+                            break;
+                    }
+                }
             }
         }
 

@@ -236,15 +236,19 @@ namespace VrScene
                     );
 
                     BlockInfo nearestBlock = patternBlocks[patternName][patternGroupId][0];
-                    BlockInfo farestBlock = patternBlocks[patternName][patternGroupId][patternBlocks[patternName][patternGroupId].Count - 1];
-                    int width = (farestBlock.x - nearestBlock.x) + 1;
-                    int height = (farestBlock.y - nearestBlock.y) + 1;
-                    int depth = (farestBlock.z - nearestBlock.z) + 1;
+                    BlockInfo farthestBlock = patternBlocks[patternName][patternGroupId][patternBlocks[patternName][patternGroupId].Count - 1];
+                    float width = (Mathf.Abs(farthestBlock.x - nearestBlock.x) + 1) * X_RATIO;
+                    float height = (Mathf.Abs(farthestBlock.y - nearestBlock.y) + 1) * Y_RATIO;
+                    float depth = (Mathf.Abs(farthestBlock.z - nearestBlock.z) + 1) * Z_RATIO;
 
                     // パターンオブジェクトを生成
                     GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    patternObject.transform.position = new Vector3(X_RATIO * nearestBlock.x, Y_RATIO * nearestBlock.y, Z_RATIO * nearestBlock.z);
-                    patternObject.transform.localScale = new Vector3(X_RATIO * width, Y_RATIO * height, Z_RATIO * depth);
+                    patternObject.transform.position = new Vector3(
+                        (nearestBlock.x + farthestBlock.x) * X_RATIO / 2,
+                        (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2,
+                        (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2
+                    );
+                    patternObject.transform.localScale = new Vector3(width, height, depth);
                     // patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
 
                     // 各パターンに応じた処理をする
@@ -253,9 +257,9 @@ namespace VrScene
                         case "road":
                             // 車の生成
                             GameObject car3dModel = (GameObject)Resources.Load("Audi S3");
-                            GameObject car = Instantiate(car3dModel, new Vector3(X_RATIO * nearestBlock.x, Y_RATIO * nearestBlock.y + Y_RATIO * height, Z_RATIO * nearestBlock.z), Quaternion.identity) as GameObject;
-                            car.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
-                            car.AddComponent<CarMover>();
+                            GameObject carObject = Instantiate(car3dModel, new Vector3(X_RATIO * nearestBlock.x, Y_RATIO * nearestBlock.y + height, Z_RATIO * nearestBlock.z), Quaternion.identity) as GameObject;
+                            carObject.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f); // そのままだと大きすぎるので小さくする
+                            carObject.AddComponent<CarController>();
                             break;
                     }
                 }

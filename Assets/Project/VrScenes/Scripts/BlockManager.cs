@@ -255,11 +255,7 @@ namespace VrScene
                     switch (patternName)
                     {
                         case "road":
-                            // 車の生成
-                            GameObject car3dModel = (GameObject)Resources.Load("Audi S3");
-                            GameObject carObject = Instantiate(car3dModel, new Vector3(X_RATIO * nearestBlock.x, Y_RATIO * nearestBlock.y + height, Z_RATIO * nearestBlock.z), Quaternion.identity) as GameObject;
-                            carObject.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f); // そのままだと大きすぎるので小さくする
-                            carObject.AddComponent<CarController>();
+                            patternObject.AddComponent<RoadManager>();
                             break;
                     }
                 }

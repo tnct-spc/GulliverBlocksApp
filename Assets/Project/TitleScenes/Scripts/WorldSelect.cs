@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using JsonFormats;
+using System.Linq;
 
 namespace TitleScene
 {
 
     public class WorldSelect : MonoBehaviour
     {
-        GameSystem gameSystem;
+        [SerializeField] GameSystem gameSystem;
         [SerializeField] private GameObject btnPref;  //ボタンプレハブ
-        public List<World> WorldsData;
+        public GameObject ModeSelectPanel;
+        public Transform Content;
+        public List<(World world, bool isMerge)> WorldsData = new List<(World world, bool isMerge)>();
         CommunicationManager CommunicationManager;
 
 
@@ -21,49 +24,59 @@ namespace TitleScene
             StartCoroutine("FetchData");
         }
 
-        private void Update()
+        private void OnEnable()
         {
+            ModeSelectPanel.SetActive(false);
         }
 
         IEnumerator FetchData()
         {
-            var task = CommunicationManager.fetchMapsAsync();
-            yield return new WaitUntil(() => task.IsCompleted);
-            this.WorldsData = task.Result;
+            var fetchMapsTask = CommunicationManager.fetchMapsAsync();
+            var fetchMergesTask = CommunicationManager.fetchMergesAsync();
+            yield return new WaitUntil(() => fetchMapsTask.IsCompleted);
+            yield return new WaitUntil(() => fetchMergesTask.IsCompleted);
+            fetchMapsTask.Result.ForEach(d => this.WorldsData.Add((d, false)));
+            fetchMergesTask.Result.ForEach(d => this.WorldsData.Add((d, true)));
             setWorldSelectButton();
         }
 
         // ButtonをScrollViewに追加する関数
         public void setWorldSelectButton()
         {
+            foreach(Transform childTransform in Content)
+            {
+                if (childTransform.name != "CreateMapButton")
+                    Destroy(childTransform.gameObject);
+            }
+
             int btnCount = WorldsData.Count;
 
-            //Content取得(ボタンを並べる場所)
-            GameObject canvas = GameObject.Find("Canvas");
-            RectTransform content = canvas.transform.Find("SelectPanel/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
-
             //Contentの高さ決定
-            float btnSpace = content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得
+            float btnSpace = Content.GetComponent<VerticalLayoutGroup>().spacing;      // WorldSelectButton間の高さを取得
             float btnHeight = btnPref.GetComponent<LayoutElement>().preferredHeight;   // WorldSelectButton自体の高さを取得
-            content.sizeDelta = new Vector2(0, (btnHeight + btnSpace) * btnCount); // 上２つの要素からcontentの高さを作成
-
-            gameSystem = gameObject.GetComponent<GameSystem>();
+            Content.GetComponent<RectTransform>().sizeDelta = new Vector2(0, (btnHeight + btnSpace) * btnCount); // 上２つの要素からcontentの高さを作成
 
             for (int i = 0; i < btnCount; i++)
             {
                 int btnNum = i;
 
                 //ボタン生成
-                GameObject btn = (GameObject)Instantiate(btnPref);
+                GameObject panel = (GameObject)Instantiate(btnPref);
 
                 //ボタンをContentの子に設定
-                btn.transform.SetParent(content, false);
+                panel.transform.SetParent(Content, false);
+
+                Transform selectBtn = panel.transform.Find("selectButton");
+                Transform editBtn = panel.transform.Find("EditButton");
+                Transform deleteBtn = panel.transform.Find("DeleteButton");
 
                 //ボタンのテキスト変更
-                btn.transform.GetComponentInChildren<Text>().text = WorldsData[btnNum].name;
+                selectBtn.GetComponentInChildren<Text>().text = WorldsData[btnNum].world.name;
 
                 //ボタンのクリックイベント登録
-                btn.transform.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].ID));
+                selectBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].world.ID, WorldsData[btnNum].isMerge));
+                editBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickChangeMapButton(WorldsData[btnNum].world.name, "EditMapName"));
+                deleteBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickChangeMapButton(WorldsData[btnNum].world.name, "Delete"));
 
             }
         }

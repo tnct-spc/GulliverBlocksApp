@@ -33,13 +33,12 @@ namespace VrScene
             return position;
         }
 
-        public Texture texture;
-
         public void SetColor(string colorID)
         {
             string colorName = "Color" + colorID;
             Material colorMaterial = Resources.Load(colorName) as Material;
-            GetComponent<Renderer>().sharedMaterial = colorMaterial;
+            GetComponent<Renderer>().material = colorMaterial;
+            this.colorID = colorID;
         }
 
         public void SetActive(bool f)
@@ -52,11 +51,12 @@ namespace VrScene
             Destroy(this.gameObject);
         }
 
+        public Texture texture;
+
         public void OnClickBlock()
         {
-            //Debug.Log(gameObject.GetComponent<Renderer>().material.GetTexture("_MainTex"));
             GameObject canvas = GameObject.Find("Canvas");
-            GameObject panel = canvas.transform.Find("ColorChangePanel").gameObject;
+            GameObject panel = canvas.transform.Find("ViewModeUI/ColorChangePanel").gameObject;
 
             if (panel.activeSelf)
             {

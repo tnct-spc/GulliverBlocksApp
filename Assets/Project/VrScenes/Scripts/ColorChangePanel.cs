@@ -25,13 +25,12 @@ namespace VrScene
         public void OnEnable()
         {
             contentMaterials.Clear();
-            for (int i = 0; i< 10; i++)
+            Object[] loadedMaterials = Resources.LoadAll("Materials");
+            foreach(var material in loadedMaterials)
             {
-                string materialName = "Color" + i.ToString();
-                Material material = Resources.Load(materialName) as Material;
-                contentMaterials.Add(material);
+                contentMaterials.Add((Material)material);
             }
-         }
+        }
 
         private void OnDisable()
         {

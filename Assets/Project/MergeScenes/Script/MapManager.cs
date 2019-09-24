@@ -12,6 +12,7 @@ namespace MergeScene
     public class MapManager : MonoBehaviour
     {
         public static string[] WorldList;
+        public static string MergeName;
         public InputField MapNameInputField;
         CommunicationManager CommunicationManager;
         List<MapParent> MapParents = new List<MapParent> { };
@@ -45,7 +46,7 @@ namespace MergeScene
                 maps.Add(d);
             });
             data.merge_maps = maps;
-            data.name = this.MapNameInputField.text;
+            data.name = MergeName;
             var uploadMergeTask = CommunicationManager.uploadMergeAsync(data);
             yield return new WaitUntil(() => uploadMergeTask.IsCompleted);
             SceneManager.LoadScene("Title");

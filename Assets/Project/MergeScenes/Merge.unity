@@ -580,7 +580,7 @@ GameObject:
   - component: {fileID: 970898368}
   - component: {fileID: 970898367}
   m_Layer: 5
-  m_Name: OpenSubmitPanel
+  m_Name: SubmitButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -649,8 +649,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 252926671}
-        m_MethodName: OnClickOpenMergePanelButton
+      - m_Target: {fileID: 252926673}
+        m_MethodName: OnClickSubmitButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

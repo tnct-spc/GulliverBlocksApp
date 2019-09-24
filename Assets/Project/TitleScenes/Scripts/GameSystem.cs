@@ -17,10 +17,12 @@ namespace TitleScene
         public GameObject MapSelectPanel;
         public GameObject MergeMapSelectPanel;
         public GameObject ModeSelectPanel;
+        public GameObject CreateMapPanel;
         public GameObject PlaybackModeButton;
         public GameObject ViewModeButton;
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
+        public InputField MapNameInputField;
 
         private void Awake()
         {
@@ -60,21 +62,33 @@ namespace TitleScene
 
         public void OnClickCreateMapButton()
         {
-            List<World> mapsData = new List<World>() { };
-            MapSelectPanel.GetComponent<WorldSelect>().WorldsData.ForEach(data =>
-            {
-                if (!data.isMerge)
-                    mapsData.Add(data.world);
-            });
+            CreateMapPanel.SetActive(true);
+        }
+
+        public void OnClickCreateMerge()
+        {
+            StartCoroutine("fetchMerge");
+        }
+        IEnumerator fetchMerge()
+        {
+            var communicationManager = new CommunicationManager();
+            var fetchMapsTask = communicationManager.fetchMapsAsync();
+            yield return new WaitUntil(() => fetchMapsTask.IsCompleted);
             MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.Clear();
-            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.AddRange(mapsData);
+            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.AddRange(fetchMapsTask.Result);
             MergeMapSelectPanel.SetActive(true);
+        }
+        public void OnClickCreateNewWorld()
+        {
+            // TODO
+            return;
         }
 
         public void OnClickMergeButton()
         {
             SceneManager.LoadScene("Merge");
             MapManager.WorldList = MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().CheckToggles();
+            MapManager.MergeName = this.MapNameInputField.text;
         }
 
         public void MoveSetting()

@@ -18,9 +18,8 @@ namespace VrScene
             }
         }
 
-        private void Start()
-        {
-            Debug.Log(Mode);
+        private void Update()
+        { 
             if (Mode == "PlayBack") ViewModeUI.SetActive(false);
         }
     }

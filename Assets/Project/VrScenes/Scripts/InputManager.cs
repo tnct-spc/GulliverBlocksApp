@@ -22,6 +22,7 @@ namespace VrScene
         // NonTwoEyesModeUI‚Æ‚»‚ÌŽq—v‘f
         public GameObject NonTwoEyesModeUI;
         public Toggle FlyingModeToggle;
+        public Toggle PlayBackModeToggle;
         public GameObject FlyingButtons;
         public Toggle PlayBackButton;
         public GameObject PlayBackModeUI;
@@ -48,6 +49,7 @@ namespace VrScene
             FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
             seekbarSlider.onValueChanged.AddListener(PlaceBlockBySeekBar);
             PlayBackButton.onValueChanged.AddListener(PlayBack);
+            PlayBackModeToggle.onValueChanged.AddListener(OnPlayBackModeChange);
 
             bool isPlayBackMode = false;
             if (GameManager.Mode == "PlayBack") isPlayBackMode = true;
@@ -181,6 +183,17 @@ namespace VrScene
         public void OnClickBackTitleButton()
         {
             SceneManager.LoadScene("Title");
+        }
+
+        public void OnPlayBackModeChange(bool isActive)
+        {
+            if (isActive)
+            {
+                BlockManager.StartPlayback();
+            } else
+            {
+                BlockManager.StopPlayback();
+            }
         }
 
 

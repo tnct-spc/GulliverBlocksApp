@@ -5,13 +5,12 @@ public class RoadManager : MonoBehaviour
 {
     private new Renderer renderer;
 
-    private string CAR_3DMODEL_NAME = "Audi S3";
+    private string CAR_3DMODEL_NAME = "Car";
 
     private float frontZPosition;
     private float backZPosition;
     private float rightSideCenterXPosition;
     private float leftSideCenterXPosition;
-    private float height;
 
     System.Random rnd = new System.Random();
 
@@ -25,8 +24,8 @@ public class RoadManager : MonoBehaviour
     {
         renderer = this.GetComponent<Renderer>();
 
-        frontZPosition = this.transform.position.z + renderer.bounds.size.z / 2;
-        backZPosition = this.transform.position.z - renderer.bounds.size.z / 2;
+        frontZPosition = this.transform.position.z - renderer.bounds.size.z / 2;
+        backZPosition = this.transform.position.z + renderer.bounds.size.z / 2;
         rightSideCenterXPosition = this.transform.position.x + renderer.bounds.size.x / 4;
         leftSideCenterXPosition = this.transform.position.x - renderer.bounds.size.x / 4;
 
@@ -38,35 +37,35 @@ public class RoadManager : MonoBehaviour
     {
         for (int i = 0; i < rightSideCars.Count; i++)
         {
+            // 道路をはみ出しているか判定
             if (rightSideCars[i].car.transform.position.z <= frontZPosition)
             {
+                // 生成時の座標に戻す
                 rightSideCars[i].car.transform.position = new Vector3(
                     rightSideCars[i].car.transform.position.x,
                     rightSideCars[i].car.transform.position.y,
                     backZPosition
                 );
+                // 車の速さを変更
                 rightSideCars[i] = (car: rightSideCars[i].car, speed: rnd.Next(RANDOM_SPEED_MIN, RANDOM_SPEED_MAX));
-            }
-            else
-            {
-                rightSideCars[i].car.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, rightSideCars[i].speed / 100);
+                rightSideCars[i].car.GetComponent<Rigidbody>().velocity = Vector3.back * rightSideCars[i].speed / 10;
             }
         }
 
         for (int i = 0; i < leftSideCars.Count; i++)
         {
+            // 道路をはみ出しているか判定
             if (leftSideCars[i].car.transform.position.z >= backZPosition)
             {
+                // 生成時の座標に戻す
                 leftSideCars[i].car.transform.position = new Vector3(
                     leftSideCars[i].car.transform.position.x,
                     leftSideCars[i].car.transform.position.y,
                     frontZPosition
                 );
+                // 車の速さを変更
                 leftSideCars[i] = (car: leftSideCars[i].car, speed: rnd.Next(RANDOM_SPEED_MIN, RANDOM_SPEED_MAX));
-            }
-            else
-            {
-                leftSideCars[i].car.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, leftSideCars[i].speed / 100);
+                leftSideCars[i].car.GetComponent<Rigidbody>().velocity = Vector3.forward * leftSideCars[i].speed / 10;
             }
         }
     }
@@ -74,15 +73,16 @@ public class RoadManager : MonoBehaviour
     void GenerateCar(string side /*left or right*/)
     {
         GameObject car3dModel = (GameObject)Resources.Load(CAR_3DMODEL_NAME);
-        int RandomSpeed = rnd.Next(RANDOM_SPEED_MIN, RANDOM_SPEED_MAX+1);
+        int randomSpeed = rnd.Next(RANDOM_SPEED_MIN, RANDOM_SPEED_MAX+1);
         
         if(side == "right")
         {
-            GameObject carObject = Instantiate(car3dModel, new Vector3(rightSideCenterXPosition, this.transform.position.y + renderer.bounds.size.y, backZPosition), Quaternion.identity) as GameObject;
+            GameObject carObject = Instantiate(car3dModel, new Vector3(rightSideCenterXPosition, this.transform.position.y + renderer.bounds.size.y, backZPosition), Quaternion.Euler(0, 180, 0)) as GameObject;
             carObject.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f); // そのままだと大きすぎるので小さくする
             carObject.AddComponent<Rigidbody>();
             carObject.GetComponent<Rigidbody>().useGravity = false;
-            rightSideCars.Add((car: carObject, speed: RandomSpeed));
+            carObject.GetComponent<Rigidbody>().velocity = Vector3.back * randomSpeed / 10;
+            rightSideCars.Add((car: carObject, speed: randomSpeed));
         }
         else if(side == "left")
         {
@@ -90,7 +90,8 @@ public class RoadManager : MonoBehaviour
             carObject.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f); // そのままだと大きすぎるので小さくする
             carObject.AddComponent<Rigidbody>();
             carObject.GetComponent<Rigidbody>().useGravity = false;
-            leftSideCars.Add((car: carObject, speed: RandomSpeed));
+            carObject.GetComponent<Rigidbody>().velocity = Vector3.forward * randomSpeed / 10;
+            leftSideCars.Add((car: carObject, speed: randomSpeed));
         }
     }
 }

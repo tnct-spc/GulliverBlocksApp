@@ -88,7 +88,7 @@ namespace TitleScene
         {
             SceneManager.LoadScene("Merge");
             MapManager.WorldList = MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().CheckToggles();
-            MapManager.MergeName = this.MapNameInputField.text;
+            //MapManager.MergeName = this.MapNameInputField.text;
         }
 
         public void MoveSetting()

@@ -12,7 +12,7 @@ namespace VrScene
         public GameObject PlayerCamera;
         public GameObject TwoEyesModeCamera;
         public GameObject corner;
-        private bool isDefault_speed = true;
+        public bool isDefault_speed = true;
         const string Stop = "Stop";
         const string Forward = "Forward";
         const string Right = "Right";

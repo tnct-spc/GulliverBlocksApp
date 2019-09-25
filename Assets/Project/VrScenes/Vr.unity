@@ -53538,7 +53538,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_Forward
+          m_MethodName: Touch
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -53555,7 +53555,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 784364638}
-          m_MethodName: Player_StopForward
+          m_MethodName: ReleaseTheTouch
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -53723,6 +53723,7 @@ MonoBehaviour:
   PlayerCamera: {fileID: 2136740893}
   TwoEyesModeCamera: {fileID: 1185310050}
   corner: {fileID: 2053780487}
+  isDefault_speed: 1
   MoveRight: 0
   MoveLeft: 0
   MoveForward: 0

@@ -278,6 +278,5 @@ namespace VrScene
         {
             playermanager.MoveDown = false;
         }
-
     }
 }

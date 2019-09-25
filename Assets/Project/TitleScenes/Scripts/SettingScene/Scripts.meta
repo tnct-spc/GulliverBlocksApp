@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Project/TitleScenes/Scripts/SettingScene/Scripts.meta
 guid: 74e4dd3223bc16441bad416466128de5
+=======
+guid: 33847c6fded0f28428aaf4da8b7010f7
+>>>>>>> 05073ef8f5ccf5fb70b20d55f1f926e6ec2403c8:Assets/Project/MergeScenes/Script.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

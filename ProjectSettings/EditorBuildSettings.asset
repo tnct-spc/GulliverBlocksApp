@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project/TitleScenes/Scripts/SettingScene/SettingScene.unity
     guid: d1a04244326c8a54cb623f87bc67e74b
+  - enabled: 1
+    path: Assets/Project/MergeScenes/Merge.unity
+    guid: cb3ba2d9ebdae0f42b6a402e47625162
   m_configObjects: {}

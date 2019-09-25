@@ -15,11 +15,13 @@ namespace VrScene
         private List<BlockInfo> UpdateBlocks = new List<BlockInfo> { }; // websocketで送られてきたものを一時的に保存
         private List<Rule> ColorRules = new List<Rule> { };
         public static string WorldID = "114e3ba9-a403-4c5c-a018-c7219c5bcc90";
+        public static bool IsMerge = false;
         GameObject GameSystem;
         public float BlockNumber = 0;
         public bool isRepeating = false;
         InputManager InputManager;
-        Slider SeekBar;
+        GameObject SeekBar;
+        Slider seekbarSlider;
         Toggle PlayBackButton;
         GameManager GameManager;
         public GameObject LoadingWindow;
@@ -64,7 +66,8 @@ namespace VrScene
             LoadingWindow.SetActive(true);
             GameSystem = GameObject.Find("GameSystem");
             InputManager = GameSystem.GetComponent<InputManager>();
-            SeekBar = InputManager.SeekBar;
+            SeekBar = InputManager.Seekbar;
+            seekbarSlider = InputManager.seekbarSlider;
             PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
             StartCoroutine("FetchData");
@@ -72,7 +75,8 @@ namespace VrScene
 
         IEnumerator FetchData()
         {
-            var fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldID);
+            var fetchBlocksTask = IsMerge ? CommunicationManager.fetchMergedBlocksAsync(WorldID) :
+                CommunicationManager.fetchMapBlocksAsync(WorldID);
             var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
             yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
@@ -113,17 +117,27 @@ namespace VrScene
             var block = this.Blocks.Find(b => b.ID == blockInfo.ID);
             block.SetBlockData(blockInfo);
         }
+
         public async void RepeatPlaceBlocks()
         {
             isRepeating = true;
+            SeekBar.SetActive(true);
             while (BlockNumber < this.BlocksCount)
             {
-                while (PlayBackButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
-                FallingBlock((int)SeekBar.value);
-                SeekBar.value++;
+                while (PlayBackButton.GetComponent<Toggle>().isOn == false)
+                {
+                    SeekBar.SetActive(false);
+                    await Task.Delay(1);
+                }
+                SeekBar.SetActive(true);
+                if (seekbarSlider.value == seekbarSlider.maxValue) break;
+                FallingBlock((int)seekbarSlider.value);
+                seekbarSlider.value++;
                 await Task.Delay(1000);
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;
+            ClearBlocks();
+            seekbarSlider.value = 0;
             isRepeating = false;
         }
 
@@ -159,7 +173,7 @@ namespace VrScene
             }
             BlockNumber = value;
         }
-        private void ApplyColorRules(Rule ruleData)
+        public void ApplyColorRules(Rule ruleData)
         {
             string type = ruleData.type;
             string to = ruleData.to;
@@ -171,7 +185,8 @@ namespace VrScene
             }
             if (type == "color")
             {
-                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == ruleData.origin);
+                string origin = ruleData.origin.Replace(" (Instance)", "");
+                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == origin);
                 targetBlocks.ForEach(block =>
                 {
                     block.SetColor(to);
@@ -190,5 +205,13 @@ namespace VrScene
             }
         }
 
+        public Rule MakeColorRules(string type, string origin, string to)
+        {
+            Rule rule = new Rule();
+            rule.type = type;
+            rule.origin = origin;
+            rule.to = to;
+            return rule;
+        }
     }
 }

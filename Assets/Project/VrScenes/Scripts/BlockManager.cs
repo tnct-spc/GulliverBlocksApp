@@ -77,7 +77,7 @@ namespace VrScene
         IEnumerator FetchData()
         {
             var fetchBlocksTask = IsMerge ? CommunicationManager.fetchMergedBlocksAsync(WorldID) :
-                CommunicationManager.fetchMapBlocksAsync(WorldID);
+            CommunicationManager.fetchMapBlocksAsync(WorldID);
             var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
             yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置

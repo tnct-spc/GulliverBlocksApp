@@ -16,6 +16,7 @@ namespace VrScene
         private ToggleGroup toggleGroup;
         private GameObject targetBlock;
         public GameObject lightUpObject = null;
+        public Color lastBlockColor;
 
         private void Awake()
         {

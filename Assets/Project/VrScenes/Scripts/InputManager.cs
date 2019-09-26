@@ -206,7 +206,7 @@ namespace VrScene
             {
                 playermanager.isDefault_speed = false;
             }
-            await Task.Delay(200);
+            await Task.Delay(500);
             TouchCount = 0;
         }
 

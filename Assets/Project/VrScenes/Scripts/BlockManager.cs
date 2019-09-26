@@ -10,44 +10,81 @@ namespace VrScene
     public class BlockManager : MonoBehaviour
     {
         public int BlocksCount;
+        List<float> NeutralPositions = new List<float>();
         private List<Block> Blocks = new List<Block> { };
+        private List<BlockInfo> UpdateBlocks = new List<BlockInfo> { }; // websocketで送られてきたものを一時的に保存
+        private List<Rule> ColorRules = new List<Rule> { };
         public static string WorldID = "114e3ba9-a403-4c5c-a018-c7219c5bcc90";
+        public static bool IsMerge = false;
         GameObject GameSystem;
         public float BlockNumber = 0;
         public bool isRepeating = false;
         InputManager InputManager;
-        Slider SeekBar;
-        Toggle PlayButton;
+        GameObject SeekBar;
+        Slider seekbarSlider;
+        Toggle PlayBackButton;
         GameManager GameManager;
         public GameObject LoadingWindow;
         CommunicationManager CommunicationManager;
+        CommunicationManager.WsClient WsClient;
 
         private void Awake()
         {
             CommunicationManager = new CommunicationManager();
+            this.WsClient = new CommunicationManager.WsClient(WorldID);
+            this.WsClient.OnBlockReceived += (sender, e) => this.UpdateBlocks = e.Blocks;// WSが来た時のイベント, parse済みのものがe.Blocksに入る
+            this.WsClient.StartConenction();
         }
 
+        private void OnBlockUpdate(List<BlockInfo> blocks)
+        {
+            this.UpdateBlocks = blocks;
+        }
+
+        private void CheckBlockupdate()
+        {
+            /*
+             * 毎フレームwebsocketの受信がないかチェックする,
+             * 一フレームに2回以上送られてくることは想定していない
+             */
+            if (this.UpdateBlocks.Count > 0)
+            {
+                UpdateBlocks.FindAll(b => b.status == "add").ForEach(b => AddBlock(b));
+                UpdateBlocks.FindAll(b => b.status == "delete").ForEach(b => DeleteBlock(b));
+                UpdateBlocks.FindAll(b => b.status == "update").ForEach(b => UpdateBlock(b));
+                this.ColorRules.ForEach(this.ApplyColorRules);
+            }
+            this.UpdateBlocks = new List<BlockInfo> { };
+        }
+
+        private void Update()
+        {
+            CheckBlockupdate();
+        }
         private void Start()
         {
             LoadingWindow.SetActive(true);
             GameSystem = GameObject.Find("GameSystem");
             InputManager = GameSystem.GetComponent<InputManager>();
-            SeekBar = InputManager.SeekBar;
-            PlayButton = InputManager.PlayButton;
+            SeekBar = InputManager.Seekbar;
+            seekbarSlider = InputManager.seekbarSlider;
+            PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
+            SetFloor();
             StartCoroutine("FetchData");
         }
 
         IEnumerator FetchData()
         {
-            var task = CommunicationManager.fetchMapBlocksAsync(WorldID);
-            var _task = CommunicationManager.fetchColorsAsync(WorldID);
-            yield return new WaitUntil(() => task.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
-            task.Result.ForEach(this.AddBlock);// 全てのブロックを配置
-            yield return new WaitUntil(() => _task.IsCompleted);
-            print(_task.Result);
-            _task.Result.ForEach(this.ApplyColorRules);
-            if (GameManager.Mode == "Vr") InputManager.PlayModeUI.SetActive(true);
+            var fetchBlocksTask = IsMerge ? CommunicationManager.fetchMergedBlocksAsync(WorldID) :
+                CommunicationManager.fetchMapBlocksAsync(WorldID);
+            var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
+            yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
+            fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
+            yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
+            this.ColorRules = fetchColorRulesTask.Result;
+            this.ColorRules.ForEach(this.ApplyColorRules);
+            if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
         }
 
@@ -56,30 +93,84 @@ namespace VrScene
             blocksInfo.ForEach(b => AddBlock(b));
         }
 
+        private void SetFloor()
+        {
+            GameObject Floor1 = (GameObject)Resources.Load("Floor1");
+            GameObject Floor2 = (GameObject)Resources.Load("Floor2");
+            for (float i = -24; i < 24; i++)
+            {
+                for (float j = -24; j < 24; j++)
+                {
+                    Instantiate(Floor1, new Vector3(0.32f * i, -0.2379662f, 0.32f * j), Quaternion.identity);
+                    Instantiate(Floor2, new Vector3(0.32f * i, -0.05f, 0.32f * j), Quaternion.identity);
+                }
+            }
+        }
+
         private void AddBlock(BlockInfo blockInfo)
         {
             Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
             Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
             block.SetColor(blockInfo.colorID);
             block.SetBlockData(blockInfo);
-            if (GameManager.Mode == "Vr") block.SetActive(false);
+            if (GameManager.Mode == "PlayBack") block.SetActive(false);
             this.Blocks.Add(block);
+            NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
             this.BlocksCount += 1;
+        }
+
+        private void DeleteBlock(BlockInfo blockInfo)
+        {
+            var block =  this.Blocks.Find(b => b.ID == blockInfo.ID);
+            block.Delete();
+            this.Blocks.Remove(block);
+            this.BlocksCount -= 1;
+        }
+
+        private void UpdateBlock(BlockInfo blockInfo)
+        {
+            var block = this.Blocks.Find(b => b.ID == blockInfo.ID);
+            block.SetBlockData(blockInfo);
         }
 
         public async void RepeatPlaceBlocks()
         {
             isRepeating = true;
+            SeekBar.SetActive(true);
             while (BlockNumber < this.BlocksCount)
             {
-                while (PlayButton.GetComponent<Toggle>().isOn == false) await Task.Delay(1);
-                SeekBar.value++;
+                while (PlayBackButton.GetComponent<Toggle>().isOn == false)
+                {
+                    SeekBar.SetActive(false);
+                    await Task.Delay(1);
+                }
+                SeekBar.SetActive(true);
+                if (seekbarSlider.value == seekbarSlider.maxValue) break;
+                FallingBlock((int)seekbarSlider.value);
+                seekbarSlider.value++;
                 await Task.Delay(1000);
             }
-            PlayButton.GetComponent<Toggle>().isOn = false;
+            PlayBackButton.GetComponent<Toggle>().isOn = false;
+            ClearBlocks();
+            seekbarSlider.value = 0;
             isRepeating = false;
         }
 
+        async void FallingBlock(int i)
+        {
+            float Accel = 0f;
+            for (float j = NeutralPositions[i]+20; j > NeutralPositions[i]; j -= Accel)
+            {
+                Vector3 pos = Blocks[i].transform.position;
+                pos.y = j;
+                Blocks[i].transform.position = pos;
+                Accel += 0.00981f;
+                await Task.Delay(1);
+            }
+            Vector3 pos2 = Blocks[i].transform.position;
+            pos2.y = NeutralPositions[i];
+            Blocks[i].transform.position = pos2;
+        }
         public void ClearBlocks()
         {
             for (int i = 0; i < this.BlocksCount; i++)
@@ -97,11 +188,11 @@ namespace VrScene
             }
             BlockNumber = value;
         }
-        private void ApplyColorRules(Rule ruleData)
+        public void ApplyColorRules(Rule ruleData)
         {
             string type = ruleData.type;
             string to = ruleData.to;
-            Material toColorMaterial = Resources.Load("Color" + to) as Material;
+            Material toColorMaterial = Resources.Load("Materials/Color" + to) as Material;
             if (toColorMaterial == null)
             {
                 Debug.Log("To is Invalid.");
@@ -109,7 +200,8 @@ namespace VrScene
             }
             if (type == "color")
             {
-                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == ruleData.origin);
+                string origin = ruleData.origin.Replace(" (Instance)", "");
+                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == origin);
                 targetBlocks.ForEach(block =>
                 {
                     block.SetColor(to);
@@ -128,5 +220,13 @@ namespace VrScene
             }
         }
 
+        public Rule MakeColorRules(string type, string origin, string to)
+        {
+            Rule rule = new Rule();
+            rule.type = type;
+            rule.origin = origin;
+            rule.to = to;
+            return rule;
+        }
     }
 }

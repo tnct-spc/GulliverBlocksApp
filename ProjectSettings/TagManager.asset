@@ -6,6 +6,7 @@ TagManager:
   tags:
   - floor
   - block
+  - map_parent
   layers:
   - Default
   - TransparentFX
@@ -15,7 +16,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Front
   - 
   - 
   - 

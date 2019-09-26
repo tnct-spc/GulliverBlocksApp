@@ -4,54 +4,59 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.XR;
+using UnityEngine.SceneManagement;
 
 namespace VrScene
 {
     public class InputManager : MonoBehaviour
     {
         PlayerManager playermanager;
-        GameObject player;
-
         GameManager gamemanager;
-        GameObject gamesystem;
         BlockManager BlockManager;
 
+        List<GameObject> fadeOutObjects = new List<GameObject>();
+
+        public GameObject player;
+        public GameObject gamesystem;
+
+        // NonTwoEyesModeUIとその子要素
+        public GameObject NonTwoEyesModeUI;
         public Toggle FlyingModeToggle;
         public GameObject FlyingButtons;
-        public Toggle PlayButton;
-        public GameObject PlayModeUI;
-        public GameObject ResetButton;
-        public GameObject NonTwoEyesModeUI;
-        public Slider SeekBar;
+        public Toggle PlayBackButton;
+        public GameObject PlayBackModeUI;
+        public GameObject Seekbar;
+        public Slider seekbarSlider;
         public GameObject TouchPanel;
 
+        // DebugButton関連
         public GameObject BackToTheGame;
         public GameObject RuntimeHierarchy;
         public GameObject RuntimeInspector;
-        bool push = true;
+
+        // GeneralMenu関連
+        public GameObject GeneralMenuButton;
+        public GameObject GeneralMenuPanel;
 
         void Start()
         {
-            player = GameObject.FindGameObjectWithTag("Player");
             playermanager = player.GetComponent<PlayerManager>();
-
-            gamesystem = GameObject.Find("GameSystem");
             gamemanager = gamesystem.GetComponent<GameManager>();
             BlockManager = gamesystem.GetComponent<BlockManager>();
 
+            seekbarSlider = Seekbar.GetComponent<Slider>();
             FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
-            SeekBar.onValueChanged.AddListener(PlaceBlockBySeekBar);
-            PlayButton.onValueChanged.AddListener(Play);
+            seekbarSlider.onValueChanged.AddListener(PlaceBlockBySeekBar);
+            PlayBackButton.onValueChanged.AddListener(PlayBack);
 
-            bool isPlayMode = false;
-            if (GameManager.Mode == "Vr") isPlayMode = true;
-            FlyingButtons.SetActive(isPlayMode);
-            FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayMode;
-            FlyingModeCheck(isPlayMode);
-            PlayButton.GetComponent<Toggle>().isOn = false;
-            PlayModeUI.SetActive(false);
-            SeekBar.maxValue = 100;
-
+            bool isPlayBackMode = false;
+            if (GameManager.Mode == "PlayBack") isPlayBackMode = true;
+            FlyingButtons.SetActive(isPlayBackMode);
+            FlyingModeToggle.GetComponent<Toggle>().isOn = isPlayBackMode;
+            FlyingModeCheck(isPlayBackMode);
+            PlayBackButton.GetComponent<Toggle>().isOn = false;
+            PlayBackModeUI.SetActive(false);
+            seekbarSlider.maxValue = 100;
             InputTracking.disablePositionalTracking = true;
         }
 
@@ -81,15 +86,113 @@ namespace VrScene
                     gamemanager.Back_To_Title_If_Android();
                 }
             }
-            TouchPanel.SetActive(XRSettings.enabled);
+
             NonTwoEyesModeUI.SetActive(!XRSettings.enabled);
+            TouchPanel.SetActive(XRSettings.enabled);
         }
+
+        private List<GameObject> FocusUI(GameObject parent, GameObject focusObject)
+        {
+            List<GameObject> fadeOutObjects = new List<GameObject>();
+            foreach(Transform child in parent.transform)
+            {
+                if (child.name == focusObject.name) continue;
+                fadeOutObjects.Add(child.gameObject);
+                child.gameObject.SetActive(false);
+            }
+
+            return fadeOutObjects;
+        }
+
+        private void ResetFocusUI(List<GameObject> fadeOutObjects)
+        {
+            fadeOutObjects.ForEach(obj => obj.SetActive(true));
+        }
+
+        // 再生モード関連
+        public void PlayBack(bool isActive)
+        {
+            seekbarSlider.maxValue = BlockManager.BlocksCount;
+            if (isActive)
+            {
+                if (seekbarSlider.value == seekbarSlider.maxValue) seekbarSlider.value = 0;
+                if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
+                fadeOutObjects.Clear();
+                fadeOutObjects.AddRange(FocusUI(NonTwoEyesModeUI, PlayBackModeUI));
+            }
+            else
+            {
+                ResetFocusUI(fadeOutObjects);
+                fadeOutObjects.Clear();
+                Seekbar.SetActive(false);
+            }
+        }
+
+        public void PlaceBlockBySeekBar(float value)
+        {
+            seekbarSlider.maxValue = BlockManager.BlocksCount;
+            BlockManager.PlaceBlocks(value);
+        }
+
+        public void OnClickAdvanceSkipButton()
+        {
+            seekbarSlider.value++;
+        }
+
+        public void OnClickBackSkipButton()
+        {
+            seekbarSlider.value--;
+        }
+
+        // GeneralMenu
+        public void OnClicKGeneralMenuButton()
+        {
+            GeneralMenuPanel.SetActive(true);
+            GeneralMenuButton.SetActive(false);
+        }
+
+        public void OnClickGeneralMenuCancelButton()
+        {
+            GeneralMenuButton.SetActive(true);
+            GeneralMenuPanel.SetActive(false);
+        }
+
+        // VRのtoggle
+        public void VR_ModeOn()
+        {
+            XRSettings.enabled = true;
+        }
+
+        public void VR_ModeOff()
+        {
+            XRSettings.enabled = false;
+        }
+
+        // DebugButton
+        public void OnClickBackToTheGame()
+        {
+            this.BackToTheGame.SetActive(false);
+            this.RuntimeHierarchy.SetActive(false);
+            this.RuntimeInspector.SetActive(false);
+            Debug.Log("Back to Game");
+        }
+
+        // BackTitleButton
+        public void OnClickBackTitleButton()
+        {
+            SceneManager.LoadScene("Title");
+        }
+
+
+        /*
+         * ここから下の関数は、Player関連
+         */
+
         public void FlyingModeCheck(bool isActive)
         {
             playermanager.Flying(isActive);
             FlyingButtons.SetActive(isActive);
         }
-
 
         public void Player_Forward()
         {
@@ -148,49 +251,6 @@ namespace VrScene
         public void Player_StopDown()
         {
             playermanager.MoveDown = false;
-        }
-        public void Play(bool isActive)
-        {
-            SeekBar.maxValue = BlockManager.BlocksCount;
-            if (isActive)
-            {
-                if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
-                ResetButton.SetActive(false);
-            }
-            else
-            {
-                ResetButton.SetActive(true);
-            }
-        }
-
-        public void DestroyBlocks()
-        {
-            BlockManager.ClearBlocks();
-            SeekBar.value = 0;
-        }
-
-        public void PlaceBlockBySeekBar(float value)
-        {
-            SeekBar.maxValue = BlockManager.BlocksCount;
-            BlockManager.PlaceBlocks(value);
-        }
-
-        public void VR_ModeOn()
-        {
-            XRSettings.enabled = true;
-        }
-
-        public void VR_ModeOff()
-        {
-            XRSettings.enabled = false;
-        }
-
-        public void OnClickBackToTheGame()
-        {
-            this.BackToTheGame.SetActive(false);
-            this.RuntimeHierarchy.SetActive(false);
-            this.RuntimeInspector.SetActive(false);
-            Debug.Log("Back to Game");
         }
     }
 }

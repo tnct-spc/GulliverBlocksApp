@@ -7,13 +7,21 @@ namespace VrScene
 {
     public class GameManager : MonoBehaviour
     {
-        public static string Mode = "Vr";
+        public static string Mode;
+        public GameObject ViewModeUI;
+
         public void Back_To_Title_If_Android()
         {
             if (Application.platform == RuntimePlatform.Android)
             {
                 SceneManager.LoadScene("Title");
             }
+        }
+
+        private void Start()
+        {
+            Debug.Log(Mode);
+            if (Mode == "PlayBack") ViewModeUI.SetActive(false);
         }
     }
 }

@@ -8,23 +8,29 @@ namespace VrScene
 {
     public class ColorChangePanel : MonoBehaviour
     {
+        BlockManager blockManager;
         [SerializeField] public GameObject panelPref;
         private List<Material> contentMaterials = new List<Material>();
-        private GameObject contentObject;
-        private GameObject colorChangePanel;
+        public GameObject contentObject;
+        public GameObject colorChangePanel;
         private ToggleGroup toggleGroup;
         private GameObject targetBlock;
         public GameObject lightUpObject = null;
+
+        private void Awake()
+        {
+            blockManager = GameObject.Find("GameSystem").GetComponent<BlockManager>();
+        }
+
         public void OnEnable()
         {
             contentMaterials.Clear();
-            for (int i = 0; i< 10; i++)
+            Object[] loadedMaterials = Resources.LoadAll("Materials", typeof(Material));
+            foreach(Material material in loadedMaterials)
             {
-                string materialName = "Color" + i.ToString();
-                Material material = Resources.Load(materialName) as Material;
-             contentMaterials.Add(material);
+                contentMaterials.Add(material);
             }
-         }
+        }
 
         private void OnDisable()
         {
@@ -37,15 +43,22 @@ namespace VrScene
         public void SetupColorChangePanel(GameObject targetObject)
         {
             targetBlock = targetObject;
-            colorChangePanel = GameObject.Find("Canvas/ColorChangePanel");
-            contentObject = GameObject.Find("Canvas/ColorChangePanel/Scroll View/Viewport/Content");
             SetColorPanel(targetBlock);
         }
 
         public Material CopyTo2DMaterial(Material original)
         {
             Material material2D = new Material(Shader.Find("UI/Default"));
-            material2D.color = original.color;
+            if(original.shader == Shader.Find("Standard"))
+            {
+                // 普通の色のマテリアル
+                material2D.color = original.color;
+            }
+            else
+            {
+                // 画像テクスチャのマテリアル
+                material2D.mainTexture = original.mainTexture;
+            }
             return material2D;
         }
 
@@ -102,8 +115,16 @@ namespace VrScene
         public void OnClickChangeButton()
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
+            string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text.Replace("Color", "");
+            targetBlock.GetComponent<Block>().SetColor(toMaterialName);
+        }
+
+        public void OnClickAllColorChangeButton()
+        {
+            Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
-            targetBlock.GetComponent<Renderer>().material = Resources.Load(toMaterialName) as Material;
+            Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
+            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
         }
 
         public void OnClickCancelButton()

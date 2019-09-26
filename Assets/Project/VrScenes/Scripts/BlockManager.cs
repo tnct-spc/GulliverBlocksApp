@@ -192,7 +192,7 @@ namespace VrScene
         {
             string type = ruleData.type;
             string to = ruleData.to;
-            Material toColorMaterial = Resources.Load("Color" + to) as Material;
+            Material toColorMaterial = Resources.Load("Materials/Color" + to) as Material;
             if (toColorMaterial == null)
             {
                 Debug.Log("To is Invalid.");

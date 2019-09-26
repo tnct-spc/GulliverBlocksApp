@@ -25,13 +25,12 @@ namespace VrScene
         public void OnEnable()
         {
             contentMaterials.Clear();
-            for (int i = 0; i< 10; i++)
+            Object[] loadedMaterials = Resources.LoadAll("Materials", typeof(Material));
+            foreach(Material material in loadedMaterials)
             {
-                string materialName = "Color" + i.ToString();
-                Material material = Resources.Load(materialName) as Material;
                 contentMaterials.Add(material);
             }
-         }
+        }
 
         private void OnDisable()
         {
@@ -50,7 +49,16 @@ namespace VrScene
         public Material CopyTo2DMaterial(Material original)
         {
             Material material2D = new Material(Shader.Find("UI/Default"));
-            material2D.color = original.color;
+            if(original.shader == Shader.Find("Standard"))
+            {
+                // 普通の色のマテリアル
+                material2D.color = original.color;
+            }
+            else
+            {
+                // 画像テクスチャのマテリアル
+                material2D.mainTexture = original.mainTexture;
+            }
             return material2D;
         }
 

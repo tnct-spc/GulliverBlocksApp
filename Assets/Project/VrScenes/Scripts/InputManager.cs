@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.XR;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 namespace VrScene
 {
@@ -18,6 +19,8 @@ namespace VrScene
 
         public GameObject player;
         public GameObject gamesystem;
+
+        int TouchCount = 0;
 
         // NonTwoEyesModeUIとその子要素
         public GameObject NonTwoEyesModeUI;
@@ -183,6 +186,29 @@ namespace VrScene
             SceneManager.LoadScene("Title");
         }
 
+        //ダッシュに関する処理
+        public void Touch()
+        {
+            TouchCount++;
+            DushCheck();
+            Player_Forward();
+        }
+
+        public void ReleaseTheTouch()
+        {
+            Player_StopForward();
+            playermanager.isDefault_speed = true;
+        }
+
+        public async void DushCheck()
+        {
+            if (TouchCount > 1)
+            {
+                playermanager.isDefault_speed = false;
+            }
+            await Task.Delay(500);
+            TouchCount = 0;
+        }
 
         /*
          * ここから下の関数は、Player関連

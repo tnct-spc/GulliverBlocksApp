@@ -111,8 +111,14 @@ namespace VrScene
             }
         }
 
+        public void SetGyroEnable(bool f)
+        {
+            RotateManagerI.UseGyro = f;
+        }
+
         class RotateManager
         {
+            public bool UseGyro = false;
 
             private Transform CameraTransform;
             private Transform PlayerTransform;
@@ -149,7 +155,7 @@ namespace VrScene
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
-                    if (SettingManager.UseGyro) this.RotateXY(GyroDiff());
+                    if (this.UseGyro) this.RotateXY(GyroDiff());
                     if (Input.touchCount > 0)
                     {
                         var touch = Input.GetTouch(0);

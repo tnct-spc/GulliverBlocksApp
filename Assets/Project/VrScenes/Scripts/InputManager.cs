@@ -129,6 +129,7 @@ namespace VrScene
             {
                 ResetFocusUI(fadeOutObjects);
                 fadeOutObjects.Clear();
+                FlyingModeCheck(FlyingModeToggle.GetComponent<Toggle>().isOn);
                 Seekbar.SetActive(false);
             }
         }
@@ -192,7 +193,7 @@ namespace VrScene
         public void Touch()
         {
             TouchCount++;
-            DushCheck();
+            DoubleTouchCheck();
             Player_Forward();
         }
 
@@ -202,7 +203,7 @@ namespace VrScene
             playermanager.isDefault_speed = true;
         }
 
-        public async void DushCheck()
+        public async void DoubleTouchCheck()
         {
             if (TouchCount > 1)
             {

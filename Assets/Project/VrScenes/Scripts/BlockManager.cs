@@ -91,12 +91,9 @@ namespace VrScene
         public void StopPlayback()
         {
             GameManager.Mode = "Vr";
-            PlayBackButton.GetComponent<Toggle>().isOn = false;
+            seekbarSlider.value = seekbarSlider.maxValue;
             InputManager.PlayBackModeUI.SetActive(false);
-            this.Blocks.ForEach(b => b.SetActive(true));
-            seekbarSlider.value = 0;
             isRepeating = false;
-            Debug.Log("testaaa");
         }
         public void StartPlayback()
         {
@@ -153,14 +150,8 @@ namespace VrScene
         {
             isRepeating = true;
             SeekBar.SetActive(true);
-            while (BlockNumber < this.BlocksCount)
+            while (true)
             {
-                while (PlayBackButton.GetComponent<Toggle>().isOn == false)
-                {
-                    SeekBar.SetActive(false);
-                    await Task.Delay(1);
-                }
-                SeekBar.SetActive(true);
                 if (seekbarSlider.value == seekbarSlider.maxValue) break;
                 FallingBlock((int)seekbarSlider.value);
                 seekbarSlider.value++;

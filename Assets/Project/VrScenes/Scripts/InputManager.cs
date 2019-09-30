@@ -120,6 +120,7 @@ namespace VrScene
             seekbarSlider.maxValue = BlockManager.BlocksCount;
             if (isActive)
             {
+                Seekbar.SetActive(true);
                 if (seekbarSlider.value == seekbarSlider.maxValue) seekbarSlider.value = 0;
                 if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
                 fadeOutObjects.Clear();

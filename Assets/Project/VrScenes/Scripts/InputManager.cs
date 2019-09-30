@@ -40,6 +40,7 @@ namespace VrScene
         // GeneralMenuŠÖ˜A
         public GameObject GeneralMenuButton;
         public GameObject GeneralMenuPanel;
+        public Toggle GyroModeToggle;
 
         void Start()
         {
@@ -49,6 +50,7 @@ namespace VrScene
 
             seekbarSlider = Seekbar.GetComponent<Slider>();
             FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
+            GyroModeToggle.onValueChanged.AddListener(playermanager.SetGyroEnable);
             seekbarSlider.onValueChanged.AddListener(PlaceBlockBySeekBar);
             PlayBackButton.onValueChanged.AddListener(PlayBack);
 

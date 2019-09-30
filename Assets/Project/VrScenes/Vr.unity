@@ -2641,6 +2641,7 @@ MonoBehaviour:
   RuntimeInspector: {fileID: 1932141157}
   GeneralMenuButton: {fileID: 1897379314}
   GeneralMenuPanel: {fileID: 1101299273}
+  GyroModeToggle: {fileID: 1507565105}
 --- !u!4 &784364639
 Transform:
   m_ObjectHideFlags: 0
@@ -2997,6 +2998,7 @@ MonoBehaviour:
   RuntimeInspector: {fileID: 1932141157}
   GeneralMenuButton: {fileID: 0}
   GeneralMenuPanel: {fileID: 0}
+  GyroModeToggle: {fileID: 0}
 --- !u!1 &867682193
 GameObject:
   m_ObjectHideFlags: 0

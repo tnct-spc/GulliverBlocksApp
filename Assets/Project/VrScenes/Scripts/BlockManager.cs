@@ -35,8 +35,17 @@ namespace VrScene
             this.WsClient = new CommunicationManager.WsClient(WorldID);
             this.WsClient.OnBlockReceived += (sender, e) => this.UpdateBlocks = e.Blocks;// WSが来た時のイベント, parse済みのものがe.Blocksに入る
             this.WsClient.StartConenction();
+            StartCoroutine("PingLoop");
         }
 
+        private IEnumerator PingLoop()
+        {
+            while(true)
+            {
+                this.WsClient.ping();
+                yield return new WaitForSeconds(30f);
+            }
+        }
         private void OnBlockUpdate(List<BlockInfo> blocks)
         {
             this.UpdateBlocks = blocks;

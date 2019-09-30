@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.EventSystems;
+using System.Threading.Tasks;
 
 namespace VrScene
 {
@@ -8,11 +9,12 @@ namespace VrScene
     {
         [SerializeField] int default_move_speed = 1;
         [SerializeField] int run_move_speed = 2;
+        Vector3 Direction;
         public Rigidbody player_rigidbody;
         public GameObject PlayerCamera;
         public GameObject TwoEyesModeCamera;
         public GameObject corner;
-        private bool isDefault_speed = true;
+        public bool isDefault_speed = true;
         const string Stop = "Stop";
         const string Forward = "Forward";
         const string Right = "Right";
@@ -22,6 +24,9 @@ namespace VrScene
         const string Down = "Down";
 
         public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
+
+        bool isMoving = false;
+        bool isDashChecking = false;
 
         RotateManager RotateManagerI;
 
@@ -50,6 +55,16 @@ namespace VrScene
             {
                 RotatePlayerInTwoEyesMode();
             }
+            if (Direction == Vector3.zero)
+            {
+                isMoving = false;
+                isDefault_speed = true;
+            }
+            else
+            {
+                isMoving = true;
+                DashCheck();
+            }
         }
         void RotatePlayerInTwoEyesMode()
         {
@@ -59,7 +74,7 @@ namespace VrScene
 
         void Move()
         {
-            Vector3 Direction = Vector3.zero;
+            Direction = Vector3.zero;
             if (MoveForward) Direction.z += 1;
             if (MoveBack) Direction.z += -1;
             if (MoveRight) Direction.x += 1;
@@ -111,8 +126,31 @@ namespace VrScene
             }
         }
 
+        public void SetGyroEnable(bool f)
+        {
+            RotateManagerI.UseGyro = f;
+	}
+
+        public async void DashCheck()
+        {
+            if (isDashChecking) return;
+            isDashChecking = true;
+            for(int i = 0; i < 20; i++)
+            {
+                await Task.Delay(100);
+                if (isMoving == false)
+                {
+                    isDashChecking = false;
+                    return;
+                }
+            }
+            isDefault_speed = false;
+            isDashChecking = false;
+        }
+
         class RotateManager
         {
+            public bool UseGyro = false;
 
             private Transform CameraTransform;
             private Transform PlayerTransform;
@@ -149,7 +187,7 @@ namespace VrScene
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
-                    if (SettingManager.UseGyro) this.RotateXY(GyroDiff());
+                    if (this.UseGyro) this.RotateXY(GyroDiff());
                     if (Input.touchCount > 0)
                     {
                         var touch = Input.GetTouch(0);

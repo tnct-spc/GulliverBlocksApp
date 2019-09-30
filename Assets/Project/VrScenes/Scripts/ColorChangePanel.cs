@@ -94,7 +94,48 @@ namespace VrScene
 
                 //Materialの名前を設定
                 Text textMaterialNameLabel = toggleObject.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>();
-                textMaterialNameLabel.text = contentMaterials[i].name;
+                switch (i)
+                {
+                    case 0:
+                        textMaterialNameLabel.text = "黒";
+                        break;
+                    case 1:
+                        textMaterialNameLabel.text = "赤";
+                        break;
+                    case 2:
+                        textMaterialNameLabel.text = "金属";
+                        break;
+                    case 3:
+                        textMaterialNameLabel.text = "レンガ";
+                        break;
+                    case 4:
+                        textMaterialNameLabel.text = "白";
+                        break;
+                    case 5:
+                        textMaterialNameLabel.text = "黄色";
+                        break;
+                    case 6:
+                        textMaterialNameLabel.text = "オレンジ";
+                        break;
+                    case 7:
+                        textMaterialNameLabel.text = "黄緑";
+                        break;
+                    case 8:
+                        textMaterialNameLabel.text = "水色";
+                        break;
+                    case 9:
+                        textMaterialNameLabel.text = "青";
+                        break;
+                    case 10:
+                        textMaterialNameLabel.text = "緑";
+                        break;
+                    case 11:
+                        textMaterialNameLabel.text = "紫";
+                        break;
+                    case 12:
+                        textMaterialNameLabel.text = "木材";
+                        break;
+                }
 
                 //RawImageの設定
                 RawImage rawImage = toggleObject.transform.Find("MaterialRawImage").gameObject.GetComponent<RawImage>();

@@ -153,18 +153,66 @@ namespace VrScene
             }
         }
 
+        string ChengeColorNameToNumber(string colorName)
+        {
+            string colorNumber = "";
+            switch (colorName)
+            {
+                case "黒":
+                    colorNumber = "0";
+                    break;
+                case "赤":
+                    colorNumber = "1";
+                    break;
+                case "黄色":
+                    colorNumber = "2";
+                    break;
+                case "オレンジ":
+                    colorNumber = "3";
+                    break;
+                case "黄緑":
+                    colorNumber = "4";
+                    break;
+                case "水色":
+                    colorNumber = "5";
+                    break;
+                case "青":
+                    colorNumber = "6";
+                    break;
+                case "緑":
+                    colorNumber = "7";
+                    break;
+                case "紫":
+                    colorNumber = "8";
+                    break;
+                case "木材":
+                    colorNumber = "9";
+                    break;
+                case "金属":
+                    colorNumber = "10";
+                    break;
+                case "レンガ":
+                    colorNumber = "11";
+                    break;
+                case "白":
+                    colorNumber = "12";
+                    break;
+            }
+            return colorNumber;
+        }
         public void OnClickChangeButton()
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
-            string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text.Replace("Color", "");
-            targetBlock.GetComponent<Block>().SetColor(toMaterialName);
+            string MaterialNumber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
+            targetBlock.GetComponent<Block>().SetColor(MaterialNumber);
         }
 
         public void OnClickAllColorChangeButton()
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
-            string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
-            Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
+            string MaterialNunber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
+            string MaterialName = "Color" + MaterialNunber;
+            Material toMaterial = contentMaterials.Find(material => material.name == MaterialName);
             blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
         }
 

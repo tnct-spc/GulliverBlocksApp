@@ -19,7 +19,6 @@ namespace VrScene
 
         public GameObject player;
         public GameObject gamesystem;
-
         int TouchCount = 0;
 
         // NonTwoEyesModeUI‚Æ‚»‚ÌŽq—v‘f
@@ -190,7 +189,7 @@ namespace VrScene
         public void Touch()
         {
             TouchCount++;
-            DashCheck();
+            DoubleTouchCheck();
             Player_Forward();
         }
 
@@ -200,7 +199,7 @@ namespace VrScene
             playermanager.isDefault_speed = true;
         }
 
-        public async void DashCheck()
+        public async void DoubleTouchCheck()
         {
             if (TouchCount > 1)
             {

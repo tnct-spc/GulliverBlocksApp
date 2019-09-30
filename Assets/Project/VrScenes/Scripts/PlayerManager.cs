@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.EventSystems;
+using System.Threading.Tasks;
 
 namespace VrScene
 {
@@ -8,6 +9,7 @@ namespace VrScene
     {
         [SerializeField] int default_move_speed = 1;
         [SerializeField] int run_move_speed = 2;
+        Vector3 Direction;
         public Rigidbody player_rigidbody;
         public GameObject PlayerCamera;
         public GameObject TwoEyesModeCamera;
@@ -22,6 +24,9 @@ namespace VrScene
         const string Down = "Down";
 
         public bool MoveRight, MoveLeft, MoveForward, MoveBack, MoveUp, MoveDown;
+
+        bool isMoving = false;
+        bool isDashChecking = false;
 
         RotateManager RotateManagerI;
 
@@ -50,6 +55,16 @@ namespace VrScene
             {
                 RotatePlayerInTwoEyesMode();
             }
+            if (Direction == Vector3.zero)
+            {
+                isMoving = false;
+                isDefault_speed = true;
+            }
+            else
+            {
+                isMoving = true;
+            }
+            DashCheck();
         }
         void RotatePlayerInTwoEyesMode()
         {
@@ -59,7 +74,7 @@ namespace VrScene
 
         void Move()
         {
-            Vector3 Direction = Vector3.zero;
+            Direction = Vector3.zero;
             if (MoveForward) Direction.z += 1;
             if (MoveBack) Direction.z += -1;
             if (MoveRight) Direction.x += 1;
@@ -109,6 +124,24 @@ namespace VrScene
             {
                 RespawnPlayer();
             }
+        }
+
+        public async void DashCheck()
+        {
+            if (isDashChecking) return;
+            isDashChecking = true;
+            for(int i = 0; i < 100; i++)
+            {
+                Debug.Log(i);
+                await Task.Delay(1);
+                if (isMoving == false)
+                {
+                    isDashChecking = false;
+                    return;
+                }
+            }
+            isDefault_speed = false;
+            isDashChecking = false;
         }
 
         class RotateManager

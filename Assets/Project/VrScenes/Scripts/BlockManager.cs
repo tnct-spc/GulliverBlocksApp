@@ -70,6 +70,7 @@ namespace VrScene
             seekbarSlider = InputManager.seekbarSlider;
             PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
+            SetFloor();
             StartCoroutine("FetchData");
         }
 
@@ -106,6 +107,20 @@ namespace VrScene
         void InitialPlacement(List<BlockInfo> blocksInfo)
         {
             blocksInfo.ForEach(b => AddBlock(b));
+        }
+
+        private void SetFloor()
+        {
+            GameObject Floor1 = (GameObject)Resources.Load("Floor1");
+            GameObject Floor2 = (GameObject)Resources.Load("Floor2");
+            for (float i = -24; i < 24; i++)
+            {
+                for (float j = -24; j < 24; j++)
+                {
+                    Instantiate(Floor1, new Vector3(0.32f * i, -0.2379662f, 0.32f * j), Quaternion.identity);
+                    Instantiate(Floor2, new Vector3(0.32f * i, -0.05f, 0.32f * j), Quaternion.identity);
+                }
+            }
         }
 
         private void AddBlock(BlockInfo blockInfo)
@@ -196,7 +211,7 @@ namespace VrScene
         {
             string type = ruleData.type;
             string to = ruleData.to;
-            Material toColorMaterial = Resources.Load("Color" + to) as Material;
+            Material toColorMaterial = Resources.Load("Materials/Color" + to) as Material;
             if (toColorMaterial == null)
             {
                 Debug.Log("To is Invalid.");

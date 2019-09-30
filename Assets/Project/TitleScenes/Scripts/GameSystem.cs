@@ -17,7 +17,8 @@ namespace TitleScene
         public GameObject MapSelectPanel;
         public GameObject MergeMapSelectPanel;
         public GameObject ModeSelectPanel;
-        public GameObject CreateMapPanel;
+        public GameObject SelectCreatingPanel;
+        public GameObject CreateNewMapPanel;
         public GameObject PlaybackModeButton;
         public GameObject ViewModeButton;
         public GameObject EditMapNamePanel;
@@ -62,13 +63,14 @@ namespace TitleScene
             Screen.orientation = ScreenOrientation.LandscapeLeft;
         }
 
-        public void OnClickCreateMapButton()
+        public void OnClickCreateButton()
         {
-            CreateMapPanel.SetActive(true);
+            SelectCreatingPanel.SetActive(true);
         }
 
         public void OnClickCreateMerge()
         {
+            SelectCreatingPanel.SetActive(false);
             StartCoroutine("fetchMerge");
         }
         IEnumerator fetchMerge()
@@ -79,6 +81,12 @@ namespace TitleScene
             MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.Clear();
             MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.AddRange(fetchMapsTask.Result);
             MergeMapSelectPanel.SetActive(true);
+        }
+
+        public void OnClickOpenCreateNewWorldPanel()
+        {
+            SelectCreatingPanel.SetActive(false);
+            CreateNewMapPanel.SetActive(true);
         }
         public void OnClickCreateNewWorld()
         {

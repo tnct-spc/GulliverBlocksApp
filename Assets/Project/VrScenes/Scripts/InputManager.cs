@@ -19,6 +19,7 @@ namespace VrScene
 
         public GameObject player;
         public GameObject gamesystem;
+
         int TouchCount = 0;
 
         // NonTwoEyesModeUI‚Æ‚»‚ÌŽq—v‘f

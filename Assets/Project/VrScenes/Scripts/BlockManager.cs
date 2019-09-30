@@ -97,6 +97,19 @@ namespace VrScene
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
         }
+        
+        public void StopPlayback()
+        {
+            GameManager.Mode = "Vr";
+            seekbarSlider.value = seekbarSlider.maxValue;
+            InputManager.PlayBackModeUI.SetActive(false);
+            isRepeating = false;
+        }
+        public void StartPlayback()
+        {
+            GameManager.Mode = "PlayBack";
+            InputManager.PlayBackModeUI.SetActive(true);
+        }
 
         void InitialPlacement(List<BlockInfo> blocksInfo)
         {
@@ -151,23 +164,20 @@ namespace VrScene
         {
             isRepeating = true;
             SeekBar.SetActive(true);
-            while (BlockNumber < this.BlocksCount)
+            while (true)
             {
-                while (PlayBackButton.GetComponent<Toggle>().isOn == false)
-                {
-                    SeekBar.SetActive(false);
-                    await Task.Delay(1);
-                }
-                SeekBar.SetActive(true);
                 if (seekbarSlider.value == seekbarSlider.maxValue) break;
                 FallingBlock((int)seekbarSlider.value);
                 seekbarSlider.value++;
                 await Task.Delay(1000);
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;
-            ClearBlocks();
-            seekbarSlider.value = 0;
-            isRepeating = false;
+            if(GameManager.Mode == "PlayBack")
+            {
+                ClearBlocks();
+                seekbarSlider.value = 0;
+                isRepeating = false;
+            }
         }
 
         async void FallingBlock(int i)

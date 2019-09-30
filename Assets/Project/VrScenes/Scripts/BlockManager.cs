@@ -27,6 +27,7 @@ namespace VrScene
         public GameObject LoadingWindow;
         CommunicationManager CommunicationManager;
         CommunicationManager.WsClient WsClient;
+        public GameObject Floor;
 
         private void Awake()
         {
@@ -34,8 +35,17 @@ namespace VrScene
             this.WsClient = new CommunicationManager.WsClient(WorldID);
             this.WsClient.OnBlockReceived += (sender, e) => this.UpdateBlocks = e.Blocks;// WSが来た時のイベント, parse済みのものがe.Blocksに入る
             this.WsClient.StartConenction();
+            StartCoroutine("PingLoop");
         }
 
+        private IEnumerator PingLoop()
+        {
+            while(true)
+            {
+                this.WsClient.ping();
+                yield return new WaitForSeconds(30f);
+            }
+        }
         private void OnBlockUpdate(List<BlockInfo> blocks)
         {
             this.UpdateBlocks = blocks;
@@ -95,14 +105,18 @@ namespace VrScene
 
         private void SetFloor()
         {
+            GameObject FloorA;
+            GameObject FloorB;
             GameObject Floor1 = (GameObject)Resources.Load("Floor1");
             GameObject Floor2 = (GameObject)Resources.Load("Floor2");
             for (float i = -24; i < 24; i++)
             {
                 for (float j = -24; j < 24; j++)
                 {
-                    Instantiate(Floor1, new Vector3(0.32f * i, -0.2379662f, 0.32f * j), Quaternion.identity);
-                    Instantiate(Floor2, new Vector3(0.32f * i, -0.05f, 0.32f * j), Quaternion.identity);
+                    FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.2379662f, 0.32f * j), Quaternion.identity);
+                    FloorA.transform.parent = Floor.transform;
+                    FloorB = (GameObject)Instantiate(Floor2, new Vector3(0.32f * i, -0.05f, 0.32f * j), Quaternion.identity);
+                    FloorB.transform.parent = Floor.transform;
                 }
             }
         }

@@ -40,6 +40,7 @@ namespace VrScene
         // GeneralMenuŠÖ˜A
         public GameObject GeneralMenuButton;
         public GameObject GeneralMenuPanel;
+        public Toggle GyroModeToggle;
 
         void Start()
         {
@@ -49,6 +50,7 @@ namespace VrScene
 
             seekbarSlider = Seekbar.GetComponent<Slider>();
             FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
+            GyroModeToggle.onValueChanged.AddListener(playermanager.SetGyroEnable);
             seekbarSlider.onValueChanged.AddListener(PlaceBlockBySeekBar);
             PlayBackButton.onValueChanged.AddListener(PlayBack);
 
@@ -127,6 +129,7 @@ namespace VrScene
             {
                 ResetFocusUI(fadeOutObjects);
                 fadeOutObjects.Clear();
+                FlyingModeCheck(FlyingModeToggle.GetComponent<Toggle>().isOn);
                 Seekbar.SetActive(false);
             }
         }
@@ -190,7 +193,7 @@ namespace VrScene
         public void Touch()
         {
             TouchCount++;
-            DushCheck();
+            DoubleTouchCheck();
             Player_Forward();
         }
 
@@ -200,7 +203,7 @@ namespace VrScene
             playermanager.isDefault_speed = true;
         }
 
-        public async void DushCheck()
+        public async void DoubleTouchCheck()
         {
             if (TouchCount > 1)
             {

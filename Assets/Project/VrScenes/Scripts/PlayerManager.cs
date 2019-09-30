@@ -63,8 +63,8 @@ namespace VrScene
             else
             {
                 isMoving = true;
+                DashCheck();
             }
-            DashCheck();
         }
         void RotatePlayerInTwoEyesMode()
         {
@@ -130,10 +130,10 @@ namespace VrScene
         {
             if (isDashChecking) return;
             isDashChecking = true;
-            for(int i = 0; i < 100; i++)
+            for(int i = 0; i < 20; i++)
             {
                 Debug.Log(i);
-                await Task.Delay(1);
+                await Task.Delay(100);
                 if (isMoving == false)
                 {
                     isDashChecking = false;

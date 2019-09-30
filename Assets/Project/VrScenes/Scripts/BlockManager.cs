@@ -52,7 +52,7 @@ namespace VrScene
                 UpdateBlocks.FindAll(b => b.status == "add").ForEach(b => AddBlock(b));
                 UpdateBlocks.FindAll(b => b.status == "delete").ForEach(b => DeleteBlock(b));
                 UpdateBlocks.FindAll(b => b.status == "update").ForEach(b => UpdateBlock(b));
-                this.ColorRules.ForEach(this.ApplyColorRules);
+                this.ColorRules.ForEach(this.ApplyColorRule);
             }
             this.UpdateBlocks = new List<BlockInfo> { };
         }
@@ -76,14 +76,24 @@ namespace VrScene
 
         IEnumerator FetchData()
         {
-            var fetchBlocksTask = IsMerge ? CommunicationManager.fetchMergedBlocksAsync(WorldID) :
-                CommunicationManager.fetchMapBlocksAsync(WorldID);
-            var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
+            Task<List<BlockInfo>> fetchBlocksTask;
+            Task<List<Rule>> fetchColorRulesTask; 
+            if (IsMerge)
+            {
+                fetchBlocksTask = CommunicationManager.fetchMergedBlocksAsync(WorldID);
+                fetchColorRulesTask = CommunicationManager.fetchMergedColorRulesAsync(WorldID);
+            } else
+            {
+                fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldID);
+                fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
+            }
             yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
+
             yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
             this.ColorRules = fetchColorRulesTask.Result;
-            this.ColorRules.ForEach(this.ApplyColorRules);
+            this.ColorRules.ForEach(this.ApplyColorRule);
+
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
         }
@@ -188,7 +198,7 @@ namespace VrScene
             }
             BlockNumber = value;
         }
-        public void ApplyColorRules(Rule ruleData)
+        public void ApplyColorRule(Rule ruleData)
         {
             string type = ruleData.type;
             string to = ruleData.to;
@@ -201,7 +211,7 @@ namespace VrScene
             if (type == "color")
             {
                 string origin = ruleData.origin.Replace(" (Instance)", "");
-                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == origin);
+                List<Block> targetBlocks = this.Blocks.FindAll(block => (block.map_id == ruleData.map_id) && block.colorID == origin);
                 targetBlocks.ForEach(block =>
                 {
                     block.SetColor(to);
@@ -220,12 +230,13 @@ namespace VrScene
             }
         }
 
-        public Rule MakeColorRules(string type, string origin, string to)
+        public Rule MakeColorRules(string type, string map_id, string origin, string to)
         {
             Rule rule = new Rule();
             rule.type = type;
             rule.origin = origin;
             rule.to = to;
+            rule.map_id = map_id;
             return rule;
         }
     }

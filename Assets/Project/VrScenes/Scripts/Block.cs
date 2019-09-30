@@ -15,6 +15,7 @@ namespace VrScene
         public string ID;
         public float time;
         public string colorID;
+        public string map_id;
 
 
         public void SetBlockData(BlockInfo block)
@@ -25,6 +26,7 @@ namespace VrScene
             ID = block.ID;
             time = block.time;
             colorID = block.colorID;
+            map_id = block.map_id;
         }
 
         public Vector3 GetPosition()

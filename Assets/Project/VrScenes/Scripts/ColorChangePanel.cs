@@ -124,7 +124,8 @@ namespace VrScene
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
             Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
-            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
+            string map_id = targetBlock.GetComponent<Block>().map_id;
+            blockManager.ApplyColorRule(blockManager.MakeColorRules("color", map_id,targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
         }
 
         public void OnClickCancelButton()

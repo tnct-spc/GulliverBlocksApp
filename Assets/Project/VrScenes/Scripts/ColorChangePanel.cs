@@ -69,7 +69,8 @@ namespace VrScene
 
             //currentColorPanelの設定
             Transform currentColorPanel = colorChangePanel.transform.Find("CurrentColorPanel");
-            currentColorPanel.Find("CurrentNameText").gameObject.GetComponent<Text>().text = currentMaterial.name;
+            string currentMaterialName = ChengeMaterialNameToColorName(currentMaterial.name);
+            currentColorPanel.Find("CurrentNameText").gameObject.GetComponent<Text>().text = currentMaterialName;
             currentColorPanel.Find("CurrentRawImage").gameObject.GetComponent<RawImage>().material = CopyTo2DMaterial(currentMaterial);
 
             //Contentの高さ決定
@@ -153,6 +154,55 @@ namespace VrScene
             }
         }
 
+        string ChengeMaterialNameToColorName (string materialName)
+        {
+            string colorName = "";
+            string str1 = materialName.Replace("Color", "");
+            string str2 = str1.Replace(" (Instance)", "");
+            switch (str2)
+            {
+                case "0":
+                    colorName = "黒";
+                    break;
+                case "1":
+                    colorName = "赤";
+                    break;
+                case "2":
+                    colorName = "黄色";
+                    break;
+                case "3":
+                    colorName = "オレンジ";
+                    break;
+                case "4":
+                    colorName = "黄緑";
+                    break;
+                case "5":
+                    colorName = "水色";
+                    break;
+                case "6":
+                    colorName = "青";
+                    break;
+                case "7":
+                    colorName = "緑";
+                    break;
+                case "8":
+                    colorName = "紫";
+                    break;
+                case "9":
+                    colorName = "木材";
+                    break;
+                case "10":
+                    colorName = "金属";
+                    break;
+                case "11":
+                    colorName = "レンガ";
+                    break;
+                case "12":
+                    colorName = "白";
+                    break;
+            }
+            return colorName;
+        }
         string ChengeColorNameToNumber(string colorName)
         {
             string colorNumber = "";

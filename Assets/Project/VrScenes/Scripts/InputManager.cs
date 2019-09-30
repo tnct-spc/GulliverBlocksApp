@@ -126,6 +126,7 @@ namespace VrScene
             {
                 ResetFocusUI(fadeOutObjects);
                 fadeOutObjects.Clear();
+                FlyingModeCheck(FlyingModeToggle.GetComponent<Toggle>().isOn);
                 Seekbar.SetActive(false);
             }
         }

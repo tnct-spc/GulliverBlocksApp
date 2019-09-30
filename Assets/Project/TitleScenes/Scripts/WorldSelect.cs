@@ -24,11 +24,6 @@ namespace TitleScene
             StartCoroutine("FetchData");
         }
 
-        private void OnEnable()
-        {
-            ModeSelectPanel.SetActive(false);
-        }
-
         IEnumerator FetchData()
         {
             var fetchMapsTask = CommunicationManager.fetchMapsAsync();

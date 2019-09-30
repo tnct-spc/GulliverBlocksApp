@@ -16,7 +16,6 @@ namespace TitleScene
     {
         public GameObject MapSelectPanel;
         public GameObject MergeMapSelectPanel;
-        public GameObject ModeSelectPanel;
         public GameObject SelectCreatingPanel;
         public GameObject CreateNewMapPanel;
         public GameObject PlaybackModeButton;
@@ -51,14 +50,7 @@ namespace TitleScene
         {
             BlockManager.WorldID = ID;
             BlockManager.IsMerge = isMerge;
-            ModeSelectPanel.SetActive(true);
-            PlaybackModeButton.GetComponent<Button>().onClick.AddListener(() => OnClickModeSelectButton("PlayBack"));
-            ViewModeButton.GetComponent<Button>().onClick.AddListener(() => OnClickModeSelectButton("Vr"));
-        }
-
-        public void OnClickModeSelectButton(string Mode)
-        {
-            GameManager.Mode = Mode;
+            GameManager.Mode = "Vr";
             SceneManager.LoadScene("Vr");
             Screen.orientation = ScreenOrientation.LandscapeLeft;
         }

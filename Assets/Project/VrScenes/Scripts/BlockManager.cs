@@ -106,7 +106,7 @@ namespace VrScene
                 {
                     FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.2379662f, 0.32f * j), Quaternion.identity);
                     FloorA.transform.parent = Floor.transform;
-                    FloorB = (GameObject)Instantiate(Floor2, new Vector3(0.32f * i, -0.2379662f, 0.32f * j), Quaternion.identity);
+                    FloorB = (GameObject)Instantiate(Floor2, new Vector3(0.32f * i, -0.05f, 0.32f * j), Quaternion.identity);
                     FloorB.transform.parent = Floor.transform;
                 }
             }

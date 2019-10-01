@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using JsonFormats;
 
 namespace VrScene
 {
     public class ColorChangePanel : MonoBehaviour
     {
         BlockManager blockManager;
+        CommunicationManager communicationManager = new CommunicationManager();
         [SerializeField] public GameObject panelPref;
         private List<Material> contentMaterials = new List<Material>();
         public GameObject contentObject;
@@ -114,10 +116,12 @@ namespace VrScene
 
         public void OnClickChangeButton()
         {
+            Block targetBlockData = targetBlock.GetComponent<Block>();
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text.Replace("Color", "");
-            targetBlock.GetComponent<Block>().SetColor(toMaterialName);
-            colorChangePanel.SetActive(false);
+            string originColorID = targetBlockData.colorID;
+            targetBlockData.SetColor(toMaterialName);
+            StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, originColorID, targetBlockData.colorID, BlockManager.WorldID));
         }
 
         public void OnClickAllColorChangeButton()
@@ -127,6 +131,7 @@ namespace VrScene
             Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
             blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
             colorChangePanel.SetActive(false);
+            //StartCoroutine(UploadAppliedColorRule("color", null, ));
         }
 
         public void OnClickCancelButton()
@@ -134,6 +139,19 @@ namespace VrScene
             colorChangePanel.SetActive(false);
             //Emissionの有効化・無効化
             targetBlock.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+        }
+
+        IEnumerator UploadAppliedColorRule(string type, string block_id, string origin, string to, string map_id)
+        {
+            Rule ruleData = new Rule();
+            ruleData.type = type;
+            ruleData.block_id = block_id;
+            ruleData.origin = origin;
+            ruleData.to = to;
+            ruleData.map_id = map_id;
+            var uploadAppliedColorRuleTask = communicationManager.uploadAppliedColorRule(ruleData);
+            yield return new WaitUntil(() => uploadAppliedColorRuleTask.IsCompleted);
+            colorChangePanel.SetActive(false);
         }
     }
 }

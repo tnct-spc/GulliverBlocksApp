@@ -9,7 +9,7 @@ using System;
 
 public class CommunicationManager
 {
-    public static string ServerAddress = "dev-gulliverblocks.herokuapp.com";
+    public static string ServerAddress = "gulliverblocks.herokuapp.com";
 
     public async Task<List<BlockInfo>> fetchMapBlocksAsync(string mapId)
     {
@@ -72,14 +72,12 @@ public class CommunicationManager
     {
         string apiUrl = "https://" + ServerAddress + "/login/";
         string jsonStr = "{\"username\": \"" + userName + "\", \"password\": \"" + password + "\"}";
-        Debug.Log(jsonStr);
         UnityWebRequest response = await PostRequest(apiUrl, jsonStr);
-        Debug.Log(response.GetResponseHeader("Cookie"));
         if(response.responseCode != 200)
         {
             return null;
         }
-        string cookie = response.GetResponseHeader("Cookie");
+        string cookie = response.GetResponseHeader("Set-Cookie");
         PlayerPrefs.SetString("Cookie", cookie);
         PlayerPrefs.Save();
         return cookie;
@@ -92,7 +90,7 @@ public class CommunicationManager
         string cookie = PlayerPrefs.GetString("Cookie", "");
         if (cookie != "")
         {
-            req.SetRequestHeader("Cookie", cookie);
+            req.SetRequestHeader("Set-Cookie", cookie);
         }
         await req.SendWebRequest();
         if (req.isNetworkError || req.isHttpError)
@@ -116,7 +114,7 @@ public class CommunicationManager
         string cookie = PlayerPrefs.GetString("Cookie", "");
         if (cookie != "")
         {
-            req.SetRequestHeader("Cookie", cookie);
+            req.SetRequestHeader("Set-Cookie", cookie);
         }
         await req.SendWebRequest();
         if (req.isNetworkError || req.isHttpError)

@@ -31,7 +31,10 @@ namespace TitleScene
         private void Awake()
         {
             XRSettings.enabled = false;
+        }
 
+        private void Start()
+        {
             // Login
             PlayerPrefs.SetString("Password", "blocks");
             PlayerPrefs.Save();
@@ -49,6 +52,7 @@ namespace TitleScene
             {
                 Debug.Log("faild to login");
             }
+            Debug.Log("success to login");
         }
 
         public void SelectGameMode()

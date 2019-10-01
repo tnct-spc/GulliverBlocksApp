@@ -10,18 +10,20 @@ namespace VrScene
     public class ColorChangePanel : MonoBehaviour
     {
         BlockManager blockManager;
-        CommunicationManager communicationManager = new CommunicationManager();
+        CommunicationManager communicationManager;
         [SerializeField] public GameObject panelPref;
         private List<Material> contentMaterials = new List<Material>();
         public GameObject contentObject;
         public GameObject colorChangePanel;
         private ToggleGroup toggleGroup;
         private GameObject targetBlock;
+        private Block targetBlockData;
         public GameObject lightUpObject = null;
 
         private void Awake()
         {
             blockManager = GameObject.Find("GameSystem").GetComponent<BlockManager>();
+            communicationManager = blockManager.CommunicationManager;
         }
 
         public void OnEnable()
@@ -45,6 +47,7 @@ namespace VrScene
         public void SetupColorChangePanel(GameObject targetObject)
         {
             targetBlock = targetObject;
+            targetBlockData = targetBlock.GetComponent<Block>();
             SetColorPanel(targetBlock);
         }
 
@@ -116,7 +119,6 @@ namespace VrScene
 
         public void OnClickChangeButton()
         {
-            Block targetBlockData = targetBlock.GetComponent<Block>();
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text.Replace("Color", "");
             string originColorID = targetBlockData.colorID;
@@ -128,10 +130,10 @@ namespace VrScene
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
+            string originColorID = targetBlockData.colorID;
             Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
             blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
-            colorChangePanel.SetActive(false);
-            //StartCoroutine(UploadAppliedColorRule("color", null, ));
+            StartCoroutine(UploadAppliedColorRule("color", null, originColorID, targetBlockData.colorID, BlockManager.WorldID));
         }
 
         public void OnClickCancelButton()

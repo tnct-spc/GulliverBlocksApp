@@ -25,7 +25,7 @@ namespace VrScene
         Toggle PlayBackButton;
         GameManager GameManager;
         public GameObject LoadingWindow;
-        CommunicationManager CommunicationManager;
+        public CommunicationManager CommunicationManager;
         CommunicationManager.WsClient WsClient;
         public GameObject Floor;
 

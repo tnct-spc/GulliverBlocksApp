@@ -64,7 +64,7 @@ namespace TitleScene
                 Transform selectBtn = panel.transform.Find("selectButton");
                 Transform editBtn = panel.transform.Find("EditButton");
                 Transform deleteBtn = panel.transform.Find("DeleteButton");
-                Transform isMerged = panel.transform.Find("Text");
+                Transform isMerged = panel.transform.Find("MergeImage");
 
                 //ボタンのテキスト変更
                 selectBtn.GetComponentInChildren<Text>().text = WorldsData[btnNum].world.name;

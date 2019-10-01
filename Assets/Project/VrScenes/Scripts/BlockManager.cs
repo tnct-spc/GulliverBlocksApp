@@ -166,10 +166,18 @@ namespace VrScene
             SeekBar.SetActive(true);
             while (true)
             {
-                if (seekbarSlider.value == seekbarSlider.maxValue) break;
+                if (seekbarSlider.value == seekbarSlider.maxValue)
+                {
+                    await Task.Delay(5000);
+                    break;
+                }
+                float FirstBlockTime = Blocks[(int)seekbarSlider.value].time;
                 FallingBlock((int)seekbarSlider.value);
                 seekbarSlider.value++;
-                await Task.Delay(1000);
+                if(seekbarSlider.value != seekbarSlider.maxValue)
+                {
+                    if (FirstBlockTime != Blocks[(int)seekbarSlider.value].time) await Task.Delay(1000);
+                }
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;
             if(GameManager.Mode == "PlayBack")

@@ -269,6 +269,8 @@ namespace VrScene
         public void OnClickCancelButton()
         {
             colorChangePanel.SetActive(false);
+            //Emissionの有効化・無効化
+            targetBlock.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
         }
     }
 }

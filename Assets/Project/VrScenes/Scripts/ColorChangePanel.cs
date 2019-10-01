@@ -260,10 +260,11 @@ namespace VrScene
         public void OnClickAllColorChangeButton()
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
+            string map_id = targetBlock.GetComponent<Block>().map_id;
             string MaterialNunber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
             string MaterialName = "Color" + MaterialNunber;
             Material toMaterial = contentMaterials.Find(material => material.name == MaterialName);
-            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
+            blockManager.ApplyColorRule(blockManager.MakeColorRules("color", map_id, targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
         }
 
         public void OnClickCancelButton()

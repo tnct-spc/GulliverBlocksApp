@@ -90,7 +90,7 @@ public class CommunicationManager
         string cookie = PlayerPrefs.GetString("Cookie", "");
         if (cookie != "")
         {
-            req.SetRequestHeader("Set-Cookie", cookie);
+            req.SetRequestHeader("Cookie", cookie);
         }
         await req.SendWebRequest();
         if (req.isNetworkError || req.isHttpError)
@@ -114,7 +114,7 @@ public class CommunicationManager
         string cookie = PlayerPrefs.GetString("Cookie", "");
         if (cookie != "")
         {
-            req.SetRequestHeader("Set-Cookie", cookie);
+            req.SetRequestHeader("Cookie", cookie);
         }
         await req.SendWebRequest();
         if (req.isNetworkError || req.isHttpError)

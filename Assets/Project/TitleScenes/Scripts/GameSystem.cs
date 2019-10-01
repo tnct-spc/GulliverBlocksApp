@@ -36,7 +36,7 @@ namespace TitleScene
         private void Start()
         {
             // Login
-            PlayerPrefs.SetString("Password", "blocks");
+            PlayerPrefs.SetString("Password", "hoge");
             PlayerPrefs.Save();
             StartCoroutine("Login");
         }

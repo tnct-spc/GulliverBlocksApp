@@ -47,6 +47,13 @@ public class CommunicationManager
         return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
     }
 
+    public async Task<List<Rule>> fetchMergedColorRulesAsync(string mergeid)
+    {
+        var apiUrl = "https://" + ServerAddress + "/get_merged_color_rules/" + mergeid + "/";
+        var jsonStr = await GetRequest(apiUrl);
+        return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
+    }
+
     public async Task<String> uploadMergeAsync(MergeData data)
     {
         var apiUrl = "https://" + ServerAddress + "/create_merge/";
@@ -211,6 +218,7 @@ namespace JsonFormats
         public float time;
         public string status;
         public string colorID;
+        public string map_id;
 
         public Vector3 GetPosition()
         {

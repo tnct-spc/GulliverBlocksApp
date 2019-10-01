@@ -25,6 +25,7 @@ namespace VrScene
         // NonTwoEyesModeUIとその子要素
         public GameObject NonTwoEyesModeUI;
         public Toggle FlyingModeToggle;
+        public Toggle PlayBackModeToggle;
         public GameObject FlyingButtons;
         public Toggle PlayBackButton;
         public GameObject PlayBackModeUI;
@@ -40,6 +41,7 @@ namespace VrScene
         // GeneralMenu関連
         public GameObject GeneralMenuButton;
         public GameObject GeneralMenuPanel;
+        public Toggle GyroModeToggle;
 
         void Start()
         {
@@ -49,8 +51,10 @@ namespace VrScene
 
             seekbarSlider = Seekbar.GetComponent<Slider>();
             FlyingModeToggle.onValueChanged.AddListener(FlyingModeCheck);
+            GyroModeToggle.onValueChanged.AddListener(playermanager.SetGyroEnable);
             seekbarSlider.onValueChanged.AddListener(PlaceBlockBySeekBar);
             PlayBackButton.onValueChanged.AddListener(PlayBack);
+            PlayBackModeToggle.onValueChanged.AddListener(OnPlayBackModeChange);
 
             bool isPlayBackMode = false;
             if (GameManager.Mode == "PlayBack") isPlayBackMode = true;
@@ -118,6 +122,7 @@ namespace VrScene
             seekbarSlider.maxValue = BlockManager.BlocksCount;
             if (isActive)
             {
+                Seekbar.SetActive(true);
                 if (seekbarSlider.value == seekbarSlider.maxValue) seekbarSlider.value = 0;
                 if (BlockManager.isRepeating == false) BlockManager.RepeatPlaceBlocks();
                 fadeOutObjects.Clear();
@@ -185,6 +190,17 @@ namespace VrScene
         public void OnClickBackTitleButton()
         {
             SceneManager.LoadScene("Title");
+        }
+
+        public void OnPlayBackModeChange(bool isActive)
+        {
+            if (isActive)
+            {
+                BlockManager.StartPlayback();
+            } else
+            {
+                BlockManager.StopPlayback();
+            }
         }
 
         //ダッシュに関する処理

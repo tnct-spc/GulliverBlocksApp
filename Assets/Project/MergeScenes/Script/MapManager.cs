@@ -45,7 +45,7 @@ namespace MergeScene
                 maps.Add(d);
             });
             data.merge_maps = maps;
-            data.name = this.MapNameInputField.text;
+            data.name = MapNameInputField.text;
             var uploadMergeTask = CommunicationManager.uploadMergeAsync(data);
             yield return new WaitUntil(() => uploadMergeTask.IsCompleted);
             SceneManager.LoadScene("Title");

@@ -125,6 +125,11 @@ public class CommunicationManager
         {
             public List<BlockInfo> Blocks { get; set; }
         }
+
+        public void ping()
+        {
+            this.ws.Send("ping");
+        }
     }
 
     public static class JsonHelper

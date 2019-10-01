@@ -117,6 +117,7 @@ namespace VrScene
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text.Replace("Color", "");
             targetBlock.GetComponent<Block>().SetColor(toMaterialName);
+            colorChangePanel.SetActive(false);
         }
 
         public void OnClickAllColorChangeButton()
@@ -125,6 +126,7 @@ namespace VrScene
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
             Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
             blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
+            colorChangePanel.SetActive(false);
         }
 
         public void OnClickCancelButton()

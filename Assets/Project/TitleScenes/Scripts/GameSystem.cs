@@ -9,6 +9,7 @@ using UnityEngine.XR;
 using VrScene;
 using MergeScene;
 using JsonFormats;
+using System.Threading.Tasks;
 
 namespace TitleScene
 {
@@ -25,11 +26,31 @@ namespace TitleScene
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
         public InputField MapNameInputField;
+        private CommunicationManager communicationManager;
 
         private void Awake()
         {
             XRSettings.enabled = false;
+
+            // Login
+            PlayerPrefs.SetString("Password", "blocks");
+            PlayerPrefs.Save();
+            StartCoroutine("Login");
         }
+
+        IEnumerator Login()
+        {
+            string userName = PlayerPrefs.GetString("UserName", "");
+            string password = PlayerPrefs.GetString("Password", "");
+            Task<string> loginTask = communicationManager.loginAndFetchCookieAsync(userName, password);
+            yield return new WaitUntil(() => loginTask.IsCompleted);
+            Debug.Log(loginTask.Result);
+            if (loginTask.Result == null)
+            {
+                Debug.Log("faild to login");
+            }
+        }
+
         public void SelectGameMode()
         {
             MapSelectPanel.SetActive(true);

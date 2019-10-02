@@ -74,6 +74,14 @@ public class CommunicationManager
         return await GetRequest(apiUrl);
     }
 
+    public async Task<String> uploadAppliedColorRule(Rule ruleData)
+    {
+        var apiUrl = "https://" + ServerAddress + "/create_color_rule/";
+        string jsonStr = JsonUtility.ToJson(ruleData);
+        Debug.Log(jsonStr);
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
     private static async Task<string> GetRequest(string url)
     {
 

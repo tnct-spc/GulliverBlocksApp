@@ -15,6 +15,7 @@ namespace VrScene
         public string ID;
         public float time;
         public string colorID;
+        public string applied_colorID;
         public string map_id;
 
 
@@ -26,6 +27,7 @@ namespace VrScene
             ID = block.ID;
             time = block.time;
             colorID = block.colorID;
+            applied_colorID = block.colorID;
             map_id = block.map_id;
         }
 
@@ -40,7 +42,7 @@ namespace VrScene
             string colorName = "Color" + colorID;
             Material colorMaterial = Resources.Load("Materials/"+colorName) as Material;
             GetComponent<Renderer>().material = colorMaterial;
-            this.colorID = colorID;
+            this.applied_colorID = colorID;
         }
 
         public void SetActive(bool f)

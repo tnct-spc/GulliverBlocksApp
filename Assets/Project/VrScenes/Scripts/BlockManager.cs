@@ -25,7 +25,7 @@ namespace VrScene
         Toggle PlayBackButton;
         GameManager GameManager;
         public GameObject LoadingWindow;
-        CommunicationManager CommunicationManager;
+        public CommunicationManager CommunicationManager;
         CommunicationManager.WsClient WsClient;
         public GameObject Floor;
 
@@ -136,9 +136,9 @@ namespace VrScene
             {
                 for (float j = -24; j < 24; j++)
                 {
-                    FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.2379662f, 0.32f * j), Quaternion.identity);
+                    FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.0f, 0.32f * j), Quaternion.identity);
                     FloorA.transform.parent = Floor.transform;
-                    FloorB = (GameObject)Instantiate(Floor2, new Vector3(0.32f * i, -0.05f, 0.32f * j), Quaternion.identity);
+                    FloorB = (GameObject)Instantiate(Floor2, new Vector3(0.32f * i, 0.19f, 0.32f * j), Quaternion.identity);
                     FloorB.transform.parent = Floor.transform;
                 }
             }
@@ -176,10 +176,19 @@ namespace VrScene
             SeekBar.SetActive(true);
             while (true)
             {
-                if (seekbarSlider.value == seekbarSlider.maxValue) break;
+                if (seekbarSlider.value == seekbarSlider.maxValue)
+                {
+                    await Task.Delay(3000);
+                    break;
+                }
+                int FirstBlockTime = (int)Blocks[(int)seekbarSlider.value].time;
                 FallingBlock((int)seekbarSlider.value);
                 seekbarSlider.value++;
-                await Task.Delay(1000);
+                if(seekbarSlider.value != seekbarSlider.maxValue)
+                {
+                    if ((FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) * (FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) >= 25)
+                        await Task.Delay(1000);
+                }
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;
             if(GameManager.Mode == "PlayBack")
@@ -236,6 +245,7 @@ namespace VrScene
             {
                 string origin = ruleData.origin.Replace(" (Instance)", "");
                 List<Block> targetBlocks = this.Blocks.FindAll(block => (block.map_id == ruleData.map_id) && block.colorID == origin);
+                Debug.Log(targetBlocks.Count);
                 targetBlocks.ForEach(block =>
                 {
                     block.SetColor(to);

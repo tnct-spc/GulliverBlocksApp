@@ -116,6 +116,9 @@ namespace VrScene
         private void RespawnPlayer()
         {
             transform.position = Vector3.zero;
+            Vector3 pos = transform.position;
+            pos.y = 1.0f;
+            transform.position = pos;
         }
 
         private void CheckPlayerFall()

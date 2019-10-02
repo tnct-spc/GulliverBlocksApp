@@ -38,7 +38,7 @@ namespace TitleScene
             CommunicationManager = new CommunicationManager();
 
             // Login
-            PlayerPrefs.SetString("Password", "gulliver");
+            PlayerPrefs.SetString("Password", "hoge");
             PlayerPrefs.Save();
             StartCoroutine("Login");
         }
@@ -57,9 +57,6 @@ namespace TitleScene
             {
                 Debug.Log("success to login");
             }
-            StartCoroutine("LoginTest");
-            StartCoroutine("Logout");
-            StartCoroutine("LoginTest");
         }
 
         IEnumerable Logout()
@@ -74,13 +71,6 @@ namespace TitleScene
             {
                 Debug.Log("success to logout");
             }
-        }
-
-        IEnumerator LoginTest()
-        {
-            Task<string> loginTestTask = CommunicationManager.loginTestAsync();
-            yield return new WaitUntil(() => loginTestTask.IsCompleted);
-            Debug.Log(loginTestTask.Result);
         }
 
         public void SelectGameMode()

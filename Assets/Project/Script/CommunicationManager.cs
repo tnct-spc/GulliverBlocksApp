@@ -9,7 +9,7 @@ using System;
 
 public class CommunicationManager
 {
-    public static string ServerAddress = "dev-gulliverblocks.herokuapp.com";
+    public static string ServerAddress = "gulliverblocks.herokuapp.com";
 
     public async Task<List<BlockInfo>> fetchMapBlocksAsync(string mapId)
     {
@@ -72,12 +72,6 @@ public class CommunicationManager
     {
         string apiUrl = "https://" + ServerAddress + "/logout/";
         return await GetRequest(apiUrl);
-    }
-
-    public async Task<string> loginTestAsync()
-    {
-        string apiUrl = "https://" + ServerAddress + "/test/";
-        return await GetRequest(apiUrl); ;
     }
 
     private static async Task<string> GetRequest(string url)

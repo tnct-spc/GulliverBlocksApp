@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System;
 
 namespace VrScene
 {
@@ -16,7 +17,9 @@ namespace VrScene
         private ToggleGroup toggleGroup;
         private GameObject targetBlock;
         public GameObject lightUpObject = null;
-        public Color lastBlockColor;
+        public Material lastBlockMaterial;
+        public int quenum = 3000;
+        private string[] colors = new string[13] { "Color0", "Color1", "Color2", "Color3", "Color4", "Color5", "Color6", "Color7", "Color8", "Color9", "Color10", "Color11", "Color12" };
 
         private void Awake()
         {
@@ -26,7 +29,7 @@ namespace VrScene
         public void OnEnable()
         {
             contentMaterials.Clear();
-            Object[] loadedMaterials = Resources.LoadAll("Materials", typeof(Material));
+            UnityEngine.Object[] loadedMaterials = Resources.LoadAll("Materials", typeof(Material));
             foreach(Material material in loadedMaterials)
             {
                 contentMaterials.Add(material);
@@ -82,6 +85,20 @@ namespace VrScene
             bool isFirst = true;
             for (int i = 0; i < materialCount; i++)
             {
+                bool flag = false;
+                for(int j = 0; j < colors.Count(); j++)
+                {
+                    if(contentMaterials[i].name == colors[j])
+                    {
+                        break;
+                    }
+                    if(j == colors.Count() - 1)
+                    {
+                        flag = true;
+                    }
+                }
+                if (flag) continue;
+
                 int panelNum = i;
 
                 //ContentObjectを生成し、contentの子要素にする
@@ -117,7 +134,10 @@ namespace VrScene
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text.Replace("Color", "");
-            targetBlock.GetComponent<Block>().SetColor(toMaterialName);
+            targetBlock.GetComponent<Block>().SetColor((int.Parse(toMaterialName)).ToString());
+            targetBlock.GetComponent<Block>().colorID = (int.Parse(targetBlock.GetComponent<Block>().colorID) + 13).ToString();
+            lastBlockMaterial = targetBlock.GetComponent<Renderer>().material;
+            targetBlock = null;
         }
 
         public void OnClickAllColorChangeButton()
@@ -125,7 +145,11 @@ namespace VrScene
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
             Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
-            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
+            print(targetBlock.GetComponent<Renderer>().material.name.Replace("Color", "").Replace(" ", ""));
+            print(int.Parse(targetBlock.GetComponent<Renderer>().material.name.Replace("Color", "").Replace(" ", "")));
+            print(toMaterial.name.Replace("Color", ""));
+            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), (int.Parse(toMaterial.name.Replace("Color", "")) + 13).ToString()));
+            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", (int.Parse(targetBlock.GetComponent<Renderer>().material.name.Replace("Color", "")) - 13).ToString(), (int.Parse(toMaterial.name.Replace("Color", ""))).ToString()));
         }
 
         public void OnClickCancelButton()

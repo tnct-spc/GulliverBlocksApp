@@ -145,11 +145,11 @@ namespace VrScene
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
             Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
-            print(targetBlock.GetComponent<Renderer>().material.name.Replace("Color", "").Replace(" ", ""));
-            print(int.Parse(targetBlock.GetComponent<Renderer>().material.name.Replace("Color", "").Replace(" ", "")));
+            print(targetBlock.GetComponent<Block>().colorID);
+            print(int.Parse(targetBlock.GetComponent<Block>().colorID)-13);
             print(toMaterial.name.Replace("Color", ""));
-            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), (int.Parse(toMaterial.name.Replace("Color", "")) + 13).ToString()));
-            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", (int.Parse(targetBlock.GetComponent<Renderer>().material.name.Replace("Color", "")) - 13).ToString(), (int.Parse(toMaterial.name.Replace("Color", ""))).ToString()));
+            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", (int.Parse(targetBlock.GetComponent<Block>().colorID) - 13).ToString(), (int.Parse(toMaterial.name.Replace("Color", ""))).ToString()));
+            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Block>().colorID, (int.Parse(toMaterial.name.Replace("Color", "")) + 13).ToString()));
         }
 
         public void OnClickCancelButton()

@@ -26,15 +26,13 @@ namespace TitleScene
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
         public InputField MapNameInputField;
-        private CommunicationManager communicationManager;
+        private CommunicationManager CommunicationManager;
 
         private void Awake()
         {
             XRSettings.enabled = false;
-        }
+            CommunicationManager = new CommunicationManager();
 
-        private void Start()
-        {
             // Login
             PlayerPrefs.SetString("Password", "hoge");
             PlayerPrefs.Save();
@@ -45,9 +43,8 @@ namespace TitleScene
         {
             string userName = PlayerPrefs.GetString("UserName", "");
             string password = PlayerPrefs.GetString("Password", "");
-            Task<string> loginTask = communicationManager.loginAndFetchCookieAsync(userName, password);
+            Task<string> loginTask = CommunicationManager.loginAndFetchCookieAsync(userName, password);
             yield return new WaitUntil(() => loginTask.IsCompleted);
-            Debug.Log(loginTask.Result);
             if (loginTask.Result == null)
             {
                 Debug.Log("faild to login");

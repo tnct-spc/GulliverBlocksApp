@@ -176,7 +176,7 @@ namespace VrScene
                 seekbarSlider.value++;
                 if(seekbarSlider.value != seekbarSlider.maxValue)
                 {
-                    if ((FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) * (FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) >= 10)
+                    if ((FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) * (FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) >= 25)
                         await Task.Delay(1000);
                 }
             }

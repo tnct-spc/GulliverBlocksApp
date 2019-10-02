@@ -10,17 +10,6 @@ using VrScene;
 using MergeScene;
 using JsonFormats;
 
-public class GameSystem : MonoBehaviour
-{
-// 表示中は1眼になるようにする
-private void splashscreen()
-{
-    if (!UnityEngine.Rendering.SplashScreen.isFinished) {
-        XRSettings.enabled = false;
-    }
-}
-}
-
 namespace TitleScene
 {
     public class GameSystem : MonoBehaviour

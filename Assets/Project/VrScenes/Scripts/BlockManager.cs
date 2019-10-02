@@ -168,15 +168,16 @@ namespace VrScene
             {
                 if (seekbarSlider.value == seekbarSlider.maxValue)
                 {
-                    await Task.Delay(5000);
+                    await Task.Delay(3000);
                     break;
                 }
-                float FirstBlockTime = Blocks[(int)seekbarSlider.value].time;
+                int FirstBlockTime = (int)Blocks[(int)seekbarSlider.value].time;
                 FallingBlock((int)seekbarSlider.value);
                 seekbarSlider.value++;
                 if(seekbarSlider.value != seekbarSlider.maxValue)
                 {
-                    if (FirstBlockTime != Blocks[(int)seekbarSlider.value].time) await Task.Delay(1000);
+                    if ((FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) * (FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) >= 10)
+                        await Task.Delay(1000);
                 }
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;

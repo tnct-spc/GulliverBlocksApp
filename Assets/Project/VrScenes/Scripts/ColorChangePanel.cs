@@ -277,7 +277,7 @@ namespace VrScene
             string MaterialNunber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
             string MaterialName = "Color" + MaterialNunber;
             Material toMaterial = contentMaterials.Find(material => material.name == MaterialName);
-            blockManager.ApplyColorRule(blockManager.MakeColorRules("color", map_id, targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
+            blockManager.ApplyColorRule(blockManager.MakeColorRules("color", map_id, targetBlockData.colorID, toMaterial.name.Replace("Color", "")));
             StartCoroutine(UploadAppliedColorRule("color", null, targetBlockData.colorID, targetBlockData.applied_colorID, BlockManager.WorldID));
         }
 

@@ -11,6 +11,12 @@ public class CommunicationManager
 {
     public static string ServerAddress = "gulliverblocks.herokuapp.com";
 
+    public CommunicationManager()
+    {
+        //CommunicationManagerのサーバーアドレスの更新
+        ServerAddress = PlayerPrefs.GetString("SERVER_ADDRESS", "gulliverblocks.herokuapp.com");
+    }
+
     public async Task<List<BlockInfo>> fetchMapBlocksAsync(string mapId)
     {
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";

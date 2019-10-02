@@ -31,10 +31,14 @@ namespace TitleScene
         private void Awake()
         {
             XRSettings.enabled = false;
+        }
+
+        private void Start()
+        {
             CommunicationManager = new CommunicationManager();
 
             // Login
-            PlayerPrefs.SetString("Password", "hoge");
+            PlayerPrefs.SetString("Password", "gulliver");
             PlayerPrefs.Save();
             StartCoroutine("Login");
         }
@@ -43,13 +47,40 @@ namespace TitleScene
         {
             string userName = PlayerPrefs.GetString("UserName", "");
             string password = PlayerPrefs.GetString("Password", "");
-            Task<string> loginTask = CommunicationManager.loginAndFetchCookieAsync(userName, password);
+            Task<string> loginTask = CommunicationManager.loginAsync(userName, password);
             yield return new WaitUntil(() => loginTask.IsCompleted);
-            if (loginTask.Result == null)
+            if (loginTask.Result == "")
             {
                 Debug.Log("faild to login");
             }
-            Debug.Log("success to login");
+            else
+            {
+                Debug.Log("success to login");
+            }
+            StartCoroutine("LoginTest");
+            StartCoroutine("Logout");
+            StartCoroutine("LoginTest");
+        }
+
+        IEnumerable Logout()
+        {
+            Task<string> logoutTask = CommunicationManager.logoutAsync();
+            yield return new WaitUntil(() => logoutTask.IsCompleted);
+            if(logoutTask.Result == "")
+            {
+                Debug.Log("faild to logout");
+            }
+            else
+            {
+                Debug.Log("success to logout");
+            }
+        }
+
+        IEnumerator LoginTest()
+        {
+            Task<string> loginTestTask = CommunicationManager.loginTestAsync();
+            yield return new WaitUntil(() => loginTestTask.IsCompleted);
+            Debug.Log(loginTestTask.Result);
         }
 
         public void SelectGameMode()

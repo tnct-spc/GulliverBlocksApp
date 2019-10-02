@@ -9,53 +9,47 @@ using System;
 
 public class CommunicationManager
 {
-    public static string ServerAddress = "gulliverblocks.herokuapp.com";
+    public static string ServerAddress = "dev-gulliverblocks.herokuapp.com";
 
     public async Task<List<BlockInfo>> fetchMapBlocksAsync(string mapId)
     {
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
-        UnityWebRequest response = await GetRequest(apiUrl);
-        var jsonStr = response.downloadHandler.text;
+        var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
     }
 
     public async Task<List<BlockInfo>> fetchMergedBlocksAsync(string mapId)
     {
         var apiUrl = "https://" + ServerAddress + "/get_merged_blocks/" + mapId + "/";
-        UnityWebRequest response = await GetRequest(apiUrl);
-        var jsonStr = response.downloadHandler.text;
+        var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
     }
 
     public async Task<List<World>> fetchMapsAsync()
     {
         var apiUrl = "https://" + ServerAddress + "/get_maps/";
-        UnityWebRequest response = await GetRequest(apiUrl);
-        var jsonStr = response.downloadHandler.text;
+        var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<World>(jsonStr, "Maps");
     }
 
     public async Task<List<World>> fetchMergesAsync()
     {
         var apiUrl = "https://" + ServerAddress + "/get_merges/";
-        UnityWebRequest response = await GetRequest(apiUrl);
-        var jsonStr = response.downloadHandler.text;
+        var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<World>(jsonStr, "Merges");
     }
 
     public async Task<List<Rule>> fetchColorsAsync(string mapid)
     {
         var apiUrl = "https://" + ServerAddress + "/get_color_rules/" + mapid + "/";
-        UnityWebRequest response = await GetRequest(apiUrl);
-        var jsonStr = response.downloadHandler.text;
+        var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
     }
 
     public async Task<List<Rule>> fetchMergedColorRulesAsync(string mergeid)
     {
         var apiUrl = "https://" + ServerAddress + "/get_merged_color_rules/" + mergeid + "/";
-        UnityWebRequest response = await GetRequest(apiUrl);
-        var jsonStr = response.downloadHandler.text;
+        var jsonStr = await GetRequest(apiUrl);
         return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
     }
 
@@ -64,66 +58,60 @@ public class CommunicationManager
         var apiUrl = "https://" + ServerAddress + "/create_merge/";
         string jsonStr = JsonUtility.ToJson(data);
         Debug.Log(jsonStr);
-        UnityWebRequest request = await PostRequest(apiUrl, jsonStr);
-        return request.downloadHandler.text;
+        return await PostRequest(apiUrl, jsonStr);
     }
 
-    public async Task<string> loginAndFetchCookieAsync(string userName, string password)
+    public async Task<string> loginAsync(string userName, string password)
     {
         string apiUrl = "https://" + ServerAddress + "/login/";
         string jsonStr = "{\"username\": \"" + userName + "\", \"password\": \"" + password + "\"}";
-        UnityWebRequest response = await PostRequest(apiUrl, jsonStr);
-        if(response.responseCode != 200)
-        {
-            return null;
-        }
-        string cookie = response.GetResponseHeader("Set-Cookie");
-        PlayerPrefs.SetString("Cookie", cookie);
-        PlayerPrefs.Save();
-        return cookie;
+        return await PostRequest(apiUrl, jsonStr);
     }
 
-    private static async Task<UnityWebRequest> GetRequest(string url)
+    public async Task<string> logoutAsync()
+    {
+        string apiUrl = "https://" + ServerAddress + "/logout/";
+        return await GetRequest(apiUrl);
+    }
+
+    public async Task<string> loginTestAsync()
+    {
+        string apiUrl = "https://" + ServerAddress + "/test/";
+        return await GetRequest(apiUrl); ;
+    }
+
+    private static async Task<string> GetRequest(string url)
     {
 
         UnityWebRequest req = UnityWebRequest.Get(url);
-        string cookie = PlayerPrefs.GetString("Cookie", "");
-        if (cookie != "")
-        {
-            req.SetRequestHeader("Cookie", cookie);
-        }
+        req.redirectLimit = 1;
         await req.SendWebRequest();
         if (req.isNetworkError || req.isHttpError)
         {
             Debug.Log(req.error);
-            return null;
+            return "";
         }
         else
         {
-            return req;
+            return req.downloadHandler.text;
         }
     }
 
-    private static async Task<UnityWebRequest> PostRequest(string url, string jsonParam)
+    private static async Task<string> PostRequest(string url, string jsonParam)
     {
         var req = new UnityWebRequest(url, "POST");
         byte[] postData = System.Text.Encoding.UTF8.GetBytes(jsonParam);
         req.uploadHandler = new UploadHandlerRaw(postData);
         req.downloadHandler = new DownloadHandlerBuffer();
         req.SetRequestHeader("Content-Type", "application/json");
-        string cookie = PlayerPrefs.GetString("Cookie", "");
-        if (cookie != "")
-        {
-            req.SetRequestHeader("Cookie", cookie);
-        }
         await req.SendWebRequest();
         if (req.isNetworkError || req.isHttpError)
         {
             Debug.Log(req.error);
             Debug.Log(req.downloadHandler.text);
-            return null;
+            return "";
         }
-        return req;
+        return req.downloadHandler.text;
     }
 
     public class WsClient

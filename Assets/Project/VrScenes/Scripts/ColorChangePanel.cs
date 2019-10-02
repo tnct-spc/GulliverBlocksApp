@@ -121,27 +121,30 @@ namespace VrScene
                         textMaterialNameLabel.text = "ガラス";
                         break;
                     case 6:
-                        textMaterialNameLabel.text = "黄色";
+                        textMaterialNameLabel.text = "コンクリート";
                         break;
                     case 7:
-                        textMaterialNameLabel.text = "オレンジ";
+                        textMaterialNameLabel.text = "黄色";
                         break;
                     case 8:
-                        textMaterialNameLabel.text = "黄緑";
+                        textMaterialNameLabel.text = "オレンジ";
                         break;
                     case 9:
-                        textMaterialNameLabel.text = "水色";
+                        textMaterialNameLabel.text = "黄緑";
                         break;
                     case 10:
-                        textMaterialNameLabel.text = "青";
+                        textMaterialNameLabel.text = "水色";
                         break;
                     case 11:
-                        textMaterialNameLabel.text = "緑";
+                        textMaterialNameLabel.text = "青";
                         break;
                     case 12:
-                        textMaterialNameLabel.text = "紫";
+                        textMaterialNameLabel.text = "緑";
                         break;
                     case 13:
+                        textMaterialNameLabel.text = "紫";
+                        break;
+                    case 14:
                         textMaterialNameLabel.text = "木材";
                         break;
                 }
@@ -211,6 +214,9 @@ namespace VrScene
                 case "13":
                     colorName = "ガラス";
                     break;
+                case "14":
+                    colorName = "コンクリート";
+                    break;
             }
             return colorName;
         }
@@ -260,6 +266,9 @@ namespace VrScene
                     break;
                 case "ガラス":
                     colorNumber = "13";
+                    break;
+                case "コンクリート":
+                    colorNumber = "14";
                     break;
             }
             return colorNumber;

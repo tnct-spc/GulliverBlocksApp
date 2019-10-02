@@ -236,6 +236,7 @@ namespace VrScene
             {
                 string origin = ruleData.origin.Replace(" (Instance)", "");
                 List<Block> targetBlocks = this.Blocks.FindAll(block => (block.map_id == ruleData.map_id) && block.colorID == origin);
+                Debug.Log(targetBlocks.Count);
                 targetBlocks.ForEach(block =>
                 {
                     block.SetColor(to);

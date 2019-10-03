@@ -30,6 +30,7 @@ namespace TitleScene
         {
             XRSettings.enabled = false;
         }
+
         public void SelectGameMode()
         {
             MapSelectPanel.SetActive(true);

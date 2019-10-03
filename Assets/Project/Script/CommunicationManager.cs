@@ -28,7 +28,6 @@ public class CommunicationManager
     {
         var apiUrl = "https://" + ServerAddress + "/get_merged_blocks/" + mapId + "/";
         var jsonStr = await GetRequest(apiUrl);
-        
         return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
     }
 
@@ -66,6 +65,19 @@ public class CommunicationManager
         string jsonStr = JsonUtility.ToJson(data);
         Debug.Log(jsonStr);
         return await PostRequest(apiUrl, jsonStr);
+    }
+
+    public async Task<string> loginAsync(string userName, string password)
+    {
+        string apiUrl = "https://" + ServerAddress + "/login/";
+        string jsonStr = "{\"username\": \"" + userName + "\", \"password\": \"" + password + "\"}";
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
+    public async Task<string> logoutAsync()
+    {
+        string apiUrl = "https://" + ServerAddress + "/logout/";
+        return await GetRequest(apiUrl);
     }
 
     public async Task<String> uploadAppliedColorRule(Rule ruleData)

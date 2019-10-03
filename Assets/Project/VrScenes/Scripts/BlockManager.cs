@@ -138,13 +138,14 @@ namespace VrScene
             float minX = 0.0f;
             float maxZ = 0.0f;
             float minZ = 0.0f;
+            float extensionFloor = 48.0f;
             for (int i = 0; i < Blocks.Count; i++)
             {
                 Block block = Blocks[i];
-                if (maxX <= block.x) maxX = block.x;
-                if (minX >= block.x) minX = block.x;
-                if (maxZ <= block.z) maxZ = block.z;
-                if (minZ >= block.z) minZ = block.z;
+                if (maxX <= block.x) maxX = block.x + extensionFloor;
+                if (minX >= block.x) minX = block.x - extensionFloor;
+                if (maxZ <= block.z) maxZ = block.z + extensionFloor;
+                if (minZ >= block.z) minZ = block.z - extensionFloor;
             }
 
             for (float i = minX; i <= maxX; i++)

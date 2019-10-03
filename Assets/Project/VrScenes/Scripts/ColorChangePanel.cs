@@ -78,6 +78,13 @@ namespace VrScene
             currentColorPanel.Find("CurrentNameText").gameObject.GetComponent<Text>().text = currentMaterialName;
             currentColorPanel.Find("CurrentRawImage").gameObject.GetComponent<RawImage>().material = CopyTo2DMaterial(currentMaterial);
 
+            //originColorPanelの設定
+            Material originMaterial = Resources.Load("Materials/Color" + targetBlockData.colorID.ToString()) as Material;
+            Transform originColorPanel = colorChangePanel.transform.Find("OriginColorPanel");
+            string originMaterialName = ChengeMaterialNameToColorName(originMaterial.name);
+            originColorPanel.Find("OriginNameText").gameObject.GetComponent<Text>().text = originMaterialName;
+            originColorPanel.Find("OriginRawImage").gameObject.GetComponent<RawImage>().material = CopyTo2DMaterial(originMaterial);
+
             //Contentの高さ決定
             RectTransform content = contentObject.GetComponent<RectTransform>();
             float panelSpace = content.GetComponent<VerticalLayoutGroup>().spacing;
@@ -287,20 +294,18 @@ namespace VrScene
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string MaterialNumber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
             targetBlock.GetComponent<Block>().SetColor(MaterialNumber);
-            string originColorID = targetBlockData.colorID;
-            StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, originColorID, targetBlockData.colorID, BlockManager.WorldID));
+            StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.colorID, targetBlockData.applied_colorID, BlockManager.WorldID));
         }
 
         public void OnClickAllColorChangeButton()
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
-            string originColorID = targetBlockData.colorID;
             string map_id = targetBlockData.map_id;
             string MaterialNunber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
             string MaterialName = "Color" + MaterialNunber;
             Material toMaterial = contentMaterials.Find(material => material.name == MaterialName);
-            blockManager.ApplyColorRule(blockManager.MakeColorRules("color", map_id, targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
-            StartCoroutine(UploadAppliedColorRule("color", null, originColorID, targetBlockData.colorID, BlockManager.WorldID));
+            blockManager.ApplyColorRule(blockManager.MakeColorRules("color", map_id, targetBlockData.colorID, toMaterial.name.Replace("Color", "")));
+            StartCoroutine(UploadAppliedColorRule("color", null, targetBlockData.colorID, targetBlockData.applied_colorID, BlockManager.WorldID));
         }
 
         public void OnClickCancelButton()

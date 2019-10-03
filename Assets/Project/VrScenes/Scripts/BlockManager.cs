@@ -25,8 +25,9 @@ namespace VrScene
         Toggle PlayBackButton;
         GameManager GameManager;
         public GameObject LoadingWindow;
-        CommunicationManager CommunicationManager;
+        public CommunicationManager CommunicationManager;
         CommunicationManager.WsClient WsClient;
+        public GameObject Floor;
 
         private void Awake()
         {
@@ -34,8 +35,17 @@ namespace VrScene
             this.WsClient = new CommunicationManager.WsClient(WorldID);
             this.WsClient.OnBlockReceived += (sender, e) => this.UpdateBlocks = e.Blocks;// WSが来た時のイベント, parse済みのものがe.Blocksに入る
             this.WsClient.StartConenction();
+            StartCoroutine("PingLoop");
         }
 
+        private IEnumerator PingLoop()
+        {
+            while(true)
+            {
+                this.WsClient.ping();
+                yield return new WaitForSeconds(30f);
+            }
+        }
         private void OnBlockUpdate(List<BlockInfo> blocks)
         {
             this.UpdateBlocks = blocks;
@@ -52,7 +62,7 @@ namespace VrScene
                 UpdateBlocks.FindAll(b => b.status == "add").ForEach(b => AddBlock(b));
                 UpdateBlocks.FindAll(b => b.status == "delete").ForEach(b => DeleteBlock(b));
                 UpdateBlocks.FindAll(b => b.status == "update").ForEach(b => UpdateBlock(b));
-                this.ColorRules.ForEach(this.ApplyColorRules);
+                this.ColorRules.ForEach(this.ApplyColorRule);
             }
             this.UpdateBlocks = new List<BlockInfo> { };
         }
@@ -70,22 +80,48 @@ namespace VrScene
             seekbarSlider = InputManager.seekbarSlider;
             PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
-            SetFloor();
             StartCoroutine("FetchData");
         }
 
         IEnumerator FetchData()
         {
-            var fetchBlocksTask = IsMerge ? CommunicationManager.fetchMergedBlocksAsync(WorldID) :
-            CommunicationManager.fetchMapBlocksAsync(WorldID);
-            var fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
+            Task<List<BlockInfo>> fetchBlocksTask;
+            Task<List<Rule>> fetchColorRulesTask; 
+            if (IsMerge)
+            {
+                fetchBlocksTask = CommunicationManager.fetchMergedBlocksAsync(WorldID);
+                fetchColorRulesTask = CommunicationManager.fetchMergedColorRulesAsync(WorldID);
+            } else
+            {
+                fetchBlocksTask = CommunicationManager.fetchMapBlocksAsync(WorldID);
+                fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
+            }
             yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
             fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
+
             yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
             this.ColorRules = fetchColorRulesTask.Result;
-            this.ColorRules.ForEach(this.ApplyColorRules);
+            this.ColorRules.ForEach(this.ApplyColorRule);
+
+            SetFloor();
+
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
+
+            GameObject.Find("Player").GetComponent<PlayerManager>().Flying(false);
+        }
+        
+        public void StopPlayback()
+        {
+            GameManager.Mode = "Vr";
+            seekbarSlider.value = seekbarSlider.maxValue;
+            InputManager.PlayBackModeUI.SetActive(false);
+            isRepeating = false;
+        }
+        public void StartPlayback()
+        {
+            GameManager.Mode = "PlayBack";
+            InputManager.PlayBackModeUI.SetActive(true);
         }
 
         void InitialPlacement(List<BlockInfo> blocksInfo)
@@ -95,14 +131,33 @@ namespace VrScene
 
         private void SetFloor()
         {
+            GameObject FloorA;
+            GameObject FloorB;
             GameObject Floor1 = (GameObject)Resources.Load("Floor1");
             GameObject Floor2 = (GameObject)Resources.Load("Floor2");
-            for (float i = -24; i < 24; i++)
+
+            float maxX = 0.0f;
+            float minX = 0.0f;
+            float maxZ = 0.0f;
+            float minZ = 0.0f;
+            float extensionFloor = 48.0f;
+            for (int i = 0; i < Blocks.Count; i++)
             {
-                for (float j = -24; j < 24; j++)
+                Block block = Blocks[i];
+                if (maxX <= block.x) maxX = block.x;
+                if (minX >= block.x) minX = block.x;
+                if (maxZ <= block.z) maxZ = block.z;
+                if (minZ >= block.z) minZ = block.z;
+            }
+
+            for (float i = minX - extensionFloor; i <= maxX + extensionFloor; i++)
+            {
+                for (float j = minZ - extensionFloor; j <= maxZ + extensionFloor; j++)
                 {
-                    Instantiate(Floor1, new Vector3(0.32f * i, -0.2379662f, 0.32f * j), Quaternion.identity);
-                    Instantiate(Floor2, new Vector3(0.32f * i, -0.05f, 0.32f * j), Quaternion.identity);
+                    FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.0f, 0.32f * j), Quaternion.identity);
+                    FloorA.transform.parent = Floor.transform;
+                    FloorB = (GameObject)Instantiate(Floor2, new Vector3(0.32f * i, 0.19f, 0.32f * j), Quaternion.identity);
+                    FloorB.transform.parent = Floor.transform;
                 }
             }
         }
@@ -137,23 +192,29 @@ namespace VrScene
         {
             isRepeating = true;
             SeekBar.SetActive(true);
-            while (BlockNumber < this.BlocksCount)
+            while (true)
             {
-                while (PlayBackButton.GetComponent<Toggle>().isOn == false)
+                if (seekbarSlider.value == seekbarSlider.maxValue)
                 {
-                    SeekBar.SetActive(false);
-                    await Task.Delay(1);
+                    await Task.Delay(3000);
+                    break;
                 }
-                SeekBar.SetActive(true);
-                if (seekbarSlider.value == seekbarSlider.maxValue) break;
+                int FirstBlockTime = (int)Blocks[(int)seekbarSlider.value].time;
                 FallingBlock((int)seekbarSlider.value);
                 seekbarSlider.value++;
-                await Task.Delay(1000);
+                if(seekbarSlider.value != seekbarSlider.maxValue)
+                {
+                    if ((FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) * (FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) >= 25)
+                        await Task.Delay(1000);
+                }
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;
-            ClearBlocks();
-            seekbarSlider.value = 0;
-            isRepeating = false;
+            if(GameManager.Mode == "PlayBack")
+            {
+                ClearBlocks();
+                seekbarSlider.value = 0;
+                isRepeating = false;
+            }
         }
 
         async void FallingBlock(int i)
@@ -188,7 +249,7 @@ namespace VrScene
             }
             BlockNumber = value;
         }
-        public void ApplyColorRules(Rule ruleData)
+        public void ApplyColorRule(Rule ruleData)
         {
             string type = ruleData.type;
             string to = ruleData.to;
@@ -201,7 +262,8 @@ namespace VrScene
             if (type == "color")
             {
                 string origin = ruleData.origin.Replace(" (Instance)", "");
-                List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == origin);
+                List<Block> targetBlocks = this.Blocks.FindAll(block => (block.map_id == ruleData.map_id) && block.applied_colorID == origin);
+                //Debug.Log(targetBlocks.Count);
                 targetBlocks.ForEach(block =>
                 {
                     block.SetColor(to, false);
@@ -220,12 +282,13 @@ namespace VrScene
             }
         }
 
-        public Rule MakeColorRules(string type, string origin, string to)
+        public Rule MakeColorRules(string type, string map_id, string origin, string to)
         {
             Rule rule = new Rule();
             rule.type = type;
             rule.origin = origin;
             rule.to = to;
+            rule.map_id = map_id;
             return rule;
         }
     }

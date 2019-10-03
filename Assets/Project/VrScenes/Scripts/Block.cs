@@ -16,6 +16,8 @@ namespace VrScene
         public string ID;
         public float time;
         public string colorID;
+        public string applied_colorID;
+        public string map_id;
 
 
         public void SetBlockData(BlockInfo block)
@@ -26,6 +28,8 @@ namespace VrScene
             ID = block.ID;
             time = block.time;
             colorID = block.colorID;
+            applied_colorID = block.colorID;
+            map_id = block.map_id;
         }
 
         public Vector3 GetPosition()
@@ -47,7 +51,7 @@ namespace VrScene
             colorMaterial = Resources.Load("Materials/"+colorName) as Material;
             }
             GetComponent<Renderer>().material = colorMaterial;
-            this.colorID = colorID;
+            this.applied_colorID = colorID;
         }
 
         public void SetActive(bool f)
@@ -74,25 +78,21 @@ namespace VrScene
             panel.SetActive(true);
 
             ColorChangePanel colorChangePanel = panel.GetComponent<ColorChangePanel>();
-            Material material = gameObject.GetComponent<Renderer>().material;
 
-            Material lastMaterial = material;
             
             if (colorChangePanel.lightUpObject == null)
             {
-                colorChangePanel.lastBlockMaterial = lastMaterial;
-                this.SetColor(colorID, true);
+                this.SetColor(applied_colorID, true);
                 colorChangePanel.lightUpObject = gameObject;
             }
             if (gameObject.GetComponent<Block>().ID != colorChangePanel.lightUpObject.GetComponent<Block>().ID)
             {
-                colorChangePanel.lightUpObject.GetComponent<Block>().SetColor(colorChangePanel.lightUpObject.GetComponent<Block>().colorID, false);
+                colorChangePanel.lightUpObject.GetComponent<Block>().SetColor(colorChangePanel.lightUpObject.GetComponent<Block>().applied_colorID, false);
                 //colorChangePanel.lightUpObject.GetComponent<Renderer>().material = colorChangePanel.lastBlockMaterial ;
-                this.SetColor(colorID, true); 
+                this.SetColor(applied_colorID, true); 
 
 
                 colorChangePanel.lightUpObject = gameObject;
-                colorChangePanel.lastBlockMaterial = lastMaterial;
             }
             colorChangePanel.SetupColorChangePanel(gameObject);
         }

@@ -3,37 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SaveUsername: MonoBehaviour
+namespace TitleScene
 {
-    public InputField nameInputField;
-    public Text text;
-
-    void Start()
+    public class SaveUsername : MonoBehaviour
     {
-        nameInputField = nameInputField.GetComponent<InputField>();
-        text = text.GetComponent<Text>();
-    }
+        public InputField UserNameInputField;
+        public InputField ServerAddressInputField;
+        public Text UserNameText;
+        public Text ServerAddressText;
 
-    public void InputText()
-    {
-        text.text = nameInputField.text;
-    }
+        private const string UserNameKey = "USER_NAME";
+        private const string ServerAddressKey = "SERVER_ADDRESS";
 
-    public void SaveDate()
-    {
-        PlayerPrefs.SetString("UserName", nameInputField.text);
-        PlayerPrefs.Save();
-    }
+        void Start()
+        {
+            UserNameText.text = "ユーザー名：" + LoadData(UserNameKey);
+            ServerAddressText.text = "サーバーアドレス：" + CommunicationManager.ServerAddress;
+            UserNameInputField.text = LoadData(UserNameKey);
+            ServerAddressInputField.text = CommunicationManager.ServerAddress;
+            PlayerPrefs.Save();
+        }
 
-    public void LoadDate()
-    {
-        nameInputField.text = PlayerPrefs.GetString("UserName", "");
-    }
+        public void SaveUseName()
+        {
+            PlayerPrefs.SetString(UserNameKey, UserNameInputField.text);
+            PlayerPrefs.Save();
+            UserNameText.text = "ユーザー名：" + LoadData(UserNameKey);
+        }
 
-    public void DeleteDate()
-    {
-        PlayerPrefs.DeleteKey("UserName");
-        PlayerPrefs.DeleteAll();
-    }
+        public void SaveServerAddress()
+        {
+            PlayerPrefs.SetString(ServerAddressKey, ServerAddressInputField.text);
+            PlayerPrefs.Save();
+            ServerAddressText.text = "サーバーアドレス：" + LoadData(ServerAddressKey);
+        }
 
+        public string LoadData(string key)
+        {
+            return PlayerPrefs.GetString(key, "");
+        }
+    }
 }

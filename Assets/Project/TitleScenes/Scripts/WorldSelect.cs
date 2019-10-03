@@ -17,16 +17,10 @@ namespace TitleScene
         public List<(World world, bool isMerge)> WorldsData = new List<(World world, bool isMerge)>();
         CommunicationManager CommunicationManager;
 
-
         private void Awake()
         {
             CommunicationManager = new CommunicationManager();
             StartCoroutine("FetchData");
-        }
-
-        private void OnEnable()
-        {
-            ModeSelectPanel.SetActive(false);
         }
 
         IEnumerator FetchData()
@@ -69,9 +63,15 @@ namespace TitleScene
                 Transform selectBtn = panel.transform.Find("selectButton");
                 Transform editBtn = panel.transform.Find("EditButton");
                 Transform deleteBtn = panel.transform.Find("DeleteButton");
+                Transform isMerged = panel.transform.Find("MergeImage");
 
                 //ボタンのテキスト変更
                 selectBtn.GetComponentInChildren<Text>().text = WorldsData[btnNum].world.name;
+
+                if (WorldsData[btnNum].isMerge)
+                {
+                    isMerged.gameObject.SetActive(true);
+                }
 
                 //ボタンのクリックイベント登録
                 selectBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].world.ID, WorldsData[btnNum].isMerge));

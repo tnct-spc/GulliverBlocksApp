@@ -11,6 +11,12 @@ public class CommunicationManager
 {
     public static string ServerAddress = "gulliverblocks.herokuapp.com";
 
+    public CommunicationManager()
+    {
+        //CommunicationManagerのサーバーアドレスの更新
+        ServerAddress = PlayerPrefs.GetString("SERVER_ADDRESS", "gulliverblocks.herokuapp.com");
+    }
+
     public async Task<List<BlockInfo>> fetchMapBlocksAsync(string mapId)
     {
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
@@ -47,10 +53,25 @@ public class CommunicationManager
         return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
     }
 
+    public async Task<List<Rule>> fetchMergedColorRulesAsync(string mergeid)
+    {
+        var apiUrl = "https://" + ServerAddress + "/get_merged_color_rules/" + mergeid + "/";
+        var jsonStr = await GetRequest(apiUrl);
+        return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
+    }
+
     public async Task<String> uploadMergeAsync(MergeData data)
     {
         var apiUrl = "https://" + ServerAddress + "/create_merge/";
         string jsonStr = JsonUtility.ToJson(data);
+        Debug.Log(jsonStr);
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
+    public async Task<String> uploadAppliedColorRule(Rule ruleData)
+    {
+        var apiUrl = "https://" + ServerAddress + "/create_color_rule/";
+        string jsonStr = JsonUtility.ToJson(ruleData);
         Debug.Log(jsonStr);
         return await PostRequest(apiUrl, jsonStr);
     }
@@ -118,6 +139,11 @@ public class CommunicationManager
         public class AddBlockEventArgs : EventArgs
         {
             public List<BlockInfo> Blocks { get; set; }
+        }
+
+        public void ping()
+        {
+            this.ws.Send("ping");
         }
     }
 
@@ -199,6 +225,7 @@ namespace JsonFormats
         public float time;
         public string status;
         public string colorID;
+        public string map_id;
 
         public Vector3 GetPosition()
         {

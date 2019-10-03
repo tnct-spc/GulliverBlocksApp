@@ -3,30 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System;
+using JsonFormats;
 
 namespace VrScene
 {
     public class ColorChangePanel : MonoBehaviour
     {
         BlockManager blockManager;
+        CommunicationManager communicationManager;
         [SerializeField] public GameObject panelPref;
         private List<Material> contentMaterials = new List<Material>();
         public GameObject contentObject;
         public GameObject colorChangePanel;
         private ToggleGroup toggleGroup;
         private GameObject targetBlock;
+        private Block targetBlockData;
         public GameObject lightUpObject = null;
+        public int quenum = 3000;
 
         private void Awake()
         {
             blockManager = GameObject.Find("GameSystem").GetComponent<BlockManager>();
+            communicationManager = blockManager.CommunicationManager;
         }
 
         public void OnEnable()
         {
             contentMaterials.Clear();
-            Object[] loadedMaterials = Resources.LoadAll("Materials", typeof(Material));
-            foreach(Material material in loadedMaterials)
+            UnityEngine.Object[] blockColors = Resources.LoadAll("Materials", typeof(Material));
+            UnityEngine.Object[] selectedColors = Resources.LoadAll("SelectedColors", typeof(Material));
+            foreach(Material material in blockColors)
             {
                 contentMaterials.Add(material);
             }
@@ -43,6 +50,7 @@ namespace VrScene
         public void SetupColorChangePanel(GameObject targetObject)
         {
             targetBlock = targetObject;
+            targetBlockData = targetBlock.GetComponent<Block>();
             SetColorPanel(targetBlock);
         }
 
@@ -69,8 +77,16 @@ namespace VrScene
 
             //currentColorPanelの設定
             Transform currentColorPanel = colorChangePanel.transform.Find("CurrentColorPanel");
-            currentColorPanel.Find("CurrentNameText").gameObject.GetComponent<Text>().text = currentMaterial.name;
+            string currentMaterialName = ChengeMaterialNameToColorName(currentMaterial.name);
+            currentColorPanel.Find("CurrentNameText").gameObject.GetComponent<Text>().text = currentMaterialName;
             currentColorPanel.Find("CurrentRawImage").gameObject.GetComponent<RawImage>().material = CopyTo2DMaterial(currentMaterial);
+
+            //originColorPanelの設定
+            Material originMaterial = Resources.Load("Materials/Color" + targetBlockData.colorID.ToString()) as Material;
+            Transform originColorPanel = colorChangePanel.transform.Find("OriginColorPanel");
+            string originMaterialName = ChengeMaterialNameToColorName(originMaterial.name);
+            originColorPanel.Find("OriginNameText").gameObject.GetComponent<Text>().text = originMaterialName;
+            originColorPanel.Find("OriginRawImage").gameObject.GetComponent<RawImage>().material = CopyTo2DMaterial(originMaterial);
 
             //Contentの高さ決定
             RectTransform content = contentObject.GetComponent<RectTransform>();
@@ -81,6 +97,7 @@ namespace VrScene
             bool isFirst = true;
             for (int i = 0; i < materialCount; i++)
             {
+
                 int panelNum = i;
 
                 //ContentObjectを生成し、contentの子要素にする
@@ -94,7 +111,48 @@ namespace VrScene
 
                 //Materialの名前を設定
                 Text textMaterialNameLabel = toggleObject.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>();
-                textMaterialNameLabel.text = contentMaterials[i].name;
+                switch (i)
+                {
+                    case 0:
+                        textMaterialNameLabel.text = "黒";
+                        break;
+                    case 1:
+                        textMaterialNameLabel.text = "赤";
+                        break;
+                    case 2:
+                        textMaterialNameLabel.text = "金属";
+                        break;
+                    case 3:
+                        textMaterialNameLabel.text = "レンガ";
+                        break;
+                    case 4:
+                        textMaterialNameLabel.text = "白";
+                        break;
+                    case 5:
+                        textMaterialNameLabel.text = "黄色";
+                        break;
+                    case 6:
+                        textMaterialNameLabel.text = "オレンジ";
+                        break;
+                    case 7:
+                        textMaterialNameLabel.text = "黄緑";
+                        break;
+                    case 8:
+                        textMaterialNameLabel.text = "水色";
+                        break;
+                    case 9:
+                        textMaterialNameLabel.text = "青";
+                        break;
+                    case 10:
+                        textMaterialNameLabel.text = "緑";
+                        break;
+                    case 11:
+                        textMaterialNameLabel.text = "紫";
+                        break;
+                    case 12:
+                        textMaterialNameLabel.text = "木材";
+                        break;
+                }
 
                 //RawImageの設定
                 RawImage rawImage = toggleObject.transform.Find("MaterialRawImage").gameObject.GetComponent<RawImage>();
@@ -112,23 +170,150 @@ namespace VrScene
             }
         }
 
+        string ChengeMaterialNameToColorName (string materialName)
+        {
+            string colorName = "";
+            string str1 = materialName.Replace("Color", "");
+            string str2 = str1.Replace(" (Instance)", "");
+            switch (str2)
+            {
+                case "0":
+                    colorName = "黒";
+                    break;
+                case "1":
+                    colorName = "赤";
+                    break;
+                case "2":
+                    colorName = "黄色";
+                    break;
+                case "3":
+                    colorName = "オレンジ";
+                    break;
+                case "4":
+                    colorName = "黄緑";
+                    break;
+                case "5":
+                    colorName = "水色";
+                    break;
+                case "6":
+                    colorName = "青";
+                    break;
+                case "7":
+                    colorName = "緑";
+                    break;
+                case "8":
+                    colorName = "紫";
+                    break;
+                case "9":
+                    colorName = "木材";
+                    break;
+                case "10":
+                    colorName = "金属";
+                    break;
+                case "11":
+                    colorName = "レンガ";
+                    break;
+                case "12":
+                    colorName = "白";
+                    break;
+            }
+            return colorName;
+        }
+        string ChengeColorNameToNumber(string colorName)
+        {
+            string colorNumber = "";
+            switch (colorName)
+            {
+                case "黒":
+                    colorNumber = "0";
+                    break;
+                case "赤":
+                    colorNumber = "1";
+                    break;
+                case "黄色":
+                    colorNumber = "2";
+                    break;
+                case "オレンジ":
+                    colorNumber = "3";
+                    break;
+                case "黄緑":
+                    colorNumber = "4";
+                    break;
+                case "水色":
+                    colorNumber = "5";
+                    break;
+                case "青":
+                    colorNumber = "6";
+                    break;
+                case "緑":
+                    colorNumber = "7";
+                    break;
+                case "紫":
+                    colorNumber = "8";
+                    break;
+                case "木材":
+                    colorNumber = "9";
+                    break;
+                case "金属":
+                    colorNumber = "10";
+                    break;
+                case "レンガ":
+                    colorNumber = "11";
+                    break;
+                case "白":
+                    colorNumber = "12";
+                    break;
+            }
+            return colorNumber;
+        }
         public void OnClickChangeButton()
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
-            string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text.Replace("Color", "");
-            targetBlock.GetComponent<Block>().SetColor(toMaterialName);
+            string MaterialNumber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
+            //targetBlock.GetComponent<Block>().SetColor(MaterialNumber, false);
+            print(targetBlockData.applied_colorID);
+            print(MaterialNumber);
+            StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.applied_colorID, MaterialNumber, BlockManager.WorldID));
+            targetBlock.GetComponent<Block>().SetColor(MaterialNumber, true);
+            //StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.colorID, targetBlockData.applied_colorID, BlockManager.WorldID));
+            targetBlock = null;
         }
 
         public void OnClickAllColorChangeButton()
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
-            string toMaterialName = checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text;
-            Material toMaterial = contentMaterials.Find(material => material.name == toMaterialName);
-            blockManager.ApplyColorRules(blockManager.MakeColorRules("color", targetBlock.GetComponent<Renderer>().material.name.Replace("Color", ""), toMaterial.name.Replace("Color", "")));
+            string MaterialNumber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
+            string map_id = targetBlockData.map_id;
+            //targetBlock.GetComponent<Block>().SetColor(MaterialNumber, false);
+            print(targetBlockData.applied_colorID);
+            print(MaterialNumber);
+            //StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.applied_colorID, MaterialNumber, BlockManager.WorldID));
+            StartCoroutine(UploadAppliedColorRule("color", null, targetBlockData.applied_colorID, MaterialNumber, BlockManager.WorldID));
+            //StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.applied_colorID, MaterialNumber, BlockManager.WorldID));
+            blockManager.ApplyColorRule(blockManager.MakeColorRules("color", map_id, targetBlockData.applied_colorID, MaterialNumber));
+            //targetBlock.GetComponent<Block>().SetColor(MaterialNumber, true);
+            //StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.colorID, targetBlockData.applied_colorID, BlockManager.WorldID));
+            targetBlock = null;
         }
 
         public void OnClickCancelButton()
         {
+            targetBlock.GetComponent<Block>().SetColor(targetBlock.GetComponent<Block>().applied_colorID, false);
+            colorChangePanel.SetActive(false);
+            //Emissionの有効化・無効化
+            targetBlock.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+        }
+
+        IEnumerator UploadAppliedColorRule(string type, string block_id, string origin, string to, string map_id)
+        {
+            Rule ruleData = new Rule();
+            ruleData.type = type;
+            ruleData.block_id = block_id;
+            ruleData.origin = origin;
+            ruleData.to = to;
+            ruleData.map_id = map_id;
+            var uploadAppliedColorRuleTask = communicationManager.uploadAppliedColorRule(ruleData);
+            yield return new WaitUntil(() => uploadAppliedColorRuleTask.IsCompleted);
             colorChangePanel.SetActive(false);
         }
     }

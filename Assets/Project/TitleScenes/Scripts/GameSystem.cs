@@ -16,18 +16,22 @@ namespace TitleScene
     {
         public GameObject MapSelectPanel;
         public GameObject MergeMapSelectPanel;
-        public GameObject ModeSelectPanel;
+        public GameObject SelectCreatingPanel;
+        public GameObject CreateNewMapPanel;
         public GameObject PlaybackModeButton;
         public GameObject ViewModeButton;
         public GameObject EditMapNamePanel;
         public GameObject DeleteMapPanel;
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
+        public InputField MapNameInputField;
 
         private void Awake()
         {
+            XRSettings.LoadDeviceByName("Cardboard");
             XRSettings.enabled = false;
         }
+
         public void SelectGameMode()
         {
             MapSelectPanel.SetActive(true);
@@ -48,29 +52,40 @@ namespace TitleScene
         {
             BlockManager.WorldID = ID;
             BlockManager.IsMerge = isMerge;
-            ModeSelectPanel.SetActive(true);
-            PlaybackModeButton.GetComponent<Button>().onClick.AddListener(() => OnClickModeSelectButton("PlayBack"));
-            ViewModeButton.GetComponent<Button>().onClick.AddListener(() => OnClickModeSelectButton("Vr"));
-        }
-
-        public void OnClickModeSelectButton(string Mode)
-        {
-            GameManager.Mode = Mode;
+            GameManager.Mode = "Vr";
             SceneManager.LoadScene("Vr");
             Screen.orientation = ScreenOrientation.LandscapeLeft;
         }
 
-        public void OnClickCreateMapButton()
+        public void OnClickCreateButton()
         {
-            List<World> mapsData = new List<World>() { };
-            MapSelectPanel.GetComponent<WorldSelect>().WorldsData.ForEach(data =>
-            {
-                if (!data.isMerge)
-                    mapsData.Add(data.world);
-            });
+            SelectCreatingPanel.SetActive(true);
+        }
+
+        public void OnClickCreateMerge()
+        {
+            SelectCreatingPanel.SetActive(false);
+            StartCoroutine("fetchMerge");
+        }
+        IEnumerator fetchMerge()
+        {
+            var communicationManager = new CommunicationManager();
+            var fetchMapsTask = communicationManager.fetchMapsAsync();
+            yield return new WaitUntil(() => fetchMapsTask.IsCompleted);
             MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.Clear();
-            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.AddRange(mapsData);
+            MergeMapSelectPanel.transform.GetComponent<MergeMapSelect>().WorldsData.AddRange(fetchMapsTask.Result);
             MergeMapSelectPanel.SetActive(true);
+        }
+
+        public void OnClickOpenCreateNewWorldPanel()
+        {
+            SelectCreatingPanel.SetActive(false);
+            CreateNewMapPanel.SetActive(true);
+        }
+        public void OnClickCreateNewWorld()
+        {
+            // TODO
+            return;
         }
 
         public void OnClickMergeButton()

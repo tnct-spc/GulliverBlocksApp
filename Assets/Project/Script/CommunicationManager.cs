@@ -11,6 +11,12 @@ public class CommunicationManager
 {
     public static string ServerAddress = "gulliverblocks.herokuapp.com";
 
+    public CommunicationManager()
+    {
+        //CommunicationManagerのサーバーアドレスの更新
+        ServerAddress = PlayerPrefs.GetString("SERVER_ADDRESS", "gulliverblocks.herokuapp.com");
+    }
+
     public async Task<List<BlockInfo>> fetchMapBlocksAsync(string mapId)
     {
         var apiUrl = "https://" + ServerAddress + "/get_blocks/" + mapId + "/";
@@ -22,7 +28,6 @@ public class CommunicationManager
     {
         var apiUrl = "https://" + ServerAddress + "/get_merged_blocks/" + mapId + "/";
         var jsonStr = await GetRequest(apiUrl);
-        
         return JsonHelper.FromJson<BlockInfo>(jsonStr, "Blocks");
     }
 
@@ -47,10 +52,38 @@ public class CommunicationManager
         return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
     }
 
+    public async Task<List<Rule>> fetchMergedColorRulesAsync(string mergeid)
+    {
+        var apiUrl = "https://" + ServerAddress + "/get_merged_color_rules/" + mergeid + "/";
+        var jsonStr = await GetRequest(apiUrl);
+        return JsonHelper.FromJson<Rule>(jsonStr, "Rules");
+    }
+
     public async Task<String> uploadMergeAsync(MergeData data)
     {
         var apiUrl = "https://" + ServerAddress + "/create_merge/";
         string jsonStr = JsonUtility.ToJson(data);
+        Debug.Log(jsonStr);
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
+    public async Task<string> loginAsync(string userName, string password)
+    {
+        string apiUrl = "https://" + ServerAddress + "/login/";
+        string jsonStr = "{\"username\": \"" + userName + "\", \"password\": \"" + password + "\"}";
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
+    public async Task<string> logoutAsync()
+    {
+        string apiUrl = "https://" + ServerAddress + "/logout/";
+        return await GetRequest(apiUrl);
+    }
+
+    public async Task<String> uploadAppliedColorRule(Rule ruleData)
+    {
+        var apiUrl = "https://" + ServerAddress + "/create_color_rule/";
+        string jsonStr = JsonUtility.ToJson(ruleData);
         Debug.Log(jsonStr);
         return await PostRequest(apiUrl, jsonStr);
     }
@@ -63,6 +96,7 @@ public class CommunicationManager
         if (req.isNetworkError || req.isHttpError)
         {
             Debug.Log(req.error);
+            Debug.Log(url);
             return "";
         }
         else
@@ -205,6 +239,7 @@ namespace JsonFormats
         public string colorID;
         public string pattern_name;
         public string pattern_group_id;
+        public string map_id;
 
         public Vector3 GetPosition()
         {

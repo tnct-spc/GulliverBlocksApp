@@ -92,7 +92,6 @@ public class CommunicationManager
     {
 
         UnityWebRequest req = UnityWebRequest.Get(url);
-        req.redirectLimit = 1;
         await req.SendWebRequest();
         if (req.isNetworkError || req.isHttpError)
         {

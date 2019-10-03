@@ -9,7 +9,6 @@ using UnityEngine.XR;
 using VrScene;
 using MergeScene;
 using JsonFormats;
-using System.Threading.Tasks;
 
 namespace TitleScene
 {
@@ -26,51 +25,10 @@ namespace TitleScene
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
         public InputField MapNameInputField;
-        private CommunicationManager CommunicationManager;
 
         private void Awake()
         {
             XRSettings.enabled = false;
-        }
-
-        private void Start()
-        {
-            CommunicationManager = new CommunicationManager();
-
-            // Login
-            PlayerPrefs.SetString("Password", "hoge");
-            PlayerPrefs.Save();
-            StartCoroutine("Login");
-        }
-
-        IEnumerator Login()
-        {
-            string userName = PlayerPrefs.GetString("UserName", "");
-            string password = PlayerPrefs.GetString("Password", "");
-            Task<string> loginTask = CommunicationManager.loginAsync(userName, password);
-            yield return new WaitUntil(() => loginTask.IsCompleted);
-            if (loginTask.Result == "")
-            {
-                Debug.Log("faild to login");
-            }
-            else
-            {
-                Debug.Log("success to login");
-            }
-        }
-
-        IEnumerable Logout()
-        {
-            Task<string> logoutTask = CommunicationManager.logoutAsync();
-            yield return new WaitUntil(() => logoutTask.IsCompleted);
-            if(logoutTask.Result == "")
-            {
-                Debug.Log("faild to logout");
-            }
-            else
-            {
-                Debug.Log("success to logout");
-            }
         }
 
         public void SelectGameMode()

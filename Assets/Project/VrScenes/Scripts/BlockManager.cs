@@ -142,15 +142,15 @@ namespace VrScene
             for (int i = 0; i < Blocks.Count; i++)
             {
                 Block block = Blocks[i];
-                if (maxX <= block.x) maxX = block.x + extensionFloor;
-                if (minX >= block.x) minX = block.x - extensionFloor;
-                if (maxZ <= block.z) maxZ = block.z + extensionFloor;
-                if (minZ >= block.z) minZ = block.z - extensionFloor;
+                if (maxX <= block.x) maxX = block.x;
+                if (minX >= block.x) minX = block.x;
+                if (maxZ <= block.z) maxZ = block.z;
+                if (minZ >= block.z) minZ = block.z;
             }
 
-            for (float i = minX; i <= maxX; i++)
+            for (float i = minX - extensionFloor; i <= maxX + extensionFloor; i++)
             {
-                for (float j = minZ; j <= maxZ; j++)
+                for (float j = minZ - extensionFloor; j <= maxZ + extensionFloor; j++)
                 {
                     FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.0f, 0.32f * j), Quaternion.identity);
                     FloorA.transform.parent = Floor.transform;

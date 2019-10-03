@@ -252,14 +252,14 @@ namespace VrScene
                 /*
                  *カーソル(or タッチ位置)が動いたときの処理
                  */
-                if(!isTouchPanel)
-                {
+                //if(!isTouchPanel)
+                //{
                     if (!this.TouchMoveEnable) return;
                     Vector2 vec = position - this.lastMousePosition;
                     vec = Quaternion.Euler(0, 0, this.CurrentZRotate) * vec;
                     RotateXY(new Vector3(vec.x, vec.y, 0) * 10 * Time.deltaTime);
                     this.lastMousePosition = position;
-                }
+                //}
             }
 
             private void RotateXY(Vector3 direction)

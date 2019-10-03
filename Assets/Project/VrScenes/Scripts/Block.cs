@@ -34,10 +34,18 @@ namespace VrScene
             return position;
         }
 
-        public void SetColor(string colorID)
+        public void SetColor(string colorID, bool isSelected)
         {
             string colorName = "Color" + colorID;
-            Material colorMaterial = Resources.Load("Materials/"+colorName) as Material;
+            Material colorMaterial;
+            if (isSelected)
+            {
+            colorMaterial = Resources.Load("SelectedColors/"+colorName) as Material;
+            }
+            else
+            { 
+            colorMaterial = Resources.Load("Materials/"+colorName) as Material;
+            }
             GetComponent<Renderer>().material = colorMaterial;
             this.colorID = colorID;
         }
@@ -73,14 +81,14 @@ namespace VrScene
             if (colorChangePanel.lightUpObject == null)
             {
                 colorChangePanel.lastBlockMaterial = lastMaterial;
-                this.SetColor((int.Parse(colorID) + 13).ToString());
+                this.SetColor(colorID, true);
                 colorChangePanel.lightUpObject = gameObject;
             }
             if (gameObject.GetComponent<Block>().ID != colorChangePanel.lightUpObject.GetComponent<Block>().ID)
             {
-                colorChangePanel.lightUpObject.GetComponent<Block>().SetColor((int.Parse(colorChangePanel.lightUpObject.GetComponent<Block>().colorID) - 13).ToString());
+                colorChangePanel.lightUpObject.GetComponent<Block>().SetColor(colorChangePanel.lightUpObject.GetComponent<Block>().colorID, false);
                 //colorChangePanel.lightUpObject.GetComponent<Renderer>().material = colorChangePanel.lastBlockMaterial ;
-                this.SetColor((int.Parse(colorID) + 13).ToString()); 
+                this.SetColor(colorID, true); 
 
 
                 colorChangePanel.lightUpObject = gameObject;

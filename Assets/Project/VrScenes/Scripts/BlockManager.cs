@@ -107,6 +107,8 @@ namespace VrScene
 
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
+
+            GameObject.Find("Player").GetComponent<PlayerManager>().Flying(false);
         }
         
         public void StopPlayback()

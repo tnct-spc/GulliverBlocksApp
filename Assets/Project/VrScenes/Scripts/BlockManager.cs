@@ -166,7 +166,7 @@ namespace VrScene
         {
             Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
             Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
-            block.SetColor(blockInfo.colorID);
+            block.SetColor(blockInfo.colorID, false);
             block.SetBlockData(blockInfo);
             if (GameManager.Mode == "PlayBack") block.SetActive(false);
             this.Blocks.Add(block);
@@ -262,11 +262,11 @@ namespace VrScene
             if (type == "color")
             {
                 string origin = ruleData.origin.Replace(" (Instance)", "");
-                List<Block> targetBlocks = this.Blocks.FindAll(block => (block.map_id == ruleData.map_id) && block.colorID == origin);
-                Debug.Log(targetBlocks.Count);
+                List<Block> targetBlocks = this.Blocks.FindAll(block => (block.map_id == ruleData.map_id) && block.applied_colorID == origin);
+                //Debug.Log(targetBlocks.Count);
                 targetBlocks.ForEach(block =>
                 {
-                    block.SetColor(to);
+                    block.SetColor(to, false);
                 });
 
             }
@@ -274,7 +274,7 @@ namespace VrScene
             {
                 Block targetBlock = this.Blocks.Find(block => block.ID == ruleData.block_id);
                 if (targetBlock == null) return;
-                targetBlock.SetColor(to);
+                targetBlock.SetColor(to, false);
             }
             else
             {

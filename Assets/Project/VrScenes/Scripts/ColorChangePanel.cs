@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System;
 using JsonFormats;
 
 namespace VrScene
@@ -19,6 +20,7 @@ namespace VrScene
         private GameObject targetBlock;
         private Block targetBlockData;
         public GameObject lightUpObject = null;
+        public int quenum = 3000;
 
         private void Awake()
         {
@@ -29,8 +31,9 @@ namespace VrScene
         public void OnEnable()
         {
             contentMaterials.Clear();
-            Object[] loadedMaterials = Resources.LoadAll("Materials", typeof(Material));
-            foreach(Material material in loadedMaterials)
+            UnityEngine.Object[] blockColors = Resources.LoadAll("Materials", typeof(Material));
+            UnityEngine.Object[] selectedColors = Resources.LoadAll("SelectedColors", typeof(Material));
+            foreach(Material material in blockColors)
             {
                 contentMaterials.Add(material);
             }
@@ -94,6 +97,7 @@ namespace VrScene
             bool isFirst = true;
             for (int i = 0; i < materialCount; i++)
             {
+
                 int panelNum = i;
 
                 //ContentObjectを生成し、contentの子要素にする
@@ -266,23 +270,35 @@ namespace VrScene
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
             string MaterialNumber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
-            targetBlock.GetComponent<Block>().SetColor(MaterialNumber);
-            StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.colorID, targetBlockData.applied_colorID, BlockManager.WorldID));
+            //targetBlock.GetComponent<Block>().SetColor(MaterialNumber, false);
+            print(targetBlockData.applied_colorID);
+            print(MaterialNumber);
+            StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.applied_colorID, MaterialNumber, BlockManager.WorldID));
+            targetBlock.GetComponent<Block>().SetColor(MaterialNumber, true);
+            //StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.colorID, targetBlockData.applied_colorID, BlockManager.WorldID));
+            targetBlock = null;
         }
 
         public void OnClickAllColorChangeButton()
         {
             Toggle checkToggle = toggleGroup.ActiveToggles().FirstOrDefault();
+            string MaterialNumber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
             string map_id = targetBlockData.map_id;
-            string MaterialNunber = ChengeColorNameToNumber(checkToggle.transform.Find("MaterialNameLabel").gameObject.GetComponent<Text>().text);
-            string MaterialName = "Color" + MaterialNunber;
-            Material toMaterial = contentMaterials.Find(material => material.name == MaterialName);
-            blockManager.ApplyColorRule(blockManager.MakeColorRules("color", map_id, targetBlockData.colorID, toMaterial.name.Replace("Color", "")));
-            StartCoroutine(UploadAppliedColorRule("color", null, targetBlockData.colorID, targetBlockData.applied_colorID, BlockManager.WorldID));
+            //targetBlock.GetComponent<Block>().SetColor(MaterialNumber, false);
+            print(targetBlockData.applied_colorID);
+            print(MaterialNumber);
+            //StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.applied_colorID, MaterialNumber, BlockManager.WorldID));
+            StartCoroutine(UploadAppliedColorRule("color", null, targetBlockData.applied_colorID, MaterialNumber, BlockManager.WorldID));
+            //StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.applied_colorID, MaterialNumber, BlockManager.WorldID));
+            blockManager.ApplyColorRule(blockManager.MakeColorRules("color", map_id, targetBlockData.applied_colorID, MaterialNumber));
+            //targetBlock.GetComponent<Block>().SetColor(MaterialNumber, true);
+            //StartCoroutine(UploadAppliedColorRule("ID", targetBlockData.ID, targetBlockData.colorID, targetBlockData.applied_colorID, BlockManager.WorldID));
+            targetBlock = null;
         }
 
         public void OnClickCancelButton()
         {
+            targetBlock.GetComponent<Block>().SetColor(targetBlock.GetComponent<Block>().applied_colorID, false);
             colorChangePanel.SetActive(false);
             //Emissionの有効化・無効化
             targetBlock.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");

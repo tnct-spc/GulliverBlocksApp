@@ -80,7 +80,6 @@ namespace VrScene
             seekbarSlider = InputManager.seekbarSlider;
             PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
-            SetFloor();
             StartCoroutine("FetchData");
         }
 
@@ -104,8 +103,12 @@ namespace VrScene
             this.ColorRules = fetchColorRulesTask.Result;
             this.ColorRules.ForEach(this.ApplyColorRule);
 
+            SetFloor();
+
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
+
+            GameObject.Find("Player").GetComponent<PlayerManager>().Flying(false);
         }
         
         public void StopPlayback()
@@ -132,9 +135,24 @@ namespace VrScene
             GameObject FloorB;
             GameObject Floor1 = (GameObject)Resources.Load("Floor1");
             GameObject Floor2 = (GameObject)Resources.Load("Floor2");
-            for (float i = -24; i < 24; i++)
+
+            float maxX = 0.0f;
+            float minX = 0.0f;
+            float maxZ = 0.0f;
+            float minZ = 0.0f;
+            float extensionFloor = 48.0f;
+            for (int i = 0; i < Blocks.Count; i++)
             {
-                for (float j = -24; j < 24; j++)
+                Block block = Blocks[i];
+                if (maxX <= block.x) maxX = block.x;
+                if (minX >= block.x) minX = block.x;
+                if (maxZ <= block.z) maxZ = block.z;
+                if (minZ >= block.z) minZ = block.z;
+            }
+
+            for (float i = minX - extensionFloor; i <= maxX + extensionFloor; i++)
+            {
+                for (float j = minZ - extensionFloor; j <= maxZ + extensionFloor; j++)
                 {
                     FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.0f, 0.32f * j), Quaternion.identity);
                     FloorA.transform.parent = Floor.transform;

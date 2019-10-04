@@ -253,7 +253,7 @@ namespace VrScene
                 /*
                  *カーソル(or タッチ位置)が動いたときの処理
                  */
-                if(!isTouchPanel || Input.touchCount > 1)
+                if(!isTouchPanel || Input.touchCount > 0)
                 {
                     if (!this.TouchMoveEnable) return;
                     Vector2 vec = position - this.lastMousePosition;

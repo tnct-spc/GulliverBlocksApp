@@ -171,7 +171,7 @@ namespace VrScene
 
         private void AddBlock(BlockInfo blockInfo)
         {
-            if (blockInfo.pattern_name == "")
+            if (blockInfo.pattern_name == "" || blockInfo.pattern_name == null)
             {
                 Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
                 Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
@@ -218,7 +218,7 @@ namespace VrScene
 
         private void UpdatePattern(BlockInfo blockInfo)
         {
-            if(blockInfo.pattern_name != "")
+            if(blockInfo.pattern_name != "" && blockInfo.pattern_name != null)
             {
                 // pattern_nameがKeysに存在しないなら新しく追加する
                 List<string> patternNameKeys = new List<string>(patternBlocks.Keys);

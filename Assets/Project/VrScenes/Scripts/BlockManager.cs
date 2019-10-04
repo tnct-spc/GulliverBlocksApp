@@ -29,6 +29,7 @@ namespace VrScene
         CommunicationManager.WsClient WsClient;
         // patternBlocksの構造: {"pattern_name": {"pattern_group_id": [(BlockInfo),]}, }
         private Dictionary<string, Dictionary<string, List<BlockInfo>>> patternBlocks = new Dictionary<string, Dictionary<string, List<BlockInfo>>>();
+        private List<GameObject> patternObjects = new List<GameObject>();
         private float X_RATIO = 0.32f;
         private float Y_RATIO = 0.384f;
         private float Z_RATIO = 0.32f;
@@ -212,6 +213,43 @@ namespace VrScene
         {
             var block = this.Blocks.Find(b => b.ID == blockInfo.ID);
             block.SetBlockData(blockInfo);
+            UpdatePattern(blockInfo);
+        }
+
+        private void UpdatePattern(BlockInfo blockInfo)
+        {
+            if(blockInfo.pattern_name != "")
+            {
+                // pattern_nameがKeysに存在しないなら新しく追加する
+                List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+                if (!(patternNameKeys.IndexOf(blockInfo.pattern_name) >= 0))
+                {
+                    patternBlocks[blockInfo.pattern_name] = new Dictionary<string, List<BlockInfo>>();
+                }
+                // pattern_group_idがKeysに存在しないなら新しく追加する
+                List<string> pattern_group_id_keys = new List<string>(patternBlocks[blockInfo.pattern_name].Keys);
+                if (!(pattern_group_id_keys.IndexOf(blockInfo.pattern_group_id) >= 0))
+                {
+                    patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id] = new List<BlockInfo>();
+                }
+                for(int i = 0; i < patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Count; i++)
+                {
+                    if(patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id][i].ID == blockInfo.ID)
+                    {
+                        patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id][i] = blockInfo;
+                        foreach (GameObject _patternObject in patternObjects)
+                        {
+                            if(_patternObject.name == blockInfo.pattern_name)
+                            {
+                                GameObject patternObject = _patternObject;
+                                patternObjects.Remove(_patternObject);
+                            }
+                        }
+                        return;
+                    }
+                }
+                patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
+            }
         }
 
         public async void RepeatPlaceBlocks()
@@ -313,6 +351,12 @@ namespace VrScene
             /*
              パターン認識されたブロックをオブジェクトに置き換える
              */
+            foreach (GameObject _patternObject in patternObjects)
+            {
+                GameObject patternObject = _patternObject;
+                Destroy(patternObject);
+            }
+            patternObjects.Clear();
             List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
             foreach (string patternName in patternNameKeys)
             {
@@ -344,10 +388,11 @@ namespace VrScene
                                 (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2,
                                 (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2
                             );
-                            patternObject.name = "Road:" + patternGroupId;
+                            patternObject.name = patternGroupId;
                             patternObject.transform.localScale = new Vector3(width, height, depth);
                             patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
                             patternObject.AddComponent<RoadManager>();
+                            patternObjects.Add(patternObject);
                             break;
                     }
                 }

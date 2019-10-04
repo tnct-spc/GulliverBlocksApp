@@ -84,6 +84,7 @@ public class RoadManager : MonoBehaviour
             carObject.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f); // そのままだと大きすぎるので小さくする
             carObject.AddComponent<Rigidbody>();
             carObject.GetComponent<Rigidbody>().useGravity = false;
+            carObject.transform.parent = transform;
             AddVelocity(carObject, randomSpeed, "back");
             rightSideCars.Add((car: carObject, speed: randomSpeed));
         }
@@ -93,6 +94,7 @@ public class RoadManager : MonoBehaviour
             carObject.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f); // そのままだと大きすぎるので小さくする
             carObject.AddComponent<Rigidbody>();
             carObject.GetComponent<Rigidbody>().useGravity = false;
+            carObject.transform.parent = transform;
             AddVelocity(carObject, randomSpeed, "forward");
             leftSideCars.Add((car: carObject, speed: randomSpeed));
         }

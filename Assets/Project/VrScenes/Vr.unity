@@ -220,6 +220,7 @@ MonoBehaviour:
   contentObject: {fileID: 1229659231}
   colorChangePanel: {fileID: 48069403}
   lightUpObject: {fileID: 0}
+  quenum: 3000
 --- !u!1 &104722406
 GameObject:
   m_ObjectHideFlags: 0

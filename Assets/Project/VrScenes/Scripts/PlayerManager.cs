@@ -160,6 +160,7 @@ namespace VrScene
             private Vector2 lastMousePosition;
             private bool TouchMoveEnable;
             private bool isTouchPanel = false;
+            private bool isTouchSecondFinger = false;
             private float CurrentRightLeftRotate;
             private float CurrentZRotate;
             private Gyroscope gyro;
@@ -252,14 +253,14 @@ namespace VrScene
                 /*
                  *カーソル(or タッチ位置)が動いたときの処理
                  */
-                //if(!isTouchPanel)
-                //{
+                if(!isTouchPanel || Input.touchCount > 1)
+                {
                     if (!this.TouchMoveEnable) return;
                     Vector2 vec = position - this.lastMousePosition;
                     vec = Quaternion.Euler(0, 0, this.CurrentZRotate) * vec;
                     RotateXY(new Vector3(vec.x, vec.y, 0) * 10 * Time.deltaTime);
                     this.lastMousePosition = position;
-                //}
+                }
             }
 
             private void RotateXY(Vector3 direction)

@@ -40,7 +40,7 @@ namespace VrScene
             Input.gyro.enabled = true;
         }
 
-        void Update()
+        void FixedUpdate()
         {
             Move();
             CheckPlayerFall();

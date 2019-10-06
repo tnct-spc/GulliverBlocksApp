@@ -383,34 +383,54 @@ namespace VrScene
                         }
                     }
 
+                    // 原点に近い順にsort
+                    patternBlocks[patternName][patternGroupId].Sort(
+                        (a, b) => (a.x * a.x + a.y * a.y + a.z * a.z) - (b.x * b.x + b.y * b.y + b.z * b.z)
+                    );
+
+                    // サイズなどは先に出しておく
+                    BlockInfo nearestBlock = patternBlocks[patternName][patternGroupId][0];
+                    BlockInfo farthestBlock = patternBlocks[patternName][patternGroupId][patternBlocks[patternName][patternGroupId].Count - 1];
+                    float width = (Mathf.Abs(farthestBlock.x - nearestBlock.x) + 1) * X_RATIO;
+                    float height = (Mathf.Abs(farthestBlock.y - nearestBlock.y) + 1) * Y_RATIO;
+                    float depth = (Mathf.Abs(farthestBlock.z - nearestBlock.z) + 1) * Z_RATIO;
+
                     // 各パターンに応じた処理をする
                     switch (patternName)
                     {
-                        case "road":
-                            // 原点に近い順にsort
-                            patternBlocks[patternName][patternGroupId].Sort(
-                                (a, b) => (a.x * a.x + a.y * a.y + a.z * a.z) - (b.x * b.x + b.y * b.y + b.z * b.z)
-                            );
+                        case "verticalRoad":
+                            {
+                                // 道路を生成
+                                GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                patternObject.transform.position = new Vector3(
+                                    (nearestBlock.x + farthestBlock.x) * X_RATIO / 2,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2,
+                                    (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2
+                                );
+                                patternObject.name = patternGroupId;
+                                patternObject.transform.localScale = new Vector3(width, height, depth);
+                                patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
+                                patternObject.AddComponent<VerticalRoadManager>();
+                                patternObjects.Add(patternObject);
+                                break;
+                            }
 
-                            BlockInfo nearestBlock = patternBlocks[patternName][patternGroupId][0];
-                            BlockInfo farthestBlock = patternBlocks[patternName][patternGroupId][patternBlocks[patternName][patternGroupId].Count - 1];
-                            float width = (Mathf.Abs(farthestBlock.x - nearestBlock.x) + 1) * X_RATIO;
-                            float height = (Mathf.Abs(farthestBlock.y - nearestBlock.y) + 1) * Y_RATIO;
-                            float depth = (Mathf.Abs(farthestBlock.z - nearestBlock.z) + 1) * Z_RATIO;
-
-                            // 道路を生成
-                            GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            patternObject.transform.position = new Vector3(
-                                (nearestBlock.x + farthestBlock.x) * X_RATIO / 2,
-                                (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2,
-                                (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2
-                            );
-                            patternObject.name = patternGroupId;
-                            patternObject.transform.localScale = new Vector3(width, height, depth);
-                            patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
-                            patternObject.AddComponent<RoadManager>();
-                            patternObjects.Add(patternObject);
-                            break;
+                        case "horizontalRoad":
+                            {
+                                // 道路を生成
+                                GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                patternObject.transform.position = new Vector3(
+                                    (nearestBlock.x + farthestBlock.x) * X_RATIO / 2,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2,
+                                    (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2
+                                );
+                                patternObject.name = patternGroupId;
+                                patternObject.transform.localScale = new Vector3(width, height, depth);
+                                patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
+                                patternObject.AddComponent<HorizontalRoadManager>();
+                                patternObjects.Add(patternObject);
+                                break;
+                            }
                     }
                 }
             }

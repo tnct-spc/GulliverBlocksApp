@@ -174,7 +174,9 @@ namespace VrScene
             if (blockInfo.pattern_name == "" || blockInfo.pattern_name == null)
             {
                 Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
-                Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
+                GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
+                blockObject.name = blockInfo.ID;
+                Block block = blockObject.GetComponent<Block>();
                 block.SetColor(blockInfo.colorID, false);
                 block.SetBlockData(blockInfo);
                 if (GameManager.Mode == "PlayBack") block.SetActive(false);
@@ -197,7 +199,7 @@ namespace VrScene
                     patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id] = new List<BlockInfo>();
                 }
 
-                patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo); ;
+                patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
             }
         }
 
@@ -250,6 +252,8 @@ namespace VrScene
                 }
                 patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
             }
+
+            ReplacePatternWithObject();
         }
 
         public async void RepeatPlaceBlocks()
@@ -351,12 +355,15 @@ namespace VrScene
             /*
              パターン認識されたブロックをオブジェクトに置き換える
              */
+
+            // オブジェクトをいったん全部消す
             foreach (GameObject _patternObject in patternObjects)
             {
                 GameObject patternObject = _patternObject;
                 Destroy(patternObject);
             }
             patternObjects.Clear();
+
             List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
             foreach (string patternName in patternNameKeys)
             {
@@ -366,6 +373,16 @@ namespace VrScene
                 List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
                 foreach (string patternGroupId in patternGroupIdKeys)
                 {   
+                    // 使ったblockの削除
+                    foreach(BlockInfo blockInfo in patternBlocks[patternName][patternGroupId])
+                    {
+                        GameObject blockObject = GameObject.Find(blockInfo.ID);
+                        if (blockObject)
+                        {
+                            Destroy(blockObject);
+                        }
+                    }
+
                     // 各パターンに応じた処理をする
                     switch (patternName)
                     {

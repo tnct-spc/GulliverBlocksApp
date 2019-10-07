@@ -28,6 +28,13 @@ namespace TitleScene
 
         private void Awake()
         {
+            // url scheme debug
+            if (Assets.UrlSchemeReceiver.UrlSchemeReceiver.OpenFromUrlScheme)
+            {
+                string param = Assets.UrlSchemeReceiver.UrlSchemeReceiver.OpenUrl;
+                Debug.Log(param);
+            }
+
             XRSettings.LoadDeviceByName("Cardboard");
             XRSettings.enabled = false;
         }

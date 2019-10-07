@@ -9,9 +9,11 @@ using UnityEngine.XR;
 using VrScene;
 using MergeScene;
 using JsonFormats;
+using SocialConnector;
 
 namespace TitleScene
 {
+
     public class GameSystem : MonoBehaviour
     {
         public GameObject MapSelectPanel;
@@ -116,9 +118,9 @@ namespace TitleScene
 
         public void OnClickEndGameButton()
         {
-            #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-            #endif
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
             UnityEngine.Application.Quit();
         }
 
@@ -127,12 +129,12 @@ namespace TitleScene
 
         public void OnClickChangeMapButton(string mapName, string command)
         {
-            if(command == "EditMapName")
+            if (command == "EditMapName")
             {
                 EditMapNamePanel.SetActive(true);
                 EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text = mapName;
             }
-            else if(command == "Delete")
+            else if (command == "Delete")
             {
                 DeleteMapPanel.SetActive(true);
                 DeleteMapPanel.transform.Find("Text(DeletePanel)").GetComponent<Text>().text = mapName;
@@ -160,6 +162,11 @@ namespace TitleScene
             }
             worldSelect.WorldsData.RemoveAll(w => w.world.name == selectMapName);
             worldSelect.setWorldSelectButton();
+        }
+
+        public void OnClickShareButton(string id)
+        {
+            SocialConnector.SocialConnector.Share("https://gulliverblocks.herokuapp.com/share/" + id + "/ ");
         }
     }
 }

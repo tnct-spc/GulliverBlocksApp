@@ -14,8 +14,7 @@ namespace VrScene
 
         int TapCount = 0;
 
-
-        private void Update()
+        private void CheckTenTaps()
         {
             if (TapCount == 10)
             {
@@ -37,6 +36,7 @@ namespace VrScene
             int NowTapCount = TapCount;
             yield return new WaitForSeconds(1);
             if (NowTapCount == TapCount) TapCount = 0;
+            CheckTenTaps();
         }
     }
 }

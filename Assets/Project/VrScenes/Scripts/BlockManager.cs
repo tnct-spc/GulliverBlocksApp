@@ -119,6 +119,7 @@ namespace VrScene
         {
             GameManager.Mode = "PlayBack";
             InputManager.PlayBackModeUI.SetActive(true);
+            InputManager.ViewModeUI.SetActive(false);
         }
 
         void InitialPlacement(List<BlockInfo> blocksInfo)
@@ -129,24 +130,23 @@ namespace VrScene
         private void SetFloor()
         {
             GameObject FloorA;
-            GameObject FloorB;
-            GameObject Floor1 = (GameObject)Resources.Load("Floor1");
-            GameObject Floor2 = (GameObject)Resources.Load("Floor2");
-            for (float i = -24; i < 24; i++)
+            
+            int extantionFloor = 4;
+            GameObject FloorObj = Resources.Load("Floor_10") as GameObject;
+
+            for (float i = -1*extantionFloor; i < extantionFloor; i++)
             {
-                for (float j = -24; j < 24; j++)
+                for (float j = -1*extantionFloor; j < extantionFloor; j++)
                 {
-                    FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.0f, 0.32f * j), Quaternion.identity);
+                    FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10*0.32f * i, -0.0f, 10*0.32f * j), Quaternion.identity);
                     FloorA.transform.parent = Floor.transform;
-                    FloorB = (GameObject)Instantiate(Floor2, new Vector3(0.32f * i, 0.19f, 0.32f * j), Quaternion.identity);
-                    FloorB.transform.parent = Floor.transform;
                 }
             }
         }
 
         private void AddBlock(BlockInfo blockInfo)
         {
-            Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
+            Object blockPrefab = (GameObject)Resources.Load("Block");
             Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
             block.SetColor(blockInfo.colorID, false);
             block.SetBlockData(blockInfo);

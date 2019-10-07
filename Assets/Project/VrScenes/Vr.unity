@@ -220,6 +220,7 @@ MonoBehaviour:
   contentObject: {fileID: 1229659231}
   colorChangePanel: {fileID: 48069403}
   lightUpObject: {fileID: 0}
+  quenum: 3000
 --- !u!1 &104722406
 GameObject:
   m_ObjectHideFlags: 0
@@ -2494,7 +2495,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 2
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2812,6 +2813,7 @@ MonoBehaviour:
   GeneralMenuButton: {fileID: 1897379314}
   GeneralMenuPanel: {fileID: 1101299273}
   GyroModeToggle: {fileID: 1507565105}
+  ViewModeUI: {fileID: 1126917721}
 --- !u!4 &784364639
 Transform:
   m_ObjectHideFlags: 0
@@ -3170,6 +3172,7 @@ MonoBehaviour:
   GeneralMenuButton: {fileID: 0}
   GeneralMenuPanel: {fileID: 0}
   GyroModeToggle: {fileID: 0}
+  ViewModeUI: {fileID: 0}
 --- !u!1 &867682193
 GameObject:
   m_ObjectHideFlags: 0
@@ -3499,7 +3502,6 @@ GameObject:
   - component: {fileID: 963194232}
   - component: {fileID: 963194229}
   - component: {fileID: 963194231}
-  - component: {fileID: 963194234}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -3557,7 +3559,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -3586,18 +3588,6 @@ CapsuleCollider:
   m_Height: 0.7
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &963194234
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8cb675514703329409a9cc3bd774ffcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &979611538
 GameObject:
   m_ObjectHideFlags: 0
@@ -8455,7 +8445,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1000
+  far clip plane: 500
   field of view: 60
   orthographic: 0
   orthographic size: 5

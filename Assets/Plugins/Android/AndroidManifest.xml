@@ -73,7 +73,7 @@
           <!-- url receiver activity -->
         <activity android:name="urlreceiver.IntentReceiveActivity">
             <intent-filter>
-                <data android:scheme="{Your Url Scheme}" />
+                <data android:scheme="gulliverblock" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <action android:name="android.intent.action.VIEW" />

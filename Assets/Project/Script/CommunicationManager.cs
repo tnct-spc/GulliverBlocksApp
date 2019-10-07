@@ -230,13 +230,15 @@ namespace JsonFormats
     [System.Serializable]
     public struct BlockInfo
     {
-        public float x;
-        public float y;
-        public float z;
+        public int x;
+        public int y;
+        public int z;
         public string ID;
         public float time;
         public string status;
         public string colorID;
+        public string pattern_name;
+        public string pattern_group_id;
         public string map_id;
 
         public Vector3 GetPosition()

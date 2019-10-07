@@ -8,23 +8,12 @@ using System.Runtime.InteropServices;
 
 namespace Assets.UrlSchemeReceiver
 {
-    public class UrlSchemeReceiver : MonoBehaviour
+    public static class UrlSchemeReceiver
     {
         public static bool OpenFromUrlScheme { get; private set; }
 
         public static string OpenUrl { get; private set; }
         public static  string SpecificPart { get; private set; }
-
-
-        private void Awake()
-        {
-            Debug.Log("OpenFromUrlScheme: " + OpenFromUrlScheme);
-            if (OpenFromUrlScheme == true)
-            {
-                Debug.Log("OpenUrl: " + OpenUrl);
-                Debug.Log("SpecificPart: " + SpecificPart);
-            }
-        }
 
         static UrlSchemeReceiver()
         {

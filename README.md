@@ -1,4 +1,4 @@
-## 使用したライブラリ
+## 菴ｿ逕ｨ縺励◆繝ｩ繧､繝悶Λ繝ｪ
 
 - [UrlSchemeReceiver](https://github.com/Marimoiro/urlschemereceiver)
 

@@ -96,6 +96,7 @@ public class CommunicationManager
         if (req.isNetworkError || req.isHttpError)
         {
             Debug.Log(req.error);
+            Debug.Log(url);
             return "";
         }
         else

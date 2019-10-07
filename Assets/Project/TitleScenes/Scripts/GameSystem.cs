@@ -28,6 +28,7 @@ namespace TitleScene
 
         private void Awake()
         {
+            XRSettings.LoadDeviceByName("Cardboard");
             XRSettings.enabled = false;
         }
 

@@ -20,7 +20,7 @@ namespace MergeScene
             {
                 Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
                 Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
-                block.SetColor(blockInfo.colorID);
+                block.SetColor(blockInfo.colorID, false);
                 block.SetBlockData(blockInfo);
                 this.Blocks.Add(block);
                 block.gameObject.transform.parent = this.gameObject.transform;
@@ -62,7 +62,7 @@ namespace MergeScene
                     List<Block> targetBlocks = this.Blocks.FindAll(block => block.colorID == ruleData.origin);
                     targetBlocks.ForEach(block =>
                     {
-                        block.SetColor(to);
+                        block.SetColor(to, false);
                     });
 
                 }
@@ -70,7 +70,7 @@ namespace MergeScene
                 {
                     Block targetBlock = this.Blocks.Find(block => block.ID == ruleData.block_id);
                     if (targetBlock == null) return;
-                    targetBlock.SetColor(to);
+                    targetBlock.SetColor(to, false);
                 }
                 else
                 {

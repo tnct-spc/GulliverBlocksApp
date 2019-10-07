@@ -84,8 +84,16 @@ namespace TitleScene
         }
         public void OnClickCreateNewWorld()
         {
-            // TODO
-            return;
+            StartCoroutine("uploadWorld");
+        }
+
+        IEnumerator uploadWorld()
+        {
+            var communicationManager = new CommunicationManager();
+            var name = MapNameInputField.text;
+            var t = communicationManager.uploadWorldAsync(name);
+            yield return new WaitUntil(() => t.IsCompleted);
+            CreateNewMapPanel.SetActive(false);
         }
 
         public void OnClickMergeButton()

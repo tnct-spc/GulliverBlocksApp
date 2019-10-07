@@ -155,7 +155,7 @@ namespace VrScene
         {
             if (blockInfo.pattern_name == "" || blockInfo.pattern_name == null)
             {
- 　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
+ 　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("Block");
                 GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
                 blockObject.name = blockInfo.ID;
                 Block block = blockObject.GetComponent<Block>();

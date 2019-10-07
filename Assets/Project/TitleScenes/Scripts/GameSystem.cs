@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using VrScene;
 using MergeScene;
+using System.Threading.Tasks;
 using JsonFormats;
 using SocialConnector;
 
@@ -28,17 +29,41 @@ namespace TitleScene
         public ToggleGroup toggleGroup;
         public InputField MapNameInputField;
 
+        private CommunicationManager CommunicationManager;
+        private string URL_SCHEME = "gulliverblocks://";
+
         private void Awake()
         {
-            // url scheme debug
+            CommunicationManager = new CommunicationManager();
+
+            // url schemeの処理
             if (Assets.UrlSchemeReceiver.UrlSchemeReceiver.OpenFromUrlScheme)
             {
-                string param = Assets.UrlSchemeReceiver.UrlSchemeReceiver.OpenUrl;
-                Debug.Log(param);
+                string urlStr = Assets.UrlSchemeReceiver.UrlSchemeReceiver.OpenUrl;
+                urlStr = urlStr.Replace(URL_SCHEME, "");
+                // パラメータを配列に分割
+                string[] urlSchemeParams = urlStr.Split('/');
+
+                string worldType = urlSchemeParams[0];
+                string map_or_merge_id = urlSchemeParams[1];
+
+                // デバック表示
+                //for(int i = 0; i < urlSchemeParams.Length; i++)
+                //{
+                //    Debug.Log("UrlSchemeParam" + i.ToString() + ": " + urlSchemeParams[i]);
+                //}
+
+                StartCoroutine("CreateViewRight", map_or_merge_id);
             }
 
             XRSettings.LoadDeviceByName("Cardboard");
             XRSettings.enabled = false;
+        }
+
+        IEnumerator CreateViewRight(string map_or_merge_id)
+        {
+            Task<string> createViewRightTask = CommunicationManager.createViewRightAsync(map_or_merge_id);
+            yield return new WaitUntil(() => createViewRightTask.IsCompleted);
         }
 
         public void SelectGameMode()

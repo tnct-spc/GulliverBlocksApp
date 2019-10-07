@@ -192,23 +192,30 @@ namespace VrScene
                 {
                     CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
                     if (this.UseGyro) this.RotateXY(GyroDiff());
-                    if (Input.touchCount == 1)
+                    if (Input.touchCount > 0)
                     {
-                        isTouchSecondFinger = false;
-                        var touch = Input.GetTouch(0);
-                        if (touch.phase == TouchPhase.Began)
+                        Touch[] touch = Input.touches;
+                        for (int i = 0; i < touch.Length; i++)
                         {
-                            this.OnClick(touch.position,CornerPosition,isActiveColorPanel);
-
-                        } else if (touch.phase == TouchPhase.Moved)
-                        {
-                            this.OnMove(touch.position);
+                            if (i == 0)
+                            {
+                                if (touch[0].phase == TouchPhase.Began)
+                                {
+                                    this.OnClick(touch[0].position, CornerPosition, isActiveColorPanel);
+                                }
+                                else if (touch[0].phase == TouchPhase.Moved && !isTouchPanel && this.TouchMoveEnable)
+                                {
+                                    this.OnMove(touch[0].position);
+                                }
+                            }
+                            else
+                            {
+                                if (touch[i].phase == TouchPhase.Moved)
+                                {
+                                    this.OnMove(touch[i].position);
+                                }
+                            }
                         }
-                    }else if(Input.touchCount == 2)
-                    {
-                        isTouchSecondFinger = true;
-                        var touch = Input.GetTouch(0);
-                        this.OnMove(touch.position);
                     }
                     CameraTransform.rotation = Quaternion.AngleAxis(this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
                 } else
@@ -259,14 +266,10 @@ namespace VrScene
                 /*
                  *カーソル(or タッチ位置)が動いたときの処理
                  */
-                if(!isTouchPanel || isTouchSecondFinger)
-                {
-                    if (!this.TouchMoveEnable) return;
-                    Vector2 vec = position - this.lastMousePosition;
-                    vec = Quaternion.Euler(0, 0, this.CurrentZRotate) * vec;
-                    RotateXY(new Vector3(vec.x, vec.y, 0) * 10 * Time.deltaTime);
-                    this.lastMousePosition = position;
-                }
+                Vector2 vec = position - this.lastMousePosition;
+                vec = Quaternion.Euler(0, 0, this.CurrentZRotate) * vec;
+                RotateXY(new Vector3(vec.x, vec.y, 0) * 10 * Time.deltaTime);
+                this.lastMousePosition = position;
             }
 
             private void RotateXY(Vector3 direction)

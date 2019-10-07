@@ -155,13 +155,6 @@ namespace VrScene
         {
             if (blockInfo.pattern_name == "" || blockInfo.pattern_name == null)
             {
-             Object blockPrefab = (GameObject)Resources.Load("Block");
-            Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
-            block.SetColor(blockInfo.colorID, false);
-            block.SetBlockData(blockInfo);
-            if (GameManager.Mode == "PlayBack") block.SetActive(false);
-            this.Blocks.Add(block);
-            NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
  　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
                 GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
                 blockObject.name = blockInfo.ID;

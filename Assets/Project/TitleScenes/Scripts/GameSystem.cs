@@ -28,8 +28,10 @@ namespace TitleScene
 
         private void Awake()
         {
+            XRSettings.LoadDeviceByName("Cardboard");
             XRSettings.enabled = false;
         }
+
         public void SelectGameMode()
         {
             MapSelectPanel.SetActive(true);

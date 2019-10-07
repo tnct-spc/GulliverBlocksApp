@@ -17,7 +17,6 @@ namespace TitleScene
         public List<(World world, bool isMerge)> WorldsData = new List<(World world, bool isMerge)>();
         CommunicationManager CommunicationManager;
 
-
         private void Awake()
         {
             CommunicationManager = new CommunicationManager();

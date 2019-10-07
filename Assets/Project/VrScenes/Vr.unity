@@ -2495,7 +2495,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 2
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2813,6 +2813,7 @@ MonoBehaviour:
   GeneralMenuButton: {fileID: 1897379314}
   GeneralMenuPanel: {fileID: 1101299273}
   GyroModeToggle: {fileID: 1507565105}
+  ViewModeUI: {fileID: 1126917721}
 --- !u!4 &784364639
 Transform:
   m_ObjectHideFlags: 0
@@ -3171,6 +3172,7 @@ MonoBehaviour:
   GeneralMenuButton: {fileID: 0}
   GeneralMenuPanel: {fileID: 0}
   GyroModeToggle: {fileID: 0}
+  ViewModeUI: {fileID: 0}
 --- !u!1 &867682193
 GameObject:
   m_ObjectHideFlags: 0
@@ -8443,7 +8445,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1000
+  far clip plane: 500
   field of view: 60
   orthographic: 0
   orthographic size: 5

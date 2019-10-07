@@ -257,7 +257,7 @@ namespace VrScene
                     if (!this.TouchMoveEnable) return;
                     Vector2 vec = position - this.lastMousePosition;
                     vec = Quaternion.Euler(0, 0, this.CurrentZRotate) * vec;
-                    RotateXY(new Vector3(vec.x, vec.y, 0) * 10 * Time.deltaTime);
+                    RotateXY(new Vector3(vec.x, vec.y, 0) * 7 * Time.deltaTime);
                     this.lastMousePosition = position;
                 }
             }

@@ -86,6 +86,7 @@ namespace VrScene
             seekbarSlider = InputManager.seekbarSlider;
             PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
+            SetFloor();
             StartCoroutine("FetchData");
         }
 
@@ -110,12 +111,8 @@ namespace VrScene
             this.ColorRules = fetchColorRulesTask.Result;
             this.ColorRules.ForEach(this.ApplyColorRule);
 
-            SetFloor();
-
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             LoadingWindow.SetActive(false);
-
-            GameObject.Find("Player").GetComponent<PlayerManager>().Flying(false);
         }
         
         public void StopPlayback()
@@ -129,6 +126,7 @@ namespace VrScene
         {
             GameManager.Mode = "PlayBack";
             InputManager.PlayBackModeUI.SetActive(true);
+            InputManager.ViewModeUI.SetActive(false);
         }
 
         void InitialPlacement(List<BlockInfo> blocksInfo)
@@ -139,32 +137,16 @@ namespace VrScene
         private void SetFloor()
         {
             GameObject FloorA;
-            GameObject FloorB;
-            GameObject Floor1 = (GameObject)Resources.Load("Floor1");
-            GameObject Floor2 = (GameObject)Resources.Load("Floor2");
+            
+            int extantionFloor = 4;
+            GameObject FloorObj = Resources.Load("Floor_10") as GameObject;
 
-            float maxX = 0.0f;
-            float minX = 0.0f;
-            float maxZ = 0.0f;
-            float minZ = 0.0f;
-            float extensionFloor = 48.0f;
-            for (int i = 0; i < Blocks.Count; i++)
+            for (float i = -1*extantionFloor; i < extantionFloor; i++)
             {
-                Block block = Blocks[i];
-                if (maxX <= block.x) maxX = block.x;
-                if (minX >= block.x) minX = block.x;
-                if (maxZ <= block.z) maxZ = block.z;
-                if (minZ >= block.z) minZ = block.z;
-            }
-
-            for (float i = minX - extensionFloor; i <= maxX + extensionFloor; i++)
-            {
-                for (float j = minZ - extensionFloor; j <= maxZ + extensionFloor; j++)
+                for (float j = -1*extantionFloor; j < extantionFloor; j++)
                 {
-                    FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.0f, 0.32f * j), Quaternion.identity);
+                    FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10*0.32f * i, -0.0f, 10*0.32f * j), Quaternion.identity);
                     FloorA.transform.parent = Floor.transform;
-                    FloorB = (GameObject)Instantiate(Floor2, new Vector3(0.32f * i, 0.19f, 0.32f * j), Quaternion.identity);
-                    FloorB.transform.parent = Floor.transform;
                 }
             }
         }
@@ -173,7 +155,14 @@ namespace VrScene
         {
             if (blockInfo.pattern_name == "" || blockInfo.pattern_name == null)
             {
-                Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
+             Object blockPrefab = (GameObject)Resources.Load("Block");
+            Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
+            block.SetColor(blockInfo.colorID, false);
+            block.SetBlockData(blockInfo);
+            if (GameManager.Mode == "PlayBack") block.SetActive(false);
+            this.Blocks.Add(block);
+            NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
+ 　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
                 GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
                 blockObject.name = blockInfo.ID;
                 Block block = blockObject.GetComponent<Block>();

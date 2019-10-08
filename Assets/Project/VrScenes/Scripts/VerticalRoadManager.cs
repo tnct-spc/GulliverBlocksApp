@@ -16,8 +16,8 @@ public class VerticalRoadManager : MonoBehaviour
 
     System.Random rnd = new System.Random();
 
-    private int RANDOM_SPEED_MIN = 2;
-    private int RANDOM_SPEED_MAX = 7;
+    private int RANDOM_SPEED_MIN = 4;
+    private int RANDOM_SPEED_MAX = 9;
 
     private List<(GameObject car, int speed)> rightSideCars = new List<(GameObject car, int speed)>();
     private List<(GameObject car, int speed)> leftSideCars = new List<(GameObject car, int speed)>();

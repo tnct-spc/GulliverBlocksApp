@@ -199,7 +199,7 @@ namespace VrScene
                         {
                             if (i == 0)
                             {
-                                if (touch[0].phase == TouchPhase.Began)
+                                if(touch[0].phase == TouchPhase.Began)
                                 {
                                     this.OnClick(touch[0].position, CornerPosition, isActiveColorPanel);
                                 }
@@ -210,7 +210,10 @@ namespace VrScene
                             }
                             else
                             {
-                                if (touch[i].phase == TouchPhase.Moved)
+                                if (touch[i].phase == TouchPhase.Began)
+                                {
+                                    this.lastMousePosition = touch[i].position;
+                                }else if (touch[i].phase == TouchPhase.Moved)
                                 {
                                     this.OnMove(touch[i].position);
                                 }

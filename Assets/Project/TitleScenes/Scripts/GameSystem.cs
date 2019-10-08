@@ -160,7 +160,7 @@ namespace TitleScene
 
             public void OnClickShareButton(string id)
             {
-            SocialConnector.SocialConnector.Share("https://gulliverblocks.herokuapp.com/share/{"+id+"}/ ");
+            SocialConnector.SocialConnector.Share("https://gulliverblocks.herokuapp.com/share/"+id+"/ ");
             }
         }   
     

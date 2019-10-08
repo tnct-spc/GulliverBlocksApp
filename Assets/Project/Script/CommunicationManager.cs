@@ -88,6 +88,16 @@ public class CommunicationManager
         return await PostRequest(apiUrl, jsonStr);
     }
 
+    public async Task<String> uploadUpdateMapAsync(string Id, string name, bool isMerge)
+    {
+        var apiUrl = "https://" + ServerAddress + (isMerge ? "update_merge" : "/update_map/");
+        World data;
+        data.name = name;
+        data.ID = Id;
+        string jsonStr = JsonUtility.ToJson(data);
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
     private static async Task<string> GetRequest(string url)
     {
 

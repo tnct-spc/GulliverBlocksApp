@@ -27,6 +27,12 @@ namespace VrScene
         public GameObject LoadingWindow;
         public CommunicationManager CommunicationManager;
         CommunicationManager.WsClient WsClient;
+        // patternBlocksの構造: {"pattern_name": {"pattern_group_id": [(BlockInfo),]}, }
+        private Dictionary<string, Dictionary<string, List<BlockInfo>>> patternBlocks = new Dictionary<string, Dictionary<string, List<BlockInfo>>>();
+        private List<GameObject> patternObjects = new List<GameObject>();
+        private float X_RATIO = 0.32f;
+        private float Y_RATIO = 0.384f;
+        private float Z_RATIO = 0.32f;
         public GameObject Floor;
 
         private void Awake()
@@ -98,7 +104,8 @@ namespace VrScene
                 fetchColorRulesTask = CommunicationManager.fetchColorsAsync(WorldID);
             }
             yield return new WaitUntil(() => fetchBlocksTask.IsCompleted); // 通信中の場合次のフレームに処理を引き継ぐ
-            fetchBlocksTask.Result.ForEach(this.AddBlock);// 全てのブロックを配置
+            fetchBlocksTask.Result.ForEach(this.AddBlock); // 全てのブロックを配置
+            this.ReplacePatternWithObject(); // パターン認識されたブロックをオブジェクトに置き換える
 
             yield return new WaitUntil(() => fetchColorRulesTask.IsCompleted);
             this.ColorRules = fetchColorRulesTask.Result;
@@ -119,6 +126,7 @@ namespace VrScene
         {
             GameManager.Mode = "PlayBack";
             InputManager.PlayBackModeUI.SetActive(true);
+            InputManager.ViewModeUI.SetActive(false);
         }
 
         void InitialPlacement(List<BlockInfo> blocksInfo)
@@ -129,31 +137,52 @@ namespace VrScene
         private void SetFloor()
         {
             GameObject FloorA;
-            GameObject FloorB;
-            GameObject Floor1 = (GameObject)Resources.Load("Floor1");
-            GameObject Floor2 = (GameObject)Resources.Load("Floor2");
-            for (float i = -24; i < 24; i++)
+            
+            int extantionFloor = 4;
+            GameObject FloorObj = Resources.Load("Floor_10") as GameObject;
+
+            for (float i = -1*extantionFloor; i < extantionFloor; i++)
             {
-                for (float j = -24; j < 24; j++)
+                for (float j = -1*extantionFloor; j < extantionFloor; j++)
                 {
-                    FloorA = (GameObject)Instantiate(Floor1, new Vector3(0.32f * i, -0.0f, 0.32f * j), Quaternion.identity);
+                    FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10*0.32f * i, -0.0f, 10*0.32f * j), Quaternion.identity);
                     FloorA.transform.parent = Floor.transform;
-                    FloorB = (GameObject)Instantiate(Floor2, new Vector3(0.32f * i, 0.19f, 0.32f * j), Quaternion.identity);
-                    FloorB.transform.parent = Floor.transform;
                 }
             }
         }
 
         private void AddBlock(BlockInfo blockInfo)
         {
-            Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
-            Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
-            block.SetColor(blockInfo.colorID, false);
-            block.SetBlockData(blockInfo);
-            if (GameManager.Mode == "PlayBack") block.SetActive(false);
-            this.Blocks.Add(block);
-            NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
-            this.BlocksCount += 1;
+            if (blockInfo.pattern_name == "" || blockInfo.pattern_name == null)
+            {
+ 　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("Block");
+                GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
+                blockObject.name = blockInfo.ID;
+                Block block = blockObject.GetComponent<Block>();
+                block.SetColor(blockInfo.colorID, false);
+                block.SetBlockData(blockInfo);
+                if (GameManager.Mode == "PlayBack") block.SetActive(false);
+                this.Blocks.Add(block);
+                NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
+                this.BlocksCount += 1;
+            }
+            else
+            {
+                // pattern_nameがKeysに存在しないなら新しく追加する
+                List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+                if (!(patternNameKeys.IndexOf(blockInfo.pattern_name) >= 0))
+                {
+                    patternBlocks[blockInfo.pattern_name] = new Dictionary<string, List<BlockInfo>>();
+                }
+                // pattern_group_idがKeysに存在しないなら新しく追加する
+                List<string> pattern_group_id_keys = new List<string>(patternBlocks[blockInfo.pattern_name].Keys);
+                if (!(pattern_group_id_keys.IndexOf(blockInfo.pattern_group_id) >= 0))
+                {
+                    patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id] = new List<BlockInfo>();
+                }
+
+                patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
+            }
         }
 
         private void DeleteBlock(BlockInfo blockInfo)
@@ -168,6 +197,45 @@ namespace VrScene
         {
             var block = this.Blocks.Find(b => b.ID == blockInfo.ID);
             block.SetBlockData(blockInfo);
+            UpdatePattern(blockInfo);
+        }
+
+        private void UpdatePattern(BlockInfo blockInfo)
+        {
+            if(blockInfo.pattern_name != "" && blockInfo.pattern_name != null)
+            {
+                // pattern_nameがKeysに存在しないなら新しく追加する
+                List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+                if (!(patternNameKeys.IndexOf(blockInfo.pattern_name) >= 0))
+                {
+                    patternBlocks[blockInfo.pattern_name] = new Dictionary<string, List<BlockInfo>>();
+                }
+                // pattern_group_idがKeysに存在しないなら新しく追加する
+                List<string> pattern_group_id_keys = new List<string>(patternBlocks[blockInfo.pattern_name].Keys);
+                if (!(pattern_group_id_keys.IndexOf(blockInfo.pattern_group_id) >= 0))
+                {
+                    patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id] = new List<BlockInfo>();
+                }
+                for(int i = 0; i < patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Count; i++)
+                {
+                    if(patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id][i].ID == blockInfo.ID)
+                    {
+                        patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id][i] = blockInfo;
+                        foreach (GameObject _patternObject in patternObjects)
+                        {
+                            if(_patternObject.name == blockInfo.pattern_name)
+                            {
+                                GameObject patternObject = _patternObject;
+                                patternObjects.Remove(_patternObject);
+                            }
+                        }
+                        return;
+                    }
+                }
+                patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
+            }
+
+            ReplacePatternWithObject();
         }
 
         public async void RepeatPlaceBlocks()
@@ -261,6 +329,92 @@ namespace VrScene
             else
             {
                 Debug.Log("Type is Invalid.");
+            }
+        }
+
+        private void ReplacePatternWithObject()
+        {
+            /*
+             パターン認識されたブロックをオブジェクトに置き換える
+             */
+
+            // オブジェクトをいったん全部消す
+            foreach (GameObject _patternObject in patternObjects)
+            {
+                GameObject patternObject = _patternObject;
+                Destroy(patternObject);
+            }
+            patternObjects.Clear();
+
+            List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+            foreach (string patternName in patternNameKeys)
+            {
+                string patternMaterialName = patternName + "Material";
+                Material patternMaterial = Resources.Load(patternMaterialName) as Material;
+
+                List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
+                foreach (string patternGroupId in patternGroupIdKeys)
+                {   
+                    // 使ったblockの削除
+                    foreach(BlockInfo blockInfo in patternBlocks[patternName][patternGroupId])
+                    {
+                        GameObject blockObject = GameObject.Find(blockInfo.ID);
+                        if (blockObject)
+                        {
+                            Destroy(blockObject);
+                        }
+                    }
+
+                    // 原点に近い順にsort
+                    patternBlocks[patternName][patternGroupId].Sort(
+                        (a, b) => (a.x * a.x + a.y * a.y + a.z * a.z) - (b.x * b.x + b.y * b.y + b.z * b.z)
+                    );
+
+                    // サイズなどは先に出しておく
+                    BlockInfo nearestBlock = patternBlocks[patternName][patternGroupId][0];
+                    BlockInfo farthestBlock = patternBlocks[patternName][patternGroupId][patternBlocks[patternName][patternGroupId].Count - 1];
+                    float width = (Mathf.Abs(farthestBlock.x - nearestBlock.x) + 1) * X_RATIO;
+                    float height = (Mathf.Abs(farthestBlock.y - nearestBlock.y) + 1) * Y_RATIO;
+                    float depth = (Mathf.Abs(farthestBlock.z - nearestBlock.z) + 1) * Z_RATIO;
+
+                    // 各パターンに応じた処理をする
+                    switch (patternName)
+                    {
+                        case "verticalRoad":
+                            {
+                                // 道路を生成
+                                GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                patternObject.transform.position = new Vector3(
+                                    (nearestBlock.x + farthestBlock.x) * X_RATIO / 2,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2,
+                                    (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2
+                                );
+                                patternObject.name = patternGroupId;
+                                patternObject.transform.localScale = new Vector3(width, height, depth);
+                                patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
+                                patternObject.AddComponent<VerticalRoadManager>();
+                                patternObjects.Add(patternObject);
+                                break;
+                            }
+
+                        case "horizontalRoad":
+                            {
+                                // 道路を生成
+                                GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                patternObject.transform.position = new Vector3(
+                                    (nearestBlock.x + farthestBlock.x) * X_RATIO / 2,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2,
+                                    (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2
+                                );
+                                patternObject.name = patternGroupId;
+                                patternObject.transform.localScale = new Vector3(width, height, depth);
+                                patternObject.GetComponent<Renderer>().sharedMaterial = patternMaterial;
+                                patternObject.AddComponent<HorizontalRoadManager>();
+                                patternObjects.Add(patternObject);
+                                break;
+                            }
+                    }
+                }
             }
         }
 

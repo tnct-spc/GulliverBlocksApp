@@ -1,6 +1,12 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/SocialConnector/Plugins/Android.meta
+guid: e70e1e10b864b4b80bb9ea7fb0acd11a
+folderAsset: yes
+DefaultImporter:
+=======
 guid: bb566f778dd6ee941a4d5e32d649b6e4
 PrefabImporter:
+>>>>>>> c5d7c94830a1374caecb2731f70f60f66126f3a1:Assets/Resources/Block.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

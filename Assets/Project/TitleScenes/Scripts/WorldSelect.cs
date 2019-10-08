@@ -64,9 +64,11 @@ namespace TitleScene
                 Transform editBtn = panel.transform.Find("EditButton");
                 Transform deleteBtn = panel.transform.Find("DeleteButton");
                 Transform isMerged = panel.transform.Find("MergeImage");
+                Transform ShareBtn = panel.transform.Find("ShareButton");
 
                 //ボタンのテキスト変更
                 selectBtn.GetComponentInChildren<Text>().text = WorldsData[btnNum].world.name;
+
 
                 if (WorldsData[btnNum].isMerge)
                 {
@@ -77,7 +79,7 @@ namespace TitleScene
                 selectBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickWorldSelectButton(WorldsData[btnNum].world.ID, WorldsData[btnNum].isMerge));
                 editBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickChangeMapButton(WorldsData[btnNum].world.name, "EditMapName"));
                 deleteBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickChangeMapButton(WorldsData[btnNum].world.name, "Delete"));
-
+                ShareBtn.GetComponent<Button>().onClick.AddListener(() => gameSystem.OnClickShareButton(WorldsData[btnNum].world.ID));
             }
         }
     }

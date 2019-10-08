@@ -98,6 +98,16 @@ public class CommunicationManager
         return await PostRequest(apiUrl, jsonStr);
     }
 
+    public async Task<String> uploadDeleteMapAsync(string Id, bool isMerge)
+    {
+        var apiUrl = "https://" + ServerAddress + (isMerge ? "del_merge" : "/del_map/");
+        World data;
+        data.name = "";
+        data.ID = Id;
+        string jsonStr = JsonUtility.ToJson(data);
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
     private static async Task<string> GetRequest(string url)
     {
 

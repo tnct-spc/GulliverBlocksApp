@@ -121,12 +121,26 @@ namespace VrScene
             seekbarSlider.value = seekbarSlider.maxValue;
             InputManager.PlayBackModeUI.SetActive(false);
             isRepeating = false;
+            for (int i = 0; i < BlocksCount; i++)
+            {
+                Blocks[i].SetActive(true);
+                Vector3 pos = Blocks[i].transform.position;
+                pos.y = NeutralPositions[i];
+                Blocks[i].transform.position = pos;
+            }
         }
         public void StartPlayback()
         {
             GameManager.Mode = "PlayBack";
             InputManager.PlayBackModeUI.SetActive(true);
             InputManager.ViewModeUI.SetActive(false);
+            for (int i =0;i<BlocksCount;i++)
+            {
+                Blocks[i].SetActive(false);
+                Vector3 pos = Blocks[i].transform.position;
+                pos.y = NeutralPositions[i]+20;
+                Blocks[i].transform.position = pos;
+            }
         }
 
         void InitialPlacement(List<BlockInfo> blocksInfo)
@@ -238,6 +252,20 @@ namespace VrScene
             ReplacePatternWithObject();
         }
 
+        public void BlockSkip(int slider,bool SkipOrBack)
+        {
+            Vector3 pos = Blocks[slider].transform.position;
+            if (SkipOrBack)
+            {
+                pos.y = NeutralPositions[slider];
+            }
+            else
+            {
+                pos.y = NeutralPositions[slider] + 20;
+            }
+            Blocks[slider].transform.position = pos;
+        }
+
         public async void RepeatPlaceBlocks()
         {
             isRepeating = true;
@@ -246,7 +274,12 @@ namespace VrScene
             {
                 if (seekbarSlider.value == seekbarSlider.maxValue)
                 {
+                    while (Blocks[(int)seekbarSlider.maxValue-1].transform.position.y!=NeutralPositions[(int)seekbarSlider.maxValue-1])
+                    {
+                        await Task.Delay(1);
+                    }
                     await Task.Delay(3000);
+                    StartPlayback();
                     break;
                 }
                 int FirstBlockTime = (int)Blocks[(int)seekbarSlider.value].time;
@@ -254,7 +287,7 @@ namespace VrScene
                 seekbarSlider.value++;
                 if(seekbarSlider.value != seekbarSlider.maxValue)
                 {
-                    if ((FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) * (FirstBlockTime - (int)Blocks[(int)seekbarSlider.value].time) >= 25)
+                    if ((int)Blocks[(int)seekbarSlider.value].time - FirstBlockTime > 1)
                         await Task.Delay(1000);
                 }
             }
@@ -270,7 +303,7 @@ namespace VrScene
         async void FallingBlock(int i)
         {
             float Accel = 0f;
-            for (float j = NeutralPositions[i]+20; j > NeutralPositions[i]; j -= Accel)
+            for (float j = Blocks[i].transform.position.y; j > NeutralPositions[i]; j -= Accel)
             {
                 Vector3 pos = Blocks[i].transform.position;
                 pos.y = j;

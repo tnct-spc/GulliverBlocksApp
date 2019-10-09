@@ -17,10 +17,5 @@ namespace VrScene
                 SceneManager.LoadScene("Title");
             }
         }
-
-        private void Update()
-        { 
-            if (Mode == "PlayBack") ViewModeUI.SetActive(false);
-        }
     }
 }

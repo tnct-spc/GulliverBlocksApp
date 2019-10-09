@@ -8,10 +8,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using VrScene;
 using MergeScene;
+using System.Threading.Tasks;
 using JsonFormats;
+using SocialConnector;
 
 namespace TitleScene
 {
+
     public class GameSystem : MonoBehaviour
     {
         public GameObject MapSelectPanel;
@@ -26,10 +29,43 @@ namespace TitleScene
         public ToggleGroup toggleGroup;
         public InputField MapNameInputField;
 
+        private CommunicationManager CommunicationManager;
+        private string URL_SCHEME = "gulliverblocks://";
+
         private void Awake()
         {
+            CommunicationManager = new CommunicationManager();
+
+            // url schemeの処理
+            if (Assets.UrlSchemeReceiver.UrlSchemeReceiver.OpenFromUrlScheme)
+            {
+                string urlStr = Assets.UrlSchemeReceiver.UrlSchemeReceiver.OpenUrl;
+                urlStr = urlStr.Replace(URL_SCHEME, "");
+                // パラメータを配列に分割
+                string[] urlSchemeParams = urlStr.Split('/');
+
+                string worldType = urlSchemeParams[0];
+                string map_or_merge_id = urlSchemeParams[1];
+
+                // デバック表示
+                //for(int i = 0; i < urlSchemeParams.Length; i++)
+                //{
+                //    Debug.Log("UrlSchemeParam" + i.ToString() + ": " + urlSchemeParams[i]);
+                //}
+
+                StartCoroutine("CreateViewRight", map_or_merge_id);
+            }
+
+            XRSettings.LoadDeviceByName("Cardboard");
             XRSettings.enabled = false;
         }
+
+        IEnumerator CreateViewRight(string map_or_merge_id)
+        {
+            Task<string> createViewRightTask = CommunicationManager.createViewRightAsync(map_or_merge_id);
+            yield return new WaitUntil(() => createViewRightTask.IsCompleted);
+        }
+
         public void SelectGameMode()
         {
             MapSelectPanel.SetActive(true);
@@ -107,9 +143,9 @@ namespace TitleScene
 
         public void OnClickEndGameButton()
         {
-            #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-            #endif
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
             UnityEngine.Application.Quit();
         }
 
@@ -118,12 +154,12 @@ namespace TitleScene
 
         public void OnClickChangeMapButton(string mapName, string command)
         {
-            if(command == "EditMapName")
+            if (command == "EditMapName")
             {
                 EditMapNamePanel.SetActive(true);
                 EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text = mapName;
             }
-            else if(command == "Delete")
+            else if (command == "Delete")
             {
                 DeleteMapPanel.SetActive(true);
                 DeleteMapPanel.transform.Find("Text(DeletePanel)").GetComponent<Text>().text = mapName;
@@ -151,6 +187,11 @@ namespace TitleScene
             }
             worldSelect.WorldsData.RemoveAll(w => w.world.name == selectMapName);
             worldSelect.setWorldSelectButton();
+        }
+
+        public void OnClickShareButton(string id)
+        {
+            SocialConnector.SocialConnector.Share("https://gulliverblocks.herokuapp.com/share/" + id + "/ ");
         }
     }
 }

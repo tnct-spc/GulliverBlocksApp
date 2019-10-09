@@ -61,8 +61,9 @@ MonoBehaviour:
   z: 0
   ID: 
   time: 0
-  put: 0
   colorID: 
+  applied_colorID: 
+  map_id: 
   texture: {fileID: 0}
 --- !u!1001 &2055639993188707023
 PrefabInstance:
@@ -134,6 +135,17 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: b3862f69c9396ed45a0024ecda809a9f,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5178661895559278292, guid: b3862f69c9396ed45a0024ecda809a9f,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1854474186190359453, guid: 75d1846296d383b4d8ffa61183980e71,
+        type: 3}
+    - target: {fileID: -1504981713932161579, guid: b3862f69c9396ed45a0024ecda809a9f,
+        type: 3}
+      propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

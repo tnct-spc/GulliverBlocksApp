@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.XR;
@@ -36,13 +36,6 @@ namespace VrScene {
             Input.gyro.enabled = true;
         }
 
-        void Update () {
-            Move ();
-            CheckPlayerFall ();
-            PlayerCamera.SetActive (!XRSettings.enabled);
-            TwoEyesModeCamera.SetActive (XRSettings.enabled);
-            RotateManagerI.UpdateRotate (corner.activeInHierarchy, corner.transform.position);
-            if (!XRSettings.enabled) {
                 PlayerCamera.transform.position = this.transform.position;
             } else {
                 RotatePlayerInTwoEyesMode ();
@@ -55,8 +48,7 @@ namespace VrScene {
                 DashCheck ();
             }
         }
-        void RotatePlayerInTwoEyesMode () {
-            this.transform.eulerAngles = new Vector3 (0f, TwoEyesModeCamera.transform.eulerAngles.y, 0f);
+
             TwoEyesModeCamera.transform.position = this.transform.position;
         }
 
@@ -97,6 +89,9 @@ namespace VrScene {
 
         private void RespawnPlayer () {
             transform.position = Vector3.zero;
+            Vector3 pos = transform.position;
+            pos.y = 1.0f;
+            transform.position = pos;
         }
 
         private void CheckPlayerFall () {
@@ -162,19 +157,19 @@ namespace VrScene {
                     if (Input.touchCount > 0) {
                         var touch = Input.GetTouch (0);
                         if (touch.phase == TouchPhase.Began) {
-                            this.OnClick (0.2f * touch.position, 0.2f * CornerPosition, isActiveColorPanel);
+                            this.OnClick (0.3f * touch.position, 0.3f * CornerPosition, isActiveColorPanel);
 
                         } else if (touch.phase == TouchPhase.Moved) {
-                            this.OnMove (0.2f * touch.position);
+                            this.OnMove (0.3f * touch.position);
                         }
                     }
                     CameraTransform.rotation = Quaternion.AngleAxis (this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
                 } else {
                     if (Input.GetMouseButtonDown (0)) {
-                        this.OnClick (0.2f * Input.mousePosition, 0.2f * CornerPosition, isActiveColorPanel);
+                        this.OnClick (0.3f * Input.mousePosition, 0.3f * CornerPosition, isActiveColorPanel);
 
                     } else if (Input.GetMouseButton (0)) {
-                        this.OnMove (0.2f * Input.mousePosition);
+                        this.OnMove (0.3f * Input.mousePosition);
                     }
                 }
                 PlayerTransform.rotation = Quaternion.AngleAxis (this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
@@ -210,8 +205,7 @@ namespace VrScene {
                 if (!isTouchPanel) {
                     if (!this.TouchMoveEnable) return;
                     Vector2 vec = position - this.lastMousePosition;
-                    vec = Quaternion.Euler (0, 0, this.CurrentZRotate) * vec;
-                    RotateXY (new Vector3 (vec.x, vec.y, 0) * 10 * Time.deltaTime);
+
                     this.lastMousePosition = position;
                 }
             }

@@ -43,6 +43,8 @@ namespace VrScene
         public GameObject GeneralMenuPanel;
         public Toggle GyroModeToggle;
 
+        public GameObject ViewModeUI;
+
         void Start()
         {
             playermanager = player.GetComponent<PlayerManager>();
@@ -67,9 +69,11 @@ namespace VrScene
             InputTracking.disablePositionalTracking = true;
         }
 
+
+
         private void Update()
         {
-            if (Input.GetKey("w")) Player_Forward();
+            /*if (Input.GetKey("w")) Player_Forward();
             else if (Input.GetKeyUp("w")) Player_StopForward();
 
             else if (Input.GetKey("d")) Player_Right();
@@ -80,7 +84,7 @@ namespace VrScene
 
             else if (Input.GetKey("s")) Player_Back();
             else if (Input.GetKeyUp("s")) Player_StopBack();
-
+            */
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (XRSettings.enabled == true)

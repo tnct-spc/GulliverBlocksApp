@@ -187,7 +187,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c53579681acde99439ad069b49519b82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  URL: hoge
 --- !u!1 &117089977
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,8 +1530,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 21720917}
-        m_MethodName: OnClickRegisterMapNameButton
-        m_Mode: 6
+        m_MethodName: OnClickDeleteWorld
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2739,7 +2738,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 453231301}
   m_HandleRect: {fileID: 453231300}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3078,8 +3077,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 21720917}
-        m_MethodName: OnClickRegisterMapNameButton
-        m_Mode: 6
+        m_MethodName: OnClickChangeWorldName
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4189,7 +4188,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1979087132}
   m_HandleRect: {fileID: 1979087131}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

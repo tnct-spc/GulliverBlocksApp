@@ -28,7 +28,6 @@ namespace TitleScene
         public GameManager GameManager;
         public ToggleGroup toggleGroup;
         public InputField MapNameInputField;
-
         private CommunicationManager CommunicationManager;
         private string URL_SCHEME = "gulliverblocks://";
 
@@ -167,31 +166,52 @@ namespace TitleScene
             selectMapName = mapName;
         }
 
-        public void OnClickAcceptChangeMapButton(bool isEdit)
-        {
+        public void OnClickChangeWorldName(){
             WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
-            if (isEdit)
+            string changedMapName = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
+            if (changedMapName != selectMapName)
             {
-                string changedMapName = EditMapNamePanel.transform.Find("InputField").GetComponent<InputField>().text;
-                if (changedMapName != selectMapName)
-                {
-                    var changingWordData = worldSelect.WorldsData.Find(w => w.world.name == selectMapName);
-                    changingWordData.world.name = changedMapName;
-                    worldSelect.WorldsData.Insert(0, changingWordData);
-                }
-                EditMapNamePanel.SetActive(false);
+                var changingWordData = worldSelect.WorldsData.Find(w => w.world.name == selectMapName);
+                changingWordData.world.name = changedMapName;
+                worldSelect.WorldsData.Insert(0, changingWordData);
+                StartCoroutine(UploadChangedName(changingWordData.world.ID, changedMapName, changingWordData.isMerge));
+            } else {
+                 EditMapNamePanel.SetActive(false);
             }
-            else
-            {
-                DeleteMapPanel.SetActive(false);
-            }
+        }
+
+        IEnumerator UploadChangedName(string WorldId, string name, bool isMerge)
+        {
+            var communicationManager = new CommunicationManager();
+            var task = communicationManager.uploadUpdateMapAsync(WorldId, name, isMerge);
+            yield return new WaitUntil(() => task.IsCompleted);
+            EditMapNamePanel.SetActive(false);
+            WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
             worldSelect.WorldsData.RemoveAll(w => w.world.name == selectMapName);
             worldSelect.setWorldSelectButton();
         }
+ 
+        public void OnClickDeleteWorld()
+        {
+            WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
+            var changingWordData = worldSelect.WorldsData.Find(w => w.world.name == selectMapName);
+            StartCoroutine(UploadDeleteMap(changingWordData.world.ID,changingWordData.isMerge));
+        }
 
+        IEnumerator UploadDeleteMap(string WorldId, bool isMerge)
+        {
+            var communicationManager = new CommunicationManager();
+            var task = communicationManager.uploadDeleteMapAsync(WorldId, isMerge);
+            yield return new WaitUntil(() => task.IsCompleted);
+            DeleteMapPanel.SetActive(false);
+            WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
+            var changingWordData = worldSelect.WorldsData.Find(w => w.world.name == selectMapName);
+            worldSelect.WorldsData.RemoveAll(w => w.world.name == selectMapName);
+            worldSelect.setWorldSelectButton();
+        }
         public void OnClickShareButton(string id)
         {
-            SocialConnector.SocialConnector.Share("https://gulliverblocks.herokuapp.com/share/" + id + "/ ");
+            SocialConnector.SocialConnector.Share("https://gulliverblocks.herokuapp.com/share/"+id+"/ ");
         }
     }
 }

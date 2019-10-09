@@ -88,6 +88,25 @@ public class CommunicationManager
         return await PostRequest(apiUrl, jsonStr);
     }
 
+    public async Task<String> uploadUpdateMapAsync(string Id, string name, bool isMerge)
+    {
+        var apiUrl = "https://" + ServerAddress + (isMerge ? "update_merge" : "/update_map/");
+        World data;
+        data.name = name;
+        data.ID = Id;
+        string jsonStr = JsonUtility.ToJson(data);
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
+    public async Task<String> uploadDeleteMapAsync(string Id, bool isMerge)
+    {
+        var apiUrl = "https://" + ServerAddress + (isMerge ? "del_merge" : "/del_map/");
+        World data;
+        data.name = "";
+        data.ID = Id;
+        string jsonStr = JsonUtility.ToJson(data);
+        return await PostRequest(apiUrl, jsonStr);
+    }
     public async Task<string> createViewRightAsync(string map_or_merge_id)
     {
         var apiUrl = "https://" + ServerAddress + "/receive_share/" + map_or_merge_id + "/";

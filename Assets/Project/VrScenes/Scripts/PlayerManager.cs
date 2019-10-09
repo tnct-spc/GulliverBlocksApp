@@ -40,6 +40,11 @@ namespace VrScene
             Input.gyro.enabled = true;
         }
 
+        private void Update()
+        {
+            StandVertically();
+        }
+
         void FixedUpdate()
         {
             Move();
@@ -66,6 +71,15 @@ namespace VrScene
                 DashCheck();
             }
         }
+
+        void StandVertically()
+        {
+            Vector3 pos = this.transform.localEulerAngles;
+            pos.x = 0f;
+            pos.z = 0f;
+            this.transform.localEulerAngles = pos;
+        }
+
         void RotatePlayerInTwoEyesMode()
         {
             this.transform.eulerAngles = new Vector3(0f, TwoEyesModeCamera.transform.eulerAngles.y, 0f);

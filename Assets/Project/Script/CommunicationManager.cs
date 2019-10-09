@@ -107,6 +107,11 @@ public class CommunicationManager
         string jsonStr = JsonUtility.ToJson(data);
         return await PostRequest(apiUrl, jsonStr);
     }
+    public async Task<string> createViewRightAsync(string map_or_merge_id)
+    {
+        var apiUrl = "https://" + ServerAddress + "/receive_share/" + map_or_merge_id + "/";
+        return await GetRequest(apiUrl);
+    }
 
     private static async Task<string> GetRequest(string url)
     {

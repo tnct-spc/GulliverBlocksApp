@@ -385,9 +385,9 @@ namespace VrScene
                                 // 道路を生成
                                 GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 patternObject.transform.position = new Vector3(
-                                    (nearestBlock.x + farthestBlock.x) * X_RATIO / 2,
-                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2,
-                                    (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2
+                                    (nearestBlock.x + farthestBlock.x) * X_RATIO / 2.0f,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 4.0f,
+                                    (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2.0f
                                 );
                                 patternObject.name = patternGroupId;
                                 patternObject.transform.localScale = new Vector3(width, height, depth);
@@ -402,9 +402,9 @@ namespace VrScene
                                 // 道路を生成
                                 GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 patternObject.transform.position = new Vector3(
-                                    (nearestBlock.x + farthestBlock.x) * X_RATIO / 2,
-                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2,
-                                    (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2
+                                    (nearestBlock.x + farthestBlock.x) * X_RATIO / 2.0f,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 4.0f,
+                                    (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2.0f
                                 );
                                 patternObject.name = patternGroupId;
                                 patternObject.transform.localScale = new Vector3(width, height, depth);

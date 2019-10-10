@@ -151,15 +151,16 @@ namespace VrScene
         private void SetFloor()
         {
             GameObject FloorA;
-            
-            int extantionFloor = 4;
+
+            Vector3 CornerPosition = new Vector3(HighestPositions[1], 0, HighestPositions[3]);
+            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[2], 0, HighestPositions[4]);
             GameObject FloorObj = Resources.Load("Floor_10") as GameObject;
 
-            for (float i = -1*extantionFloor; i < extantionFloor; i++)
+            for (float i = AnotherCornerPosition.x - 3.2f; i < CornerPosition.x + 3.2f; i += 3.2f)
             {
-                for (float j = -1*extantionFloor; j < extantionFloor; j++)
+                for (float j = AnotherCornerPosition.z + 3.2f; j < CornerPosition.z + 3.2f; j += 3.2f)
                 {
-                    FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10*0.32f * i, -0.0f, 10*0.32f * j), Quaternion.identity);
+                    FloorA = (GameObject)Instantiate(FloorObj, new Vector3(i, -0.0f, j), Quaternion.identity);
                     FloorA.transform.parent = Floor.transform;
                 }
             }

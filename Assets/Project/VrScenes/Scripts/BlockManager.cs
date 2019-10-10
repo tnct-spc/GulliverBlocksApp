@@ -34,7 +34,7 @@ namespace VrScene
         private float Y_RATIO = 0.384f;
         private float Z_RATIO = 0.32f;
         public GameObject Floor;
-
+        public List<float> HighestPositions = new List<float>() {0, 0, 0, 0};//{一番大きいx, 一番小さいx, 一番大きいz, 一番小さいz}
         private void Awake()
         {
             CommunicationManager = new CommunicationManager();
@@ -178,6 +178,11 @@ namespace VrScene
                 if (GameManager.Mode == "PlayBack") block.SetActive(false);
                 this.Blocks.Add(block);
                 NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
+                if (block.transform.position.x > HighestPositions[1]) HighestPositions[1] = block.transform.position.x;
+                if (block.transform.position.x < HighestPositions[2]) HighestPositions[2] = block.transform.position.x;
+                if (block.transform.position.z > HighestPositions[3]) HighestPositions[3] = block.transform.position.x;
+                if (block.transform.position.z < HighestPositions[4]) HighestPositions[4] = block.transform.position.x;
+                Debug.Log(HighestPositions);
                 this.BlocksCount += 1;
             }
             else

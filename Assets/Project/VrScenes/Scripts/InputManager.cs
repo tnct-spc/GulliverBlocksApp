@@ -150,11 +150,13 @@ namespace VrScene
         public void OnClickAdvanceSkipButton()
         {
             seekbarSlider.value++;
+            BlockManager.BlockSkip((int)seekbarSlider.value-1,true);
         }
 
         public void OnClickBackSkipButton()
         {
             seekbarSlider.value--;
+            BlockManager.BlockSkip((int)seekbarSlider.value+1, false);
         }
 
         // GeneralMenu

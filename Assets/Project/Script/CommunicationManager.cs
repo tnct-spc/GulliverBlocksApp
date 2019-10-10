@@ -67,6 +67,17 @@ public class CommunicationManager
         return await PostRequest(apiUrl, jsonStr);
     }
 
+    public async Task<String> uploadWorldAsync(string mapName)
+    {
+        World data = new World();
+        data.ID = "";
+        data.name = mapName;
+        var apiUrl = "https://" + ServerAddress + "/create_map/";
+        string jsonStr = JsonUtility.ToJson(data);
+        Debug.Log(jsonStr);
+        return await PostRequest(apiUrl, jsonStr);
+    }
+
     public async Task<string> loginAsync(string userName, string password)
     {
         string apiUrl = "https://" + ServerAddress + "/login/";

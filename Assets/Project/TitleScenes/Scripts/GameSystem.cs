@@ -117,8 +117,30 @@ namespace TitleScene
         }
         public void OnClickCreateNewWorld()
         {
-            // TODO
-            return;
+            StartCoroutine("uploadWorld");
+        }
+
+        IEnumerator uploadWorld()
+        {
+            var communicationManager = new CommunicationManager();
+            var name = MapNameInputField.text;
+            var t = communicationManager.uploadWorldAsync(name);
+            yield return new WaitUntil(() => t.IsCompleted);
+            CreateNewMapPanel.SetActive(false);
+            StartCoroutine("FetchData");
+        }
+
+        IEnumerator FetchData()
+        {
+            var CommunicationManager = new CommunicationManager();
+            var fetchMapsTask = CommunicationManager.fetchMapsAsync();
+            var fetchMergesTask = CommunicationManager.fetchMergesAsync();
+            yield return new WaitUntil(() => fetchMapsTask.IsCompleted);
+            yield return new WaitUntil(() => fetchMergesTask.IsCompleted);
+            WorldSelect worldSelect = MapSelectPanel.GetComponent<WorldSelect>();
+            fetchMapsTask.Result.ForEach(d => worldSelect.WorldsData.Add((d, false)));
+            fetchMergesTask.Result.ForEach(d => worldSelect.WorldsData.Add((d, true)));
+            worldSelect.setWorldSelectButton();
         }
 
         public void OnClickMergeButton()

@@ -34,6 +34,7 @@ namespace VrScene
         private float Y_RATIO = 0.384f;
         private float Z_RATIO = 0.32f;
         public GameObject Floor;
+        public GameObject Walls;
         public List<float> HighestPositions = new List<float>() {0, 0, 0, 0};//{一番大きいx, 一番小さいx, 一番大きいz, 一番小さいz}
         private void Awake()
         {
@@ -112,6 +113,7 @@ namespace VrScene
 
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
             SetFloor();
+            SetWall();
             LoadingWindow.SetActive(false);
         }
         
@@ -154,7 +156,6 @@ namespace VrScene
 
             Vector3 CornerPosition = new Vector3(HighestPositions[0], 0, HighestPositions[2]);
             Vector3 AnotherCornerPosition = new Vector3(HighestPositions[1], 0, HighestPositions[3]);
-            Debug.Log(CornerPosition.x + ":" + CornerPosition.z + ":" + AnotherCornerPosition.x + ":" + AnotherCornerPosition.z);
             GameObject FloorObj = Resources.Load("Floor_10") as GameObject;
 
             if (IsMerge)
@@ -180,6 +181,53 @@ namespace VrScene
                 }
             }
             Floor.transform.position = new Vector3(3.2f, 0, 3.2f);
+        }
+
+        private void SetWall()
+        {
+            GameObject Wall;
+            GameObject WallObj = Resources.Load("Wall") as GameObject;
+
+            Vector3 CornerPosition = new Vector3(HighestPositions[0], 0, HighestPositions[2]);
+            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[1], 0, HighestPositions[3]);
+
+            if (IsMerge)
+            {
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(CornerPosition.x + 6.4f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(AnotherCornerPosition.x + -6.4f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, CornerPosition.z + 6.4f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, AnotherCornerPosition.z - 6.4f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+            }
+            else
+            {
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(4 * 3.2f + 3.2f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(-4 * 3.2f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, 4 * 3.2f + 3.2f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, -4 * 3.2f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+            }
+            Walls.transform.position = new Vector3(-3.2f, 0 ,-3.2f);
         }
 
         private void AddBlock(BlockInfo blockInfo)

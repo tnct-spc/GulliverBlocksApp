@@ -272,23 +272,30 @@ namespace VrScene
             SeekBar.SetActive(true);
             while (true)
             {
-                if (seekbarSlider.value == seekbarSlider.maxValue)
+                if (isRepeating == false)
                 {
-                    while (Blocks[(int)seekbarSlider.maxValue-1].transform.position.y!=NeutralPositions[(int)seekbarSlider.maxValue-1])
-                    {
-                        await Task.Delay(1);
-                    }
-                    await Task.Delay(3000);
-                    StartPlayback();
-                    break;
+                    await Task.Delay(1);
                 }
-                int FirstBlockTime = (int)Blocks[(int)seekbarSlider.value].time;
-                FallingBlock((int)seekbarSlider.value);
-                seekbarSlider.value++;
-                if(seekbarSlider.value != seekbarSlider.maxValue)
+                else
                 {
-                    if ((int)Blocks[(int)seekbarSlider.value].time - FirstBlockTime > 1)
-                        await Task.Delay(1000);
+                    if (seekbarSlider.value == seekbarSlider.maxValue)
+                    {
+                        while (Blocks[(int)seekbarSlider.maxValue - 1].transform.position.y != NeutralPositions[(int)seekbarSlider.maxValue - 1])
+                        {
+                            await Task.Delay(1);
+                        }
+                        await Task.Delay(3000);
+                        StartPlayback();
+                        break;
+                    }
+                    int FirstBlockTime = (int)Blocks[(int)seekbarSlider.value].time;
+                    FallingBlock((int)seekbarSlider.value);
+                    seekbarSlider.value++;
+                    if (seekbarSlider.value != seekbarSlider.maxValue)
+                    {
+                        if ((int)Blocks[(int)seekbarSlider.value].time - FirstBlockTime > 1)
+                            await Task.Delay(1000);
+                    }
                 }
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;

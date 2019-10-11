@@ -152,16 +152,30 @@ namespace VrScene
         {
             GameObject FloorA;
 
-            Vector3 CornerPosition = new Vector3(HighestPositions[1], 0, HighestPositions[3]);
-            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[2], 0, HighestPositions[4]);
+            Vector3 CornerPosition = new Vector3(HighestPositions[0], 0, HighestPositions[1]);
+            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[2], 0, HighestPositions[3]);
             GameObject FloorObj = Resources.Load("Floor_10") as GameObject;
 
-            for (float i = AnotherCornerPosition.x - 3.2f; i < CornerPosition.x + 3.2f; i += 3.2f)
+            if (IsMerge)
             {
-                for (float j = AnotherCornerPosition.z + 3.2f; j < CornerPosition.z + 3.2f; j += 3.2f)
+                for (float i = AnotherCornerPosition.x - 3.2f; i < CornerPosition.x + 3.2f; i += 3.2f)
                 {
-                    FloorA = (GameObject)Instantiate(FloorObj, new Vector3(i, -0.0f, j), Quaternion.identity);
-                    FloorA.transform.parent = Floor.transform;
+                    for (float j = AnotherCornerPosition.z + 3.2f; j < CornerPosition.z + 3.2f; j += 3.2f)
+                    {
+                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(i, -0.0f, j), Quaternion.identity);
+                        FloorA.transform.parent = Floor.transform;
+                    }
+                }
+            }
+            else
+            {
+                for (float i = -4; i < 4; i++)
+                {
+                    for (float j = -4; j < 4; j++)
+                    {
+                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10 * 0.32f * i, -0.0f, 10 * 0.32f * j), Quaternion.identity);
+                        FloorA.transform.parent = Floor.transform;
+                    }
                 }
             }
         }
@@ -179,10 +193,10 @@ namespace VrScene
                 if (GameManager.Mode == "PlayBack") block.SetActive(false);
                 this.Blocks.Add(block);
                 NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
-                if (block.transform.position.x > HighestPositions[1]) HighestPositions[1] = block.transform.position.x;
-                if (block.transform.position.x < HighestPositions[2]) HighestPositions[2] = block.transform.position.x;
-                if (block.transform.position.z > HighestPositions[3]) HighestPositions[3] = block.transform.position.x;
-                if (block.transform.position.z < HighestPositions[4]) HighestPositions[4] = block.transform.position.x;
+                if (block.transform.position.x > HighestPositions[0]) HighestPositions[0] = block.transform.position.x;
+                if (block.transform.position.x < HighestPositions[1]) HighestPositions[1] = block.transform.position.x;
+                if (block.transform.position.z > HighestPositions[2]) HighestPositions[2] = block.transform.position.x;
+                if (block.transform.position.z < HighestPositions[3]) HighestPositions[3] = block.transform.position.x;
                 Debug.Log(HighestPositions);
                 this.BlocksCount += 1;
             }

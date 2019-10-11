@@ -86,7 +86,6 @@ namespace VrScene
             seekbarSlider = InputManager.seekbarSlider;
             PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
-            SetFloor();
             StartCoroutine("FetchData");
         }
 
@@ -112,6 +111,7 @@ namespace VrScene
             this.ColorRules.ForEach(this.ApplyColorRule);
 
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
+            SetFloor();
             LoadingWindow.SetActive(false);
         }
         
@@ -152,15 +152,16 @@ namespace VrScene
         {
             GameObject FloorA;
 
-            Vector3 CornerPosition = new Vector3(HighestPositions[0], 0, HighestPositions[1]);
-            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[2], 0, HighestPositions[3]);
+            Vector3 CornerPosition = new Vector3(HighestPositions[0], 0, HighestPositions[2]);
+            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[1], 0, HighestPositions[3]);
+            Debug.Log(CornerPosition.x + ":" + CornerPosition.z + ":" + AnotherCornerPosition.x + ":" + AnotherCornerPosition.z);
             GameObject FloorObj = Resources.Load("Floor_10") as GameObject;
 
             if (IsMerge)
             {
-                for (float i = AnotherCornerPosition.x - 3.2f; i < CornerPosition.x + 3.2f; i += 3.2f)
+                for (float i = AnotherCornerPosition.x - 6.4f; i < CornerPosition.x + 6.4f; i += 3.2f)
                 {
-                    for (float j = AnotherCornerPosition.z + 3.2f; j < CornerPosition.z + 3.2f; j += 3.2f)
+                    for (float j = AnotherCornerPosition.z - 6.4f; j < CornerPosition.z + 6.4f; j += 3.2f)
                     {
                         FloorA = (GameObject)Instantiate(FloorObj, new Vector3(i, -0.0f, j), Quaternion.identity);
                         FloorA.transform.parent = Floor.transform;
@@ -178,6 +179,7 @@ namespace VrScene
                     }
                 }
             }
+            Floor.transform.position = new Vector3(3.2f, 0, 3.2f);
         }
 
         private void AddBlock(BlockInfo blockInfo)
@@ -195,9 +197,8 @@ namespace VrScene
                 NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
                 if (block.transform.position.x > HighestPositions[0]) HighestPositions[0] = block.transform.position.x;
                 if (block.transform.position.x < HighestPositions[1]) HighestPositions[1] = block.transform.position.x;
-                if (block.transform.position.z > HighestPositions[2]) HighestPositions[2] = block.transform.position.x;
-                if (block.transform.position.z < HighestPositions[3]) HighestPositions[3] = block.transform.position.x;
-                Debug.Log(HighestPositions);
+                if (block.transform.position.z > HighestPositions[2]) HighestPositions[2] = block.transform.position.z;
+                if (block.transform.position.z < HighestPositions[3]) HighestPositions[3] = block.transform.position.z;
                 this.BlocksCount += 1;
             }
             else

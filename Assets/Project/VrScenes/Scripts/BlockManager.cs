@@ -69,6 +69,16 @@ namespace VrScene
                 UpdateBlocks.FindAll(b => b.status == "delete").ForEach(b => DeleteBlock(b));
                 UpdateBlocks.FindAll(b => b.status == "update").ForEach(b => UpdateBlock(b));
                 this.ColorRules.ForEach(this.ApplyColorRule);
+
+                if (UpdateBlocks.FindAll(b => b.status == "delete") != null)
+                {
+                    DeletepatternBlocks(UpdateBlocks.FindAll(b => b.status == "delete"));
+                }
+
+                if (UpdateBlocks.FindAll(b => b.status == "update") != null)
+                {
+                    UpdatePatternBlocks(UpdateBlocks.FindAll(b => b.status == "update"));
+                }
             }
             this.UpdateBlocks = new List<BlockInfo> { };
         }
@@ -207,48 +217,55 @@ namespace VrScene
             this.BlocksCount -= 1;
         }
 
+        private void DeletepatternBlocks(List<BlockInfo> blockInfos)
+        {
+            List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+            foreach (string patternName in patternNameKeys)
+            {
+                List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
+                foreach (string patternGroupId in patternGroupIdKeys)
+                {
+                    foreach (BlockInfo blockInfo in blockInfos)
+                    {
+                        patternBlocks[patternName][patternGroupId].Remove(blockInfo);
+                    }
+                }
+            }
+            ReplacePatternWithObject();
+        }
+
         private void UpdateBlock(BlockInfo blockInfo)
         {
             var block = this.Blocks.Find(b => b.ID == blockInfo.ID);
             block.SetBlockData(blockInfo);
-            UpdatePattern(blockInfo);
         }
 
-        private void UpdatePattern(BlockInfo blockInfo)
+        private void UpdatePatternBlocks(List<BlockInfo> blockInfos)
         {
-            if(blockInfo.pattern_name != "" && blockInfo.pattern_name != null)
+            patternBlocks.Clear();
+            foreach (BlockInfo blockInfo in blockInfos)
             {
-                // pattern_nameがKeysに存在しないなら新しく追加する
-                List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
-                if (!(patternNameKeys.IndexOf(blockInfo.pattern_name) >= 0))
+                if (blockInfo.pattern_name != "" && blockInfo.pattern_name != null)
                 {
-                    patternBlocks[blockInfo.pattern_name] = new Dictionary<string, List<BlockInfo>>();
-                }
-                // pattern_group_idがKeysに存在しないなら新しく追加する
-                List<string> pattern_group_id_keys = new List<string>(patternBlocks[blockInfo.pattern_name].Keys);
-                if (!(pattern_group_id_keys.IndexOf(blockInfo.pattern_group_id) >= 0))
-                {
-                    patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id] = new List<BlockInfo>();
-                }
-                for(int i = 0; i < patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Count; i++)
-                {
-                    if(patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id][i].ID == blockInfo.ID)
+                    // pattern_nameがKeysに存在しないなら新しく追加する
+                    List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+                    if (!(patternNameKeys.IndexOf(blockInfo.pattern_name) >= 0))
                     {
-                        patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id][i] = blockInfo;
-                        foreach (GameObject _patternObject in patternObjects)
-                        {
-                            if(_patternObject.name == blockInfo.pattern_name)
-                            {
-                                GameObject patternObject = _patternObject;
-                                patternObjects.Remove(_patternObject);
-                            }
-                        }
-                        return;
+                        patternBlocks[blockInfo.pattern_name] = new Dictionary<string, List<BlockInfo>>();
                     }
+                    // pattern_group_idがKeysに存在しないなら新しく追加する
+                    List<string> pattern_group_id_keys = new List<string>(patternBlocks[blockInfo.pattern_name].Keys);
+                    if (!(pattern_group_id_keys.IndexOf(blockInfo.pattern_group_id) >= 0))
+                    {
+                        patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id] = new List<BlockInfo>();
+                    }
+                    patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
                 }
-                patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
+                //else
+                //{
+                //    AddBlock(blockInfo);
+                //}
             }
-
             ReplacePatternWithObject();
         }
 

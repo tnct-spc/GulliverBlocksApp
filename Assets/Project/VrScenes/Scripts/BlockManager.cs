@@ -75,7 +75,7 @@ namespace VrScene
                 //    DeletepatternBlocks(UpdateBlocks.FindAll(b => b.status == "delete"));
                 //}
 
-                if (UpdateBlocks.FindAll(b => b.status == "update") != null)
+                if (UpdateBlocks.FindAll(b => b.status == "update").Count> 0)
                 {
                     UpdatePatternBlocks(UpdateBlocks.FindAll(b => b.status == "update"));
                 }

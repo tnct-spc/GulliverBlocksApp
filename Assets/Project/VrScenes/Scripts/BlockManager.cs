@@ -70,10 +70,10 @@ namespace VrScene
                 UpdateBlocks.FindAll(b => b.status == "update").ForEach(b => UpdateBlock(b));
                 this.ColorRules.ForEach(this.ApplyColorRule);
 
-                if (UpdateBlocks.FindAll(b => b.status == "delete") != null)
-                {
-                    DeletepatternBlocks(UpdateBlocks.FindAll(b => b.status == "delete"));
-                }
+                //if (UpdateBlocks.FindAll(b => b.status == "delete") != null)
+                //{
+                //    DeletepatternBlocks(UpdateBlocks.FindAll(b => b.status == "delete"));
+                //}
 
                 if (UpdateBlocks.FindAll(b => b.status == "update") != null)
                 {

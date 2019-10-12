@@ -18,7 +18,7 @@ namespace MergeScene
         {
             blocksInfo.ForEach(blockInfo =>
             {
-                Object blockPrefab = (GameObject)Resources.Load("pblock1x1");
+                Object blockPrefab = (GameObject)Resources.Load("Block");
                 Block block = (Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject).GetComponent<Block>();
                 block.SetColor(blockInfo.colorID, false);
                 block.SetBlockData(blockInfo);

@@ -14,7 +14,7 @@ namespace VrScene
         public float y;
         public float z;
         public string ID;
-        public float time;
+        public double time;
         public string colorID;
         public string applied_colorID;
         public string map_id;

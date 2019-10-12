@@ -177,6 +177,7 @@ namespace VrScene
                 block.SetBlockData(blockInfo);
                 if (GameManager.Mode == "PlayBack") block.SetActive(false);
                 this.Blocks.Add(block);
+                this.Blocks.Sort((a, b) => (int)(a.time - b.time));
                 NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
                 this.BlocksCount += 1;
             }
@@ -288,12 +289,13 @@ namespace VrScene
                         StartPlayback();
                         break;
                     }
-                    int FirstBlockTime = (int)Blocks[(int)seekbarSlider.value].time;
+                    double FirstBlockTime = Blocks[(int)seekbarSlider.value].time;
                     FallingBlock((int)seekbarSlider.value);
                     seekbarSlider.value++;
+
                     if (seekbarSlider.value != seekbarSlider.maxValue)
                     {
-                        if ((int)Blocks[(int)seekbarSlider.value].time - FirstBlockTime > 1)
+                        if (Blocks[(int)seekbarSlider.value].time - FirstBlockTime > 1)
                             await Task.Delay(1000);
                     }
                 }

@@ -173,20 +173,18 @@ namespace VrScene
 
         private void AddBlock(BlockInfo blockInfo)
         {
-            if (blockInfo.pattern_name == null || blockInfo.pattern_name == "" || blockInfo.pattern_name == "null")
-            {
- 　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("Block");
-                GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
-                blockObject.name = blockInfo.ID;
-                Block block = blockObject.GetComponent<Block>();
-                block.SetColor(blockInfo.colorID, false);
-                block.SetBlockData(blockInfo);
-                if (GameManager.Mode == "PlayBack") block.SetActive(false);
-                this.Blocks.Add(block);
-                NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
-                this.BlocksCount += 1;
-            }
-            else
+            Object blockPrefab = (GameObject)Resources.Load("Block");
+            GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
+            blockObject.name = blockInfo.ID;
+            Block block = blockObject.GetComponent<Block>();
+            block.SetColor(blockInfo.colorID, false);
+            block.SetBlockData(blockInfo);
+            if (GameManager.Mode == "PlayBack") block.SetActive(false);
+            this.Blocks.Add(block);
+            NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
+            this.BlocksCount += 1;
+
+            if (blockInfo.pattern_name != null && blockInfo.pattern_name != "" && blockInfo.pattern_name != "null")
             {
                 // pattern_nameがKeysに存在しないなら新しく追加する
                 List<string> patternNameKeys = new List<string>(patternBlocks.Keys);

@@ -10,7 +10,6 @@ namespace VrScene
     public class BlockManager : MonoBehaviour
     {
         public int BlocksCount;
-        List<float> NeutralPositions = new List<float>();
         private List<Block> Blocks = new List<Block> { };
         private List<BlockInfo> UpdateBlocks = new List<BlockInfo> { }; // websocketで送られてきたものを一時的に保存
         private List<Rule> ColorRules = new List<Rule> { };
@@ -30,11 +29,13 @@ namespace VrScene
         // patternBlocksの構造: {"pattern_name": {"pattern_group_id": [(BlockInfo),]}, }
         private Dictionary<string, Dictionary<string, List<BlockInfo>>> patternBlocks = new Dictionary<string, Dictionary<string, List<BlockInfo>>>();
         private List<GameObject> patternObjects = new List<GameObject>();
+        private List<GameObject> usedPatternBlocks = new List<GameObject>();
         private float X_RATIO = 0.32f;
         private float Y_RATIO = 0.384f;
         private float Z_RATIO = 0.32f;
         public GameObject Floor;
-
+        public GameObject Walls;
+        public List<float> HighestPositions = new List<float>() {0, 0, 0, 0};//{一番大きいx, 一番小さいx, 一番大きいz, 一番小さいz}
         private void Awake()
         {
             CommunicationManager = new CommunicationManager();
@@ -69,6 +70,11 @@ namespace VrScene
                 UpdateBlocks.FindAll(b => b.status == "delete").ForEach(b => DeleteBlock(b));
                 UpdateBlocks.FindAll(b => b.status == "update").ForEach(b => UpdateBlock(b));
                 this.ColorRules.ForEach(this.ApplyColorRule);
+
+                if (UpdateBlocks.FindAll(b => b.status == "update").Count> 0)
+                {
+                    UpdatePatternBlocks(UpdateBlocks.FindAll(b => b.status == "update"));
+                }
             }
             this.UpdateBlocks = new List<BlockInfo> { };
         }
@@ -86,7 +92,6 @@ namespace VrScene
             seekbarSlider = InputManager.seekbarSlider;
             PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
-            SetFloor();
             StartCoroutine("FetchData");
         }
 
@@ -112,6 +117,8 @@ namespace VrScene
             this.ColorRules.ForEach(this.ApplyColorRule);
 
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
+            SetFloor();
+            SetWall();
             LoadingWindow.SetActive(false);
         }
         
@@ -125,7 +132,7 @@ namespace VrScene
             {
                 Blocks[i].SetActive(true);
                 Vector3 pos = Blocks[i].transform.position;
-                pos.y = NeutralPositions[i];
+                pos.y = Blocks[i].GetPosition().y;
                 Blocks[i].transform.position = pos;
             }
         }
@@ -138,7 +145,7 @@ namespace VrScene
             {
                 Blocks[i].SetActive(false);
                 Vector3 pos = Blocks[i].transform.position;
-                pos.y = NeutralPositions[i]+20;
+                pos.y = Blocks[i].GetPosition().y + 20;
                 Blocks[i].transform.position = pos;
             }
         }
@@ -151,37 +158,97 @@ namespace VrScene
         private void SetFloor()
         {
             GameObject FloorA;
-            
-            int extantionFloor = 4;
+
+            Vector3 CornerPosition = new Vector3(HighestPositions[0], 0, HighestPositions[2]);
+            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[1], 0, HighestPositions[3]);
             GameObject FloorObj = Resources.Load("Floor_10") as GameObject;
 
-            for (float i = -1*extantionFloor; i < extantionFloor; i++)
+            if (IsMerge)
             {
-                for (float j = -1*extantionFloor; j < extantionFloor; j++)
+                for (float i = AnotherCornerPosition.x - 6.4f; i < CornerPosition.x + 6.4f; i += 3.2f)
                 {
-                    FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10*0.32f * i, -0.0f, 10*0.32f * j), Quaternion.identity);
-                    FloorA.transform.parent = Floor.transform;
+                    for (float j = AnotherCornerPosition.z - 6.4f; j < CornerPosition.z + 6.4f; j += 3.2f)
+                    {
+                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(i, 0.2f, j), Quaternion.identity);
+                        FloorA.transform.parent = Floor.transform;
+                    }
                 }
             }
+            else
+            {
+                for (float i = -4; i < 4; i++)
+                {
+                    for (float j = -4; j < 4; j++)
+                    {
+                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10 * 0.32f * i, 0.2f, 10 * 0.32f * j), Quaternion.identity);
+                        FloorA.transform.parent = Floor.transform;
+                    }
+                }
+            }
+            Floor.transform.position = new Vector3(3.2f, 0, 3.2f);
+        }
+
+        private void SetWall()
+        {
+            GameObject Wall;
+            GameObject WallObj = Resources.Load("Wall") as GameObject;
+
+            Vector3 CornerPosition = new Vector3(HighestPositions[0], 0, HighestPositions[2]);
+            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[1], 0, HighestPositions[3]);
+
+            if (IsMerge)
+            {
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(CornerPosition.x + 6.4f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(AnotherCornerPosition.x + -6.4f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, CornerPosition.z + 6.4f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, AnotherCornerPosition.z - 6.4f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+            }
+            else
+            {
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(4 * 3.2f + 3.2f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(-4 * 3.2f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, 4 * 3.2f + 3.2f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, -4 * 3.2f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+            }
+            Walls.transform.position = new Vector3(-3.2f, 0 ,-3.2f);
         }
 
         private void AddBlock(BlockInfo blockInfo)
         {
-            if (blockInfo.pattern_name == "" || blockInfo.pattern_name == null)
-            {
- 　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("Block");
-                GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
-                blockObject.name = blockInfo.ID;
-                Block block = blockObject.GetComponent<Block>();
-                block.SetColor(blockInfo.colorID, false);
-                block.SetBlockData(blockInfo);
-                if (GameManager.Mode == "PlayBack") block.SetActive(false);
-                this.Blocks.Add(block);
-                this.Blocks.Sort((a, b) => (int)(a.time - b.time));
-                NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
-                this.BlocksCount += 1;
-            }
-            else
+            Object blockPrefab = (GameObject)Resources.Load("Block");
+            GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
+            blockObject.name = blockInfo.ID;
+            Block block = blockObject.GetComponent<Block>();
+            block.SetColor(blockInfo.colorID, false);
+            block.SetBlockData(blockInfo);
+            if (GameManager.Mode == "PlayBack") block.SetActive(false);
+            this.Blocks.Add(block);
+            // NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
+            this.BlocksCount += 1;
+
+            if (blockInfo.pattern_name != null && blockInfo.pattern_name != "" && blockInfo.pattern_name != "null")
             {
                 // pattern_nameがKeysに存在しないなら新しく追加する
                 List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
@@ -203,6 +270,8 @@ namespace VrScene
         private void DeleteBlock(BlockInfo blockInfo)
         {
             var block =  this.Blocks.Find(b => b.ID == blockInfo.ID);
+            GameObject blockObject = usedPatternBlocks.Find(b => b.name == blockInfo.ID);
+            usedPatternBlocks.Remove(blockObject);
             block.Delete();
             this.Blocks.Remove(block);
             this.BlocksCount -= 1;
@@ -212,44 +281,39 @@ namespace VrScene
         {
             var block = this.Blocks.Find(b => b.ID == blockInfo.ID);
             block.SetBlockData(blockInfo);
-            UpdatePattern(blockInfo);
         }
 
-        private void UpdatePattern(BlockInfo blockInfo)
+        private void UpdatePatternBlocks(List<BlockInfo> blockInfos)
         {
-            if(blockInfo.pattern_name != "" && blockInfo.pattern_name != null)
+            patternBlocks.Clear();
+            foreach (BlockInfo blockInfo in blockInfos)
             {
-                // pattern_nameがKeysに存在しないなら新しく追加する
-                List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
-                if (!(patternNameKeys.IndexOf(blockInfo.pattern_name) >= 0))
+                if (blockInfo.pattern_name != null && blockInfo.pattern_name != "" && blockInfo.pattern_name != "null")
                 {
-                    patternBlocks[blockInfo.pattern_name] = new Dictionary<string, List<BlockInfo>>();
-                }
-                // pattern_group_idがKeysに存在しないなら新しく追加する
-                List<string> pattern_group_id_keys = new List<string>(patternBlocks[blockInfo.pattern_name].Keys);
-                if (!(pattern_group_id_keys.IndexOf(blockInfo.pattern_group_id) >= 0))
-                {
-                    patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id] = new List<BlockInfo>();
-                }
-                for(int i = 0; i < patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Count; i++)
-                {
-                    if(patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id][i].ID == blockInfo.ID)
+                    // pattern_nameがKeysに存在しないなら新しく追加する
+                    List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
+                    if (!(patternNameKeys.IndexOf(blockInfo.pattern_name) >= 0))
                     {
-                        patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id][i] = blockInfo;
-                        foreach (GameObject _patternObject in patternObjects)
-                        {
-                            if(_patternObject.name == blockInfo.pattern_name)
-                            {
-                                GameObject patternObject = _patternObject;
-                                patternObjects.Remove(_patternObject);
-                            }
-                        }
-                        return;
+                        patternBlocks[blockInfo.pattern_name] = new Dictionary<string, List<BlockInfo>>();
                     }
+                    // pattern_group_idがKeysに存在しないなら新しく追加する
+                    List<string> pattern_group_id_keys = new List<string>(patternBlocks[blockInfo.pattern_name].Keys);
+                    if (!(pattern_group_id_keys.IndexOf(blockInfo.pattern_group_id) >= 0))
+                    {
+                        patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id] = new List<BlockInfo>();
+                    }
+                    patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
                 }
-                patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
+                else
+                {
+                    GameObject blockObject = usedPatternBlocks.Find(b => b.name == blockInfo.ID);
+                    if (blockObject != null)
+                    {
+                        blockObject.SetActive(true);
+                    }
+                    usedPatternBlocks.Remove(blockObject);
+                }
             }
-
             ReplacePatternWithObject();
         }
 
@@ -258,11 +322,11 @@ namespace VrScene
             Vector3 pos = Blocks[slider].transform.position;
             if (SkipOrBack)
             {
-                pos.y = NeutralPositions[slider];
+                pos.y = Blocks[slider].GetPosition().y;
             }
             else
             {
-                pos.y = NeutralPositions[slider] + 20;
+                pos.y = Blocks[slider].GetPosition().y + 20;
             }
             Blocks[slider].transform.position = pos;
         }
@@ -281,7 +345,7 @@ namespace VrScene
                 {
                     if (seekbarSlider.value == seekbarSlider.maxValue)
                     {
-                        while (Blocks[(int)seekbarSlider.maxValue - 1].transform.position.y != NeutralPositions[(int)seekbarSlider.maxValue - 1])
+                        while (Blocks[(int)seekbarSlider.maxValue - 1].transform.position.y != Blocks[(int)seekbarSlider.maxValue -1].GetPosition().y)
                         {
                             await Task.Delay(1);
                         }
@@ -312,7 +376,7 @@ namespace VrScene
         async void FallingBlock(int i)
         {
             float Accel = 0f;
-            for (float j = Blocks[i].transform.position.y; j > NeutralPositions[i]; j -= Accel)
+            for (float j = Blocks[i].transform.position.y; j > Blocks[i].GetPosition().y; j -= Accel)
             {
                 Vector3 pos = Blocks[i].transform.position;
                 pos.y = j;
@@ -321,7 +385,7 @@ namespace VrScene
                 await Task.Delay(1);
             }
             Vector3 pos2 = Blocks[i].transform.position;
-            pos2.y = NeutralPositions[i];
+            pos2.y = Blocks[i].GetPosition().y;
             Blocks[i].transform.position = pos2;
         }
         public void ClearBlocks()
@@ -397,13 +461,14 @@ namespace VrScene
                 List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
                 foreach (string patternGroupId in patternGroupIdKeys)
                 {   
-                    // 使ったblockの削除
+                    // 使ったblockの非表示
                     foreach(BlockInfo blockInfo in patternBlocks[patternName][patternGroupId])
                     {
                         GameObject blockObject = GameObject.Find(blockInfo.ID);
-                        if (blockObject)
+                        if (blockObject != null)
                         {
-                            Destroy(blockObject);
+                            blockObject.SetActive(false);
+                            usedPatternBlocks.Add(blockObject);
                         }
                     }
 
@@ -428,7 +493,7 @@ namespace VrScene
                                 GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 patternObject.transform.position = new Vector3(
                                     (nearestBlock.x + farthestBlock.x) * X_RATIO / 2.0f,
-                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 4.0f,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2.0f,
                                     (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2.0f
                                 );
                                 patternObject.name = patternGroupId;
@@ -445,7 +510,7 @@ namespace VrScene
                                 GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 patternObject.transform.position = new Vector3(
                                     (nearestBlock.x + farthestBlock.x) * X_RATIO / 2.0f,
-                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 4.0f,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2.0f,
                                     (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2.0f
                                 );
                                 patternObject.name = patternGroupId;

@@ -70,11 +70,6 @@ namespace VrScene
                 UpdateBlocks.FindAll(b => b.status == "update").ForEach(b => UpdateBlock(b));
                 this.ColorRules.ForEach(this.ApplyColorRule);
 
-                //if (UpdateBlocks.FindAll(b => b.status == "delete") != null)
-                //{
-                //    DeletepatternBlocks(UpdateBlocks.FindAll(b => b.status == "delete"));
-                //}
-
                 if (UpdateBlocks.FindAll(b => b.status == "update").Count> 0)
                 {
                     UpdatePatternBlocks(UpdateBlocks.FindAll(b => b.status == "update"));
@@ -177,7 +172,7 @@ namespace VrScene
 
         private void AddBlock(BlockInfo blockInfo)
         {
-            if (blockInfo.pattern_name == "" || blockInfo.pattern_name == null)
+            if (blockInfo.pattern_name == null)
             {
  　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("Block");
                 GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
@@ -217,23 +212,6 @@ namespace VrScene
             this.BlocksCount -= 1;
         }
 
-        private void DeletepatternBlocks(List<BlockInfo> blockInfos)
-        {
-            List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
-            foreach (string patternName in patternNameKeys)
-            {
-                List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
-                foreach (string patternGroupId in patternGroupIdKeys)
-                {
-                    foreach (BlockInfo blockInfo in blockInfos)
-                    {
-                        patternBlocks[patternName][patternGroupId].Remove(blockInfo);
-                    }
-                }
-            }
-            ReplacePatternWithObject();
-        }
-
         private void UpdateBlock(BlockInfo blockInfo)
         {
             var block = this.Blocks.Find(b => b.ID == blockInfo.ID);
@@ -245,7 +223,7 @@ namespace VrScene
             patternBlocks.Clear();
             foreach (BlockInfo blockInfo in blockInfos)
             {
-                if (blockInfo.pattern_name != "" && blockInfo.pattern_name != null)
+                if (blockInfo.pattern_name != null)
                 {
                     // pattern_nameがKeysに存在しないなら新しく追加する
                     List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
@@ -261,10 +239,14 @@ namespace VrScene
                     }
                     patternBlocks[blockInfo.pattern_name][blockInfo.pattern_group_id].Add(blockInfo);
                 }
-                //else
-                //{
-                //    AddBlock(blockInfo);
-                //}
+                else
+                {
+                    GameObject blockObject = GameObject.Find(blockInfo.ID);
+                    if (blockObject != null)
+                    {
+                        blockObject.SetActive(true);
+                    }
+                }
             }
             ReplacePatternWithObject();
         }
@@ -409,9 +391,9 @@ namespace VrScene
                     foreach(BlockInfo blockInfo in patternBlocks[patternName][patternGroupId])
                     {
                         GameObject blockObject = GameObject.Find(blockInfo.ID);
-                        if (blockObject)
+                        if (blockObject != null)
                         {
-                            Destroy(blockObject);
+                            blockObject.SetActive(false);
                         }
                     }
 

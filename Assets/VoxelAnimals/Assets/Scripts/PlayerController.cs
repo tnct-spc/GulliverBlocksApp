@@ -16,6 +16,18 @@ public class PlayerController : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        StartCoroutine("JumpCo");
+    }
+
+    IEnumerator JumpCo()
+    {
+        while(true)
+        {
+            rb.AddForce(0, jumpForce, 0);
+            canJump = Time.time + timeBeforeNextJump;
+            anim.SetTrigger("jump");
+            yield return new WaitForSeconds(10);
+        }
     }
 
     void Update()

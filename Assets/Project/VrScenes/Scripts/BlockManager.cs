@@ -29,6 +29,7 @@ namespace VrScene
         // patternBlocksの構造: {"pattern_name": {"pattern_group_id": [(BlockInfo),]}, }
         private Dictionary<string, Dictionary<string, List<BlockInfo>>> patternBlocks = new Dictionary<string, Dictionary<string, List<BlockInfo>>>();
         private List<GameObject> patternObjects = new List<GameObject>();
+        private List<GameObject> usedPatternBlocks = new List<GameObject>();
         private float X_RATIO = 0.32f;
         private float Y_RATIO = 0.384f;
         private float Z_RATIO = 0.32f;
@@ -236,24 +237,18 @@ namespace VrScene
 
         private void AddBlock(BlockInfo blockInfo)
         {
-            if (blockInfo.pattern_name == null)
-            {
- 　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("Block");
-                GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
-                blockObject.name = blockInfo.ID;
-                Block block = blockObject.GetComponent<Block>();
-                block.SetColor(blockInfo.colorID, false);
-                block.SetBlockData(blockInfo);
-                if (GameManager.Mode == "PlayBack") block.SetActive(false);
-                this.Blocks.Add(block);
-                this.Blocks.Sort((a, b) => (int)(a.time - b.time));
-                if (block.transform.position.x > HighestPositions[0]) HighestPositions[0] = block.transform.position.x;
-                if (block.transform.position.x < HighestPositions[1]) HighestPositions[1] = block.transform.position.x;
-                if (block.transform.position.z > HighestPositions[2]) HighestPositions[2] = block.transform.position.z;
-                if (block.transform.position.z < HighestPositions[3]) HighestPositions[3] = block.transform.position.z;
-                this.BlocksCount += 1;
-            }
-            else
+            Object blockPrefab = (GameObject)Resources.Load("Block");
+            GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
+            blockObject.name = blockInfo.ID;
+            Block block = blockObject.GetComponent<Block>();
+            block.SetColor(blockInfo.colorID, false);
+            block.SetBlockData(blockInfo);
+            if (GameManager.Mode == "PlayBack") block.SetActive(false);
+            this.Blocks.Add(block);
+            // NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
+            this.BlocksCount += 1;
+
+            if (blockInfo.pattern_name != null && blockInfo.pattern_name != "" && blockInfo.pattern_name != "null")
             {
                 // pattern_nameがKeysに存在しないなら新しく追加する
                 List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
@@ -275,6 +270,8 @@ namespace VrScene
         private void DeleteBlock(BlockInfo blockInfo)
         {
             var block =  this.Blocks.Find(b => b.ID == blockInfo.ID);
+            GameObject blockObject = usedPatternBlocks.Find(b => b.name == blockInfo.ID);
+            usedPatternBlocks.Remove(blockObject);
             block.Delete();
             this.Blocks.Remove(block);
             this.BlocksCount -= 1;
@@ -291,7 +288,7 @@ namespace VrScene
             patternBlocks.Clear();
             foreach (BlockInfo blockInfo in blockInfos)
             {
-                if (blockInfo.pattern_name != null)
+                if (blockInfo.pattern_name != null && blockInfo.pattern_name != "" && blockInfo.pattern_name != "null")
                 {
                     // pattern_nameがKeysに存在しないなら新しく追加する
                     List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
@@ -309,11 +306,12 @@ namespace VrScene
                 }
                 else
                 {
-                    GameObject blockObject = GameObject.Find(blockInfo.ID);
+                    GameObject blockObject = usedPatternBlocks.Find(b => b.name == blockInfo.ID);
                     if (blockObject != null)
                     {
                         blockObject.SetActive(true);
                     }
+                    usedPatternBlocks.Remove(blockObject);
                 }
             }
             ReplacePatternWithObject();
@@ -463,13 +461,14 @@ namespace VrScene
                 List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
                 foreach (string patternGroupId in patternGroupIdKeys)
                 {   
-                    // 使ったblockの削除
+                    // 使ったblockの非表示
                     foreach(BlockInfo blockInfo in patternBlocks[patternName][patternGroupId])
                     {
                         GameObject blockObject = GameObject.Find(blockInfo.ID);
                         if (blockObject != null)
                         {
                             blockObject.SetActive(false);
+                            usedPatternBlocks.Add(blockObject);
                         }
                     }
 
@@ -494,7 +493,7 @@ namespace VrScene
                                 GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 patternObject.transform.position = new Vector3(
                                     (nearestBlock.x + farthestBlock.x) * X_RATIO / 2.0f,
-                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 4.0f,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2.0f,
                                     (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2.0f
                                 );
                                 patternObject.name = patternGroupId;
@@ -511,7 +510,7 @@ namespace VrScene
                                 GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 patternObject.transform.position = new Vector3(
                                     (nearestBlock.x + farthestBlock.x) * X_RATIO / 2.0f,
-                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 4.0f,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2.0f,
                                     (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2.0f
                                 );
                                 patternObject.name = patternGroupId;

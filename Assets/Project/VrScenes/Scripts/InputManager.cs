@@ -138,6 +138,7 @@ namespace VrScene
                 fadeOutObjects.Clear();
                 FlyingModeCheck(FlyingModeToggle.GetComponent<Toggle>().isOn);
                 Seekbar.SetActive(false);
+                BlockManager.isRepeating = false;
             }
         }
 

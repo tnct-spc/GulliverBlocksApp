@@ -270,7 +270,7 @@ namespace JsonFormats
         public int y;
         public int z;
         public string ID;
-        public float time;
+        public double time;
         public string status;
         public string colorID;
         public string pattern_name;

@@ -10,7 +10,6 @@ namespace VrScene
     public class BlockManager : MonoBehaviour
     {
         public int BlocksCount;
-        List<float> NeutralPositions = new List<float>();
         private List<Block> Blocks = new List<Block> { };
         private List<BlockInfo> UpdateBlocks = new List<BlockInfo> { }; // websocketで送られてきたものを一時的に保存
         private List<Rule> ColorRules = new List<Rule> { };
@@ -35,7 +34,8 @@ namespace VrScene
         private float Y_RATIO = 0.384f;
         private float Z_RATIO = 0.32f;
         public GameObject Floor;
-
+        public GameObject Walls;
+        public List<float> HighestPositions = new List<float>() {0, 0, 0, 0};//{一番大きいx, 一番小さいx, 一番大きいz, 一番小さいz}
         private void Awake()
         {
             CommunicationManager = new CommunicationManager();
@@ -92,7 +92,6 @@ namespace VrScene
             seekbarSlider = InputManager.seekbarSlider;
             PlayBackButton = InputManager.PlayBackButton;
             GameManager = GameSystem.GetComponent<GameManager>();
-            SetFloor();
             StartCoroutine("FetchData");
         }
 
@@ -118,6 +117,8 @@ namespace VrScene
             this.ColorRules.ForEach(this.ApplyColorRule);
 
             if (GameManager.Mode == "PlayBack") InputManager.PlayBackModeUI.SetActive(true);
+            SetFloor();
+            SetWall();
             LoadingWindow.SetActive(false);
         }
         
@@ -131,7 +132,7 @@ namespace VrScene
             {
                 Blocks[i].SetActive(true);
                 Vector3 pos = Blocks[i].transform.position;
-                pos.y = NeutralPositions[i];
+                pos.y = Blocks[i].GetPosition().y;
                 Blocks[i].transform.position = pos;
             }
         }
@@ -144,7 +145,7 @@ namespace VrScene
             {
                 Blocks[i].SetActive(false);
                 Vector3 pos = Blocks[i].transform.position;
-                pos.y = NeutralPositions[i]+20;
+                pos.y = Blocks[i].GetPosition().y + 20;
                 Blocks[i].transform.position = pos;
             }
         }
@@ -157,18 +158,81 @@ namespace VrScene
         private void SetFloor()
         {
             GameObject FloorA;
-            
-            int extantionFloor = 4;
+
+            Vector3 CornerPosition = new Vector3(HighestPositions[0], 0, HighestPositions[2]);
+            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[1], 0, HighestPositions[3]);
             GameObject FloorObj = Resources.Load("Floor_10") as GameObject;
 
-            for (float i = -1*extantionFloor; i < extantionFloor; i++)
+            if (IsMerge)
             {
-                for (float j = -1*extantionFloor; j < extantionFloor; j++)
+                for (float i = AnotherCornerPosition.x - 6.4f; i < CornerPosition.x + 6.4f; i += 3.2f)
                 {
-                    FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10*0.32f * i, -0.0f, 10*0.32f * j), Quaternion.identity);
-                    FloorA.transform.parent = Floor.transform;
+                    for (float j = AnotherCornerPosition.z - 6.4f; j < CornerPosition.z + 6.4f; j += 3.2f)
+                    {
+                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(i, 0.2f, j), Quaternion.identity);
+                        FloorA.transform.parent = Floor.transform;
+                    }
                 }
             }
+            else
+            {
+                for (float i = -4; i < 4; i++)
+                {
+                    for (float j = -4; j < 4; j++)
+                    {
+                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10 * 0.32f * i, 0.2f, 10 * 0.32f * j), Quaternion.identity);
+                        FloorA.transform.parent = Floor.transform;
+                    }
+                }
+            }
+            Floor.transform.position = new Vector3(3.2f, 0, 3.2f);
+        }
+
+        private void SetWall()
+        {
+            GameObject Wall;
+            GameObject WallObj = Resources.Load("Wall") as GameObject;
+
+            Vector3 CornerPosition = new Vector3(HighestPositions[0], 0, HighestPositions[2]);
+            Vector3 AnotherCornerPosition = new Vector3(HighestPositions[1], 0, HighestPositions[3]);
+
+            if (IsMerge)
+            {
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(CornerPosition.x + 6.4f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(AnotherCornerPosition.x + -6.4f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, CornerPosition.z + 6.4f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, AnotherCornerPosition.z - 6.4f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+            }
+            else
+            {
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(4 * 3.2f + 3.2f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(-4 * 3.2f, 0, 0), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(0.1f, 1000, 1000);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, 4 * 3.2f + 3.2f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+
+                Wall = (GameObject)Instantiate(WallObj, new Vector3(0, 0, -4 * 3.2f), Quaternion.identity);
+                Wall.transform.localScale = new Vector3(1000, 1000, 0.1f);
+                Wall.transform.parent = Walls.transform;
+            }
+            Walls.transform.position = new Vector3(-3.2f, 0 ,-3.2f);
         }
 
         private void AddBlock(BlockInfo blockInfo)
@@ -181,7 +245,7 @@ namespace VrScene
             block.SetBlockData(blockInfo);
             if (GameManager.Mode == "PlayBack") block.SetActive(false);
             this.Blocks.Add(block);
-            NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
+            // NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
             this.BlocksCount += 1;
 
             if (blockInfo.pattern_name != null && blockInfo.pattern_name != "" && blockInfo.pattern_name != "null")
@@ -258,11 +322,11 @@ namespace VrScene
             Vector3 pos = Blocks[slider].transform.position;
             if (SkipOrBack)
             {
-                pos.y = NeutralPositions[slider];
+                pos.y = Blocks[slider].GetPosition().y;
             }
             else
             {
-                pos.y = NeutralPositions[slider] + 20;
+                pos.y = Blocks[slider].GetPosition().y + 20;
             }
             Blocks[slider].transform.position = pos;
         }
@@ -273,23 +337,31 @@ namespace VrScene
             SeekBar.SetActive(true);
             while (true)
             {
-                if (seekbarSlider.value == seekbarSlider.maxValue)
+                if (isRepeating == false)
                 {
-                    while (Blocks[(int)seekbarSlider.maxValue-1].transform.position.y!=NeutralPositions[(int)seekbarSlider.maxValue-1])
-                    {
-                        await Task.Delay(1);
-                    }
-                    await Task.Delay(3000);
-                    StartPlayback();
-                    break;
+                    await Task.Delay(1);
                 }
-                int FirstBlockTime = (int)Blocks[(int)seekbarSlider.value].time;
-                FallingBlock((int)seekbarSlider.value);
-                seekbarSlider.value++;
-                if(seekbarSlider.value != seekbarSlider.maxValue)
+                else
                 {
-                    if ((int)Blocks[(int)seekbarSlider.value].time - FirstBlockTime > 1)
-                        await Task.Delay(1000);
+                    if (seekbarSlider.value == seekbarSlider.maxValue)
+                    {
+                        while (Blocks[(int)seekbarSlider.maxValue - 1].transform.position.y != Blocks[(int)seekbarSlider.maxValue -1].GetPosition().y)
+                        {
+                            await Task.Delay(1);
+                        }
+                        await Task.Delay(3000);
+                        StartPlayback();
+                        break;
+                    }
+                    double FirstBlockTime = Blocks[(int)seekbarSlider.value].time;
+                    FallingBlock((int)seekbarSlider.value);
+                    seekbarSlider.value++;
+
+                    if (seekbarSlider.value != seekbarSlider.maxValue)
+                    {
+                        if (Blocks[(int)seekbarSlider.value].time - FirstBlockTime > 1)
+                            await Task.Delay(1000);
+                    }
                 }
             }
             PlayBackButton.GetComponent<Toggle>().isOn = false;
@@ -304,7 +376,7 @@ namespace VrScene
         async void FallingBlock(int i)
         {
             float Accel = 0f;
-            for (float j = Blocks[i].transform.position.y; j > NeutralPositions[i]; j -= Accel)
+            for (float j = Blocks[i].transform.position.y; j > Blocks[i].GetPosition().y; j -= Accel)
             {
                 Vector3 pos = Blocks[i].transform.position;
                 pos.y = j;
@@ -313,7 +385,7 @@ namespace VrScene
                 await Task.Delay(1);
             }
             Vector3 pos2 = Blocks[i].transform.position;
-            pos2.y = NeutralPositions[i];
+            pos2.y = Blocks[i].GetPosition().y;
             Blocks[i].transform.position = pos2;
         }
         public void ClearBlocks()

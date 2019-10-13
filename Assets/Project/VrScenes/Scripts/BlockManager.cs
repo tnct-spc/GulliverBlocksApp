@@ -174,7 +174,7 @@ namespace VrScene
                 {
                     for (float j = AnotherCornerPosition.z - 6.4f; j < CornerPosition.z + 6.4f; j += 3.2f)
                     {
-                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(i, -0.0f, j), Quaternion.identity);
+                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(i, 0.2f, j), Quaternion.identity);
                         FloorA.transform.parent = Floor.transform;
                     }
                 }
@@ -185,7 +185,7 @@ namespace VrScene
                 {
                     for (float j = -4; j < 4; j++)
                     {
-                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10 * 0.32f * i, -0.0f, 10 * 0.32f * j), Quaternion.identity);
+                        FloorA = (GameObject)Instantiate(FloorObj, new Vector3(10 * 0.32f * i, 0.2f, 10 * 0.32f * j), Quaternion.identity);
                         FloorA.transform.parent = Floor.transform;
                     }
                 }

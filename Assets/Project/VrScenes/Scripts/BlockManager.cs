@@ -30,6 +30,7 @@ namespace VrScene
         // patternBlocksの構造: {"pattern_name": {"pattern_group_id": [(BlockInfo),]}, }
         private Dictionary<string, Dictionary<string, List<BlockInfo>>> patternBlocks = new Dictionary<string, Dictionary<string, List<BlockInfo>>>();
         private List<GameObject> patternObjects = new List<GameObject>();
+        private List<GameObject> usedPatternBlocks = new List<GameObject>();
         private float X_RATIO = 0.32f;
         private float Y_RATIO = 0.384f;
         private float Z_RATIO = 0.32f;
@@ -172,7 +173,7 @@ namespace VrScene
 
         private void AddBlock(BlockInfo blockInfo)
         {
-            if (blockInfo.pattern_name == null || blockInfo.pattern_name == "")
+            if (blockInfo.pattern_name == null || blockInfo.pattern_name == "" || blockInfo.pattern_name == "null")
             {
  　　　　　　　　Object blockPrefab = (GameObject)Resources.Load("Block");
                 GameObject blockObject = Instantiate(blockPrefab, blockInfo.GetPosition(), Quaternion.identity) as GameObject;
@@ -207,6 +208,8 @@ namespace VrScene
         private void DeleteBlock(BlockInfo blockInfo)
         {
             var block =  this.Blocks.Find(b => b.ID == blockInfo.ID);
+            GameObject blockObject = usedPatternBlocks.Find(b => b.name == blockInfo.ID);
+            usedPatternBlocks.Remove(blockObject);
             block.Delete();
             this.Blocks.Remove(block);
             this.BlocksCount -= 1;
@@ -223,7 +226,7 @@ namespace VrScene
             patternBlocks.Clear();
             foreach (BlockInfo blockInfo in blockInfos)
             {
-                if (blockInfo.pattern_name != null && blockInfo.pattern_name != "")
+                if (blockInfo.pattern_name != null && blockInfo.pattern_name != "" && blockInfo.pattern_name != "null")
                 {
                     // pattern_nameがKeysに存在しないなら新しく追加する
                     List<string> patternNameKeys = new List<string>(patternBlocks.Keys);
@@ -241,11 +244,12 @@ namespace VrScene
                 }
                 else
                 {
-                    GameObject blockObject = GameObject.Find(blockInfo.ID);
+                    GameObject blockObject = usedPatternBlocks.Find(b => b.name == blockInfo.ID);
                     if (blockObject != null)
                     {
                         blockObject.SetActive(true);
                     }
+                    usedPatternBlocks.Remove(blockObject);
                 }
             }
             ReplacePatternWithObject();
@@ -387,13 +391,14 @@ namespace VrScene
                 List<string> patternGroupIdKeys = new List<string>(patternBlocks[patternName].Keys);
                 foreach (string patternGroupId in patternGroupIdKeys)
                 {   
-                    // 使ったblockの削除
+                    // 使ったblockの非表示
                     foreach(BlockInfo blockInfo in patternBlocks[patternName][patternGroupId])
                     {
                         GameObject blockObject = GameObject.Find(blockInfo.ID);
                         if (blockObject != null)
                         {
                             blockObject.SetActive(false);
+                            usedPatternBlocks.Add(blockObject);
                         }
                     }
 

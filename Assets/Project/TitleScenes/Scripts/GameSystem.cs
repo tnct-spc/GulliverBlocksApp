@@ -127,7 +127,8 @@ namespace TitleScene
             var t = communicationManager.uploadWorldAsync(name);
             yield return new WaitUntil(() => t.IsCompleted);
             CreateNewMapPanel.SetActive(false);
-            StartCoroutine("FetchData");
+            // StartCoroutine("FetchData");
+            this.OnClickWorldSelectButton(t.Result, false);
         }
 
         IEnumerator FetchData()

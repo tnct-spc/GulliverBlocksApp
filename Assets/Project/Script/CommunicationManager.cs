@@ -75,7 +75,10 @@ public class CommunicationManager
         var apiUrl = "https://" + ServerAddress + "/create_map/";
         string jsonStr = JsonUtility.ToJson(data);
         Debug.Log(jsonStr);
-        return await PostRequest(apiUrl, jsonStr);
+        var resJsonStr = await PostRequest(apiUrl, jsonStr);
+        World createdWorld = JsonUtility.FromJson<World>(resJsonStr);
+        Debug.Log(createdWorld.ID);
+        return createdWorld.ID;
     }
 
     public async Task<string> loginAsync(string userName, string password)

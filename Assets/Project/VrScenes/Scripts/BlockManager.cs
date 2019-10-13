@@ -421,7 +421,7 @@ namespace VrScene
                                 GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 patternObject.transform.position = new Vector3(
                                     (nearestBlock.x + farthestBlock.x) * X_RATIO / 2.0f,
-                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 4.0f,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2.0f,
                                     (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2.0f
                                 );
                                 patternObject.name = patternGroupId;
@@ -438,7 +438,7 @@ namespace VrScene
                                 GameObject patternObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 patternObject.transform.position = new Vector3(
                                     (nearestBlock.x + farthestBlock.x) * X_RATIO / 2.0f,
-                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 4.0f,
+                                    (nearestBlock.y + farthestBlock.y) * Y_RATIO / 2.0f,
                                     (nearestBlock.z + farthestBlock.z) * Z_RATIO / 2.0f
                                 );
                                 patternObject.name = patternGroupId;

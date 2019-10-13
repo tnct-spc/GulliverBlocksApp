@@ -10,7 +10,6 @@ namespace VrScene
     public class BlockManager : MonoBehaviour
     {
         public int BlocksCount;
-        List<float> NeutralPositions = new List<float>();
         private List<Block> Blocks = new List<Block> { };
         private List<BlockInfo> UpdateBlocks = new List<BlockInfo> { }; // websocketで送られてきたものを一時的に保存
         private List<Rule> ColorRules = new List<Rule> { };
@@ -137,7 +136,7 @@ namespace VrScene
             {
                 Blocks[i].SetActive(true);
                 Vector3 pos = Blocks[i].transform.position;
-                pos.y = NeutralPositions[i];
+                pos.y = Blocks[i].GetPosition().y;
                 Blocks[i].transform.position = pos;
             }
         }
@@ -150,7 +149,7 @@ namespace VrScene
             {
                 Blocks[i].SetActive(false);
                 Vector3 pos = Blocks[i].transform.position;
-                pos.y = NeutralPositions[i]+20;
+                pos.y = Blocks[i].GetPosition().y + 20;
                 Blocks[i].transform.position = pos;
             }
         }
@@ -253,7 +252,6 @@ namespace VrScene
                 if (GameManager.Mode == "PlayBack") block.SetActive(false);
                 this.Blocks.Add(block);
                 this.Blocks.Sort((a, b) => (int)(a.time - b.time));
-                NeutralPositions.Add(Blocks[BlocksCount].transform.position.y);
                 if (block.transform.position.x > HighestPositions[0]) HighestPositions[0] = block.transform.position.x;
                 if (block.transform.position.x < HighestPositions[1]) HighestPositions[1] = block.transform.position.x;
                 if (block.transform.position.z > HighestPositions[2]) HighestPositions[2] = block.transform.position.z;
@@ -344,11 +342,11 @@ namespace VrScene
             Vector3 pos = Blocks[slider].transform.position;
             if (SkipOrBack)
             {
-                pos.y = NeutralPositions[slider];
+                pos.y = Blocks[slider].GetPosition().y;
             }
             else
             {
-                pos.y = NeutralPositions[slider] + 20;
+                pos.y = Blocks[slider].GetPosition().y + 20;
             }
             Blocks[slider].transform.position = pos;
         }
@@ -367,7 +365,7 @@ namespace VrScene
                 {
                     if (seekbarSlider.value == seekbarSlider.maxValue)
                     {
-                        while (Blocks[(int)seekbarSlider.maxValue - 1].transform.position.y != NeutralPositions[(int)seekbarSlider.maxValue - 1])
+                        while (Blocks[(int)seekbarSlider.maxValue - 1].transform.position.y != Blocks[(int)seekbarSlider.maxValue -1].GetPosition().y)
                         {
                             await Task.Delay(1);
                         }
@@ -398,7 +396,7 @@ namespace VrScene
         async void FallingBlock(int i)
         {
             float Accel = 0f;
-            for (float j = Blocks[i].transform.position.y; j > NeutralPositions[i]; j -= Accel)
+            for (float j = Blocks[i].transform.position.y; j > Blocks[i].GetPosition().y; j -= Accel)
             {
                 Vector3 pos = Blocks[i].transform.position;
                 pos.y = j;
@@ -407,7 +405,7 @@ namespace VrScene
                 await Task.Delay(1);
             }
             Vector3 pos2 = Blocks[i].transform.position;
-            pos2.y = NeutralPositions[i];
+            pos2.y = Blocks[i].GetPosition().y;
             Blocks[i].transform.position = pos2;
         }
         public void ClearBlocks()

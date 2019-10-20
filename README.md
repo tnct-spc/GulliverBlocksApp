@@ -2,7 +2,7 @@
 
 第30回全国高等専門学校プログラミングコンテスト自由部門に出場しました
 ## GulliverBlocks
-* [tnct-spc/GulliverBlocks](https://github.com/tnct-spc/GulliverBlocksApp)
+* [tnct-spc/GulliverBlocksApp](https://github.com/tnct-spc/GulliverBlocksApp)
 * [tnct-spc/GulliverBlocksServer](https://github.com/tnct-spc/GulliverBlocksServer)
 * [tnct-spc/GulliverBlocksBlockDetection](https://github.com/tnct-spc/GulliverBlocksBlockDetection)
 

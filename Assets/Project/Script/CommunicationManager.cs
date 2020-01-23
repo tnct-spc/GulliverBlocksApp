@@ -9,7 +9,7 @@ using System;
 
 public class CommunicationManager
 {
-    public static string ServerAddress = "gulliverblocks.herokuapp.com";
+    public static string ServerAddress = "dev-gulliverblocks.herokuapp.com";
 
     public CommunicationManager()
     {

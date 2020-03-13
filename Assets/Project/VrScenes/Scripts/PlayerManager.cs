@@ -1,11 +1,11 @@
-﻿using UnityEngine;
-using UnityEngine.XR;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.XR;
 using System.Threading.Tasks;
 
-namespace VrScene
+namespace VrScene 
 {
-    public class PlayerManager : MonoBehaviour
+    public class PlayerManager : MonoBehaviour 
     {
         [SerializeField] int default_move_speed = 1;
         [SerializeField] int run_move_speed = 2;
@@ -30,63 +30,34 @@ namespace VrScene
 
         RotateManager RotateManagerI;
 
-        private void Awake()
+        private void Awake () 
         {
-            RotateManagerI = new RotateManager(PlayerCamera.transform, transform);
+            RotateManagerI = new RotateManager (PlayerCamera.transform, transform);
         }
 
-        void Start()
+        void Start () 
         {
             Input.gyro.enabled = true;
         }
 
-        private void Update()
-        {
-            StandVertically();
-        }
-
-        void FixedUpdate()
-        {
-            Move();
-            CheckPlayerFall();
-            PlayerCamera.SetActive(!XRSettings.enabled);
-            TwoEyesModeCamera.SetActive(XRSettings.enabled);
-            RotateManagerI.UpdateRotate(corner.activeInHierarchy,corner.transform.position);
-            if (!XRSettings.enabled)
-            {
                 PlayerCamera.transform.position = this.transform.position;
+            } else {
+                RotatePlayerInTwoEyesMode ();
             }
-            else
-            {
-                RotatePlayerInTwoEyesMode();
-            }
-            if (Direction == Vector3.zero)
+            if (Direction == Vector3.zero) 
             {
                 isMoving = false;
                 isDefault_speed = true;
-            }
-            else
-            {
+            } else {
                 isMoving = true;
-                DashCheck();
+                DashCheck ();
             }
         }
 
-        void StandVertically()
-        {
-            Vector3 pos = this.transform.localEulerAngles;
-            pos.x = 0f;
-            pos.z = 0f;
-            this.transform.localEulerAngles = pos;
-        }
-
-        void RotatePlayerInTwoEyesMode()
-        {
-            this.transform.eulerAngles = new Vector3(0f, TwoEyesModeCamera.transform.eulerAngles.y, 0f);
             TwoEyesModeCamera.transform.position = this.transform.position;
         }
 
-        void Move()
+        void Move () 
         {
             Direction = Vector3.zero;
             if (MoveForward) Direction.z += 1;
@@ -96,9 +67,9 @@ namespace VrScene
             if (MoveUp) Direction.y += 1;
             if (MoveDown) Direction.y += -1;
 
-            Add_Velocity(Direction);
+            Add_Velocity (Direction);
         }
-        public void Add_Velocity(Vector3 moveDirection)
+        public void Add_Velocity (Vector3 moveDirection) 
         {
             moveDirection.x *= player_rigidbody.transform.right.x;
             moveDirection.y *= player_rigidbody.transform.up.y;
@@ -109,25 +80,23 @@ namespace VrScene
             if (MoveForward) moveDirection.x += player_rigidbody.transform.forward.x;
             if (MoveBack) moveDirection.x += player_rigidbody.transform.forward.x * -1;
 
-            moveDirection.Normalize();
+            moveDirection.Normalize ();
             if (player_rigidbody.useGravity == true) moveDirection.y = player_rigidbody.velocity.y;
 
             if (isDefault_speed) player_rigidbody.velocity = default_move_speed * moveDirection;
             else player_rigidbody.velocity = run_move_speed * moveDirection;
         }
-        public void Flying(bool value)
+        public void Flying (bool value) 
         {
-            if (value == true)
+            if (value == true) 
             {
                 player_rigidbody.useGravity = false;
-            }
-            else
-            {
+            } else {
                 player_rigidbody.useGravity = true;
             }
         }
 
-        private void RespawnPlayer()
+        private void RespawnPlayer () 
         {
             transform.position = Vector3.zero;
             Vector3 pos = transform.position;
@@ -135,27 +104,27 @@ namespace VrScene
             transform.position = pos;
         }
 
-        private void CheckPlayerFall()
+        private void CheckPlayerFall () 
         {
-            if (transform.position.y < -1)
+            if (transform.position.y < -1) 
             {
-                RespawnPlayer();
+                RespawnPlayer ();
             }
         }
 
-        public void SetGyroEnable(bool f)
+        public void SetGyroEnable (bool f) 
         {
             RotateManagerI.UseGyro = f;
-	}
+        }
 
-        public async void DashCheck()
+        public async void DashCheck () 
         {
             if (isDashChecking) return;
             isDashChecking = true;
-            for(int i = 0; i < 20; i++)
+            for (int i = 0; i < 20; i++) 
             {
-                await Task.Delay(100);
-                if (isMoving == false)
+                await Task.Delay (100);
+                if (isMoving == false) 
                 {
                     isDashChecking = false;
                     return;
@@ -165,7 +134,7 @@ namespace VrScene
             isDashChecking = false;
         }
 
-        class RotateManager
+        class RotateManager 
         {
             public bool UseGyro = false;
 
@@ -179,7 +148,7 @@ namespace VrScene
             private Gyroscope gyro;
             private Vector3 LastGyroRotate;
 
-            public RotateManager(Transform cameraTransform,Transform playerTransform)
+            public RotateManager(Transform cameraTransform, Transform playerTransform) 
             {
                 this.CameraTransform = cameraTransform;
                 this.PlayerTransform = playerTransform;
@@ -189,7 +158,7 @@ namespace VrScene
                 this.gyro = Input.gyro;
             }
 
-            public void UpdateRotate(bool isActiveColorPanel,Vector2 CornerPosition)
+            public void UpdateRotate (bool isActiveColorPanel, Vector2 CornerPosition) 
             {
                 /*
                  * # 各回転
@@ -201,43 +170,40 @@ namespace VrScene
                  *　X,Z方向の回転はPlayerを回転させたくないのでPlayerCameraを回転させてる
                  * 
                  */
-                if (Application.platform == RuntimePlatform.Android)
+                if (Application.platform == RuntimePlatform.Android) 
                 {
-                    CameraTransform.rotation = Quaternion.AngleAxis(-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
-                    if (this.UseGyro) this.RotateXY(GyroDiff());
-                    if (Input.touchCount > 0)
-                    {
-                        var touch = Input.GetTouch(0);
-                        if (touch.phase == TouchPhase.Began)
+                    CameraTransform.rotation = Quaternion.AngleAxis (-this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
+                    if (this.UseGyro) this.RotateXY (GyroDiff ());
+                    if (Input.touchCount > 0) {
+                        var touch = Input.GetTouch (0);
+                        if (touch.phase == TouchPhase.Began) 
                         {
-                            this.OnClick(touch.position,CornerPosition,isActiveColorPanel);
+                            this.OnClick (0.3f * touch.position, 0.3f * CornerPosition, isActiveColorPanel);
 
-                        } else if (touch.phase == TouchPhase.Moved)
+                        } else if (touch.phase == TouchPhase.Moved) 
                         {
-                            this.OnMove(touch.position);
+                            this.OnMove (0.3f * touch.position);
                         }
                     }
-                    CameraTransform.rotation = Quaternion.AngleAxis(this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
-                } else
-                {
-                    if (Input.GetMouseButtonDown(0))
+                    CameraTransform.rotation = Quaternion.AngleAxis (this.CurrentZRotate, CameraTransform.forward) * CameraTransform.rotation;
+                } else {
+                    if (Input.GetMouseButtonDown (0)) 
                     {
-                        this.OnClick(Input.mousePosition,CornerPosition,isActiveColorPanel);
+                        this.OnClick (0.3f * Input.mousePosition, 0.3f * CornerPosition, isActiveColorPanel);
 
-                    } else if (Input.GetMouseButton(0))
+                    } else if (Input.GetMouseButton (0)) 
                     {
-                        this.OnMove(Input.mousePosition);
+                        this.OnMove (0.3f * Input.mousePosition);
                     }
                 }
-                PlayerTransform.rotation = Quaternion.AngleAxis(this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
+                PlayerTransform.rotation = Quaternion.AngleAxis (this.CurrentRightLeftRotate, Vector3.up); // Player本体は常に回転を固定する
             }
 
-            private void OnClick(Vector2 position,Vector2 cornerposition,bool isActive)
-            {
+            private void OnClick (Vector2 position, Vector2 cornerposition, bool isActive) {
                 /*
                  *カーソル(or タッチ)が初めてされたときの処理
                  */
-                if (!isActive)
+                if (!isActive) 
                 {
                     var tappedObject = EventSystem.current.currentSelectedGameObject;
                     this.TouchMoveEnable = tappedObject == null || tappedObject.tag == "block" || tappedObject.tag == "floor";
@@ -245,8 +211,7 @@ namespace VrScene
                     this.lastMousePosition = position;
 
                     isTouchPanel = false;
-                }
-                else if (position.x < cornerposition.x || position.y > cornerposition.y)
+                } else if (position.x < cornerposition.x || position.y > cornerposition.y) 
                 {
                     var tappedObject = EventSystem.current.currentSelectedGameObject;
                     this.TouchMoveEnable = tappedObject == null || tappedObject.tag == "block" || tappedObject.tag == "floor";
@@ -254,42 +219,39 @@ namespace VrScene
                     this.lastMousePosition = position;
 
                     isTouchPanel = false;
-                }
-                else
-                {
+                } else {
                     isTouchPanel = true;
                 }
             }
 
-            private void OnMove(Vector2 position)
+            private void OnMove (Vector2 position) 
             {
                 /*
                  *カーソル(or タッチ位置)が動いたときの処理
                  */
-                if(!isTouchPanel)
+                if (!isTouchPanel) 
                 {
                     if (!this.TouchMoveEnable) return;
                     Vector2 vec = position - this.lastMousePosition;
-                    vec = Quaternion.Euler(0, 0, this.CurrentZRotate) * vec;
-                    RotateXY(new Vector3(vec.x, vec.y, 0) * 7 * Time.deltaTime);
+
                     this.lastMousePosition = position;
                 }
             }
 
-            private void RotateXY(Vector3 direction)
+            private void RotateXY (Vector3 direction) 
             {
                 this.CurrentRightLeftRotate -= direction.x;
                 this.CurrentZRotate += direction.z;
-                CameraTransform.RotateAround(PlayerTransform.position, PlayerTransform.right, direction.y);
+                CameraTransform.RotateAround (PlayerTransform.position, PlayerTransform.right, direction.y);
             }
-            private Vector3 GyroDiff()
+            private Vector3 GyroDiff () 
             {
-                var currentGyro = (Quaternion.AngleAxis(90.0f, Vector3.right) * gyro.attitude * Quaternion.AngleAxis(180.0f, Vector3.forward)).eulerAngles;
+                var currentGyro = (Quaternion.AngleAxis (90.0f, Vector3.right) * gyro.attitude * Quaternion.AngleAxis (180.0f, Vector3.forward)).eulerAngles;
                 var x = currentGyro.x - LastGyroRotate.x;
                 var y = currentGyro.y - LastGyroRotate.y;
                 var z = currentGyro.z - LastGyroRotate.z;
                 LastGyroRotate = currentGyro;
-                return new Vector3(-y, x, z);
+                return new Vector3 (-y, x, z);
             }
         }
     }

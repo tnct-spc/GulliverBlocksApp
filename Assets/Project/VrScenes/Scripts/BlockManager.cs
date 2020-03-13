@@ -520,6 +520,34 @@ namespace VrScene
                                 patternObjects.Add(patternObject);
                                 break;
                             }
+                        case "tori1":
+                        case "tori2":
+                        case "tori3":
+                        case "tori4":
+                            {
+                      　　　　　Object ChickenPrefab = (GameObject)Resources.Load("Chicken");
+                                var position = new Vector3(
+                                    nearestBlock.x * X_RATIO,
+                                    nearestBlock.y * Y_RATIO,
+                                    nearestBlock.z * Z_RATIO
+                                );
+                                GameObject blockObject = Instantiate(ChickenPrefab, position, Quaternion.identity) as GameObject;
+                                break;
+                            }
+                        case "dog1":
+                        case "dog2":
+                        case "dog3":
+                        case "dog4":
+                            {
+                      　　　　　Object ChickenPrefab = (GameObject)Resources.Load("Dog");
+                                var position = new Vector3(
+                                    nearestBlock.x * X_RATIO,
+                                    nearestBlock.y * Y_RATIO,
+                                    nearestBlock.z * Z_RATIO
+                                );
+                                GameObject blockObject = Instantiate(ChickenPrefab, position, Quaternion.identity) as GameObject;
+                                break;
+                            }
                     }
                 }
             }

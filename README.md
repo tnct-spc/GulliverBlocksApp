@@ -40,6 +40,10 @@
 
 [大会募集要項](http://www.procon.gr.jp/wp-content/uploads//2019/04/e3ca8e6e8c8d8ab1062729e66a711fea.pdf)
 
+[プレゼンテーション](https://youtu.be/FOi_t-h9DXg?t=1245) (リンクに埋め込まれた時間は本作品発表開始時間)
+
+[デモンストレーション](https://youtu.be/QY-F4nFKLxk?t=542) (リンクに埋め込まれた時間は本作品発表開始時間)
+
 ## 使用したライブラリ
 
 - [UrlSchemeReceiver](https://github.com/Marimoiro/urlschemereceiver)
